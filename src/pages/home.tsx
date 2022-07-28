@@ -62,13 +62,13 @@ const Home = () => {
     return (
         <div className='-mt-20 px-5 py-4 flex gap-3'>
             <Head>
-                <title>Página Inicial</title>
+                <title>Painel de controlo</title>
             </Head>
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0'>
                     <div className='flex justify-between items-center w-[720px] p-2'>
 
-                        <h1 className='text-2xl font-bold'>DASHBOARD</h1>
+                        <h1 className='text-2xl font-bold'>PAINEL DE CONTROLO</h1>
                     </div>
                     <div className='flex gap-6 flex-wrap items-center justify-center mb-4 mt-2'>
 
@@ -91,25 +91,25 @@ const Home = () => {
                             <div>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
-                                        <tr className='p-2 my-2 flex gap-10'>
-                                            <th>Fornecedor A</th>
-                                            <th>Fornecedor B</th>
-                                            <th>Fornecedor C</th>
-                                            <th>Preço Médio</th>
+                                        <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500 '>
+                                            <th className='w-1/4'>Fornecedor A</th>
+                                            <th className='w-1/4'>Fornecedor B</th>
+                                            <th className='w-1/4'>Fornecedor C</th>
+                                            <th className='w-1/4'>Preço Médio</th>
                                         </tr>
                                     </thead>
-                                    <tbody className=''>
-                                        <tr className='flex shadow rounded space-x-10 p-2'>
-                                            <td>20-02-2022</td>
-                                            <td>30-03-2022</td>
-                                            <td>04-04-2022</td>
-                                            <td>-</td>
+                                    <tbody className='flex flex-col gap-2'>
+                                        <tr className='flex shadow rounded p-1'>
+                                            <td className='w-1/4 flex justify-center items-center'>20-02-2022</td>
+                                            <td className='w-1/4 flex justify-center items-center'>30-03-2022</td>
+                                            <td className='w-1/4 flex justify-center items-center'>04-04-2022</td>
+                                            <td className='w-1/4 flex justify-center items-center'>-</td>
                                         </tr>
-                                        <tr className='flex shadow rounded space-x-10 p-2'>
-                                            <td>20.000,00 AKWZ</td>
-                                            <td>20.000,00 AKWZ</td>
-                                            <td>20.000,00 AKWZ</td>
-                                            <td className='font-bold'>20.000,00 AKWZ</td>
+                                        <tr className='flex shadow rounded p-1'>
+                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center font-bold'>20.000,00 AKWZ</td>
                                         </tr>
 
                                     </tbody>
