@@ -1,3 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+
+    input,
+    button,
+    textarea,
+    label,body{
+        @apply font-roboto text-[14px]
+    }
+  
+}
+
+@layer components {
+
+    .search-category {
+        @apply py-2 px-4 rounded-t-lg hover:cursor-pointer   hover:text-blue-600 bg-sky-100
+    }
+
+    .search-category-selected {
+        @apply bg-white text-blue-600 font-bold !important
+    }
+
+    .login-social-btn {
+        @apply px-4 py-2 border-2 w-full flex items-center space-x-8 hover:brightness-75
+  
+    }
+
+    .link-menu{
+        @apply cursor-pointer py-4 font-bold hover:border-b-2 text-gray-400
+    }
+    .actived{
+        @apply border-b-2 text-black
+    }
+    .btn{
+        @apply px-4 py-2 bg-blue-700 text-white font-bold rounded shadow-sm mt-2 hover:brightness-75
+    }
+    .selected-item{
+        @apply bg-blue-700 text-white
+    }
+    .overflow-hide-scroll-bar::-webkit-scrollbar {
+        display: none;
+        }
+
+
+}
