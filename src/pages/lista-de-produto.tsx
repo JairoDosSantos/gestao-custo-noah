@@ -19,47 +19,51 @@ const ListaProdutos = () => {
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>
                             <thead >
-                                <tr className=' flex items-center justify-around  mx-3 my-4 text-center border p-2 shadow-sm rounded bg-gray-500'>
-                                    <th>Fornecedor</th>
-                                    <th>Telefone</th>
-                                    <th>Telefone 2</th>
-                                    <th>Endereço</th>
-                                    <th>Custo c/transporte</th>
-                                    <th>Custo s/transporte</th>
+                                <tr className='flex items-center justify-around  mx-3 my-4 text-center border p-2 shadow-sm rounded bg-gray-500'>
+                                    <th className=' w-1/6'>Fornecedor</th>
+                                    <th className=' w-1/6'>Telefone</th>
+                                    <th className=' w-1/6'>Telefone 2</th>
+                                    <th className=' w-1/6'>Endereço</th>
+                                    <th className=' w-1/6'>Custo c/transporte</th>
+                                    <th className=' w-1/6'>Custo s/transporte</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2 border'>
-                                    <td className=''>Fornecedor A</td>
-                                    <td>+244 929-84-89-58</td>
-                                    <td>+244 928-30-80-96</td>
-                                    <td className=' w-36'>Vila de viana ao lado da ponte amarela</td>
-                                    <td className=''>60.000,00 AKWZ</td>
-                                    <td className=''>5.000,00 AKWZ</td>
+                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
+                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
+                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
+                                    <td className='  w-1/6 text-center'>Projecto nova-vida</td>
+                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
+                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
 
                                 </tr>
-                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2 border'>
-                                    <td className=''>Fornecedor B</td>
-                                    <td>+244 929-84-89-58</td>
-                                    <td>+244 928-30-80-96</td>
-                                    <td>Vila de viana</td>
-                                    <td className=''>300.000,00 AKWZ</td>
-                                    <td className=''>10.000,00 AKWZ</td>
-                                </tr>  <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2 border'>
-                                    <td className=''>Fornecedor B</td>
-                                    <td>+244 929-84-89-58</td>
-                                    <td>+244 928-30-80-96</td>
-                                    <td className=' w-36'>Vila de viana</td>
-                                    <td className=''>300.000,00 AKWZ</td>
-                                    <td className=''>10.000,00 AKWZ</td>
+                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
+                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
+                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
+                                    <td className='  w-1/6 text-center'>Urbanização boa vida</td>
+                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
+                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
+
                                 </tr>
-                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2 border'>
-                                    <td className=''>Fornecedor C</td>
-                                    <td>+244 929-84-89-58</td>
-                                    <td>+244 928-30-80-96</td>
-                                    <td className=' w-36'>Vila de viana</td>
-                                    <td className=''>450.000,00 AKWZ</td>
-                                    <td className=''>15.000,00 AKWZ</td>
+                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
+                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
+                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
+                                    <td className='  w-1/6 text-center'>Jardim de Rosas</td>
+                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
+                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
+
+                                </tr>
+                                <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
+                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
+                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
+                                    <td className='  w-1/6 text-center'>Largo da Maianga</td>
+                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
+                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
+
                                 </tr>
 
                             </tbody>
@@ -72,11 +76,11 @@ const ListaProdutos = () => {
                                 <h4><span className='font-bold'>Gerado por</span> : Jairo dos Santos</h4>
                             </div>
                             <div className='flex gap-3'>
-                                <button className='btn flex space-x-2 items-center print:hidden'>
+                                <button onClick={() => print()} className='btn flex space-x-2 items-center print:hidden shadow'>
                                     <FaPrint />
                                     <span>Imprimir</span>
                                 </button>
-                                <button onClick={() => print()} className='btn bg-green-400 flex space-x-2 items-center print:hidden'>
+                                <button onClick={() => print()} className='btn bg-green-400 flex space-x-2 items-center print:hidden shadow'>
                                     <FaPrint />
                                     <span>Imprimir tudo</span>
                                 </button>

@@ -51,7 +51,10 @@ const InfoProduto = () => {
                         <div className='flex flex-col align-top space-y-2'>
 
                             <div className='flex gap-3'>
-                                <button className='flex space-x-2 items-center btn'>
+                                <button
+                                    onClick={() => alert('Aquí virá uma Modal para edição do Produto')}
+                                    className='flex space-x-2 items-center btn'
+                                >
                                     <FaEdit /> <span>Editar</span>
                                 </button>
                                 <button className='btn bg-green-400 flex space-x-2 items-center'>

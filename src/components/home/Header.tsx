@@ -15,7 +15,7 @@ const Header = () => {
     const [showNotification, setShowNotification] = useState(false)
 
     return (
-        <div className="bg-gray-50 text-black h-72  py-2 px-8">
+        <header className="bg-gray-50 text-black h-72  py-2 px-8">
             <div className="flex justify-between print:justify-end items-center border-b border-gray-100">
                 <div className="print:hidden">
                     <Image src={Logo} height={100} width={100} objectFit='contain' />
@@ -47,7 +47,7 @@ const Header = () => {
                     <FaSearch />
                 </button>
             </div>
-            <div className="py-5 hidden lg:flex justify-between items-center">
+            <nav className="py-5 hidden lg:flex justify-between items-center">
                 <ul className="flex space-x-8 ">
                     <li onClick={() => setActivo('home')} className={`link-menu ${activo === 'home' && 'actived'}`}>
                         <Link href='/home'>
@@ -87,13 +87,13 @@ const Header = () => {
                     </li>
                 </ul>
                 <form>
-                    <input placeholder="Pesquisar" className="placeholder:text-left text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded-md w-[432px] ring-0 focus:ring-0" />
+                    <input type='search' placeholder="Pesquisar" className="placeholder:text-left text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded-md w-[432px] ring-0 focus:ring-0" />
                 </form>
-            </div>
+            </nav>
             <div>
 
             </div>
-        </div>
+        </header>
     )
 }
 

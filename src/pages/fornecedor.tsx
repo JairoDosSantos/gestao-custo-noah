@@ -20,33 +20,36 @@ const fornecedor = () => {
                 <div className=' border-2 border-dashed rounded p-5 min-h-full'>
                     <form>
 
-                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2'>
-                            <input type="text" placeholder='Nome do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-72' />
-                            <input type="number" placeholder='Telefone 1 do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-72' />
-                            <label htmlFor='logoFornecedor' className='cursor-pointer ml-auto hidden lg:flex'>
-                                <Image src={Fornecedor} height={75} width={75} objectFit={'cover'} className='rounded' />
-                            </label>
-                            <input type={'file'} className='hidden' id='logoFornecedor' />
+                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0'>
+
+                            <input type="text" placeholder='Nome do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-full lg:w-72 shadow' />
+                            <input type="number" placeholder='Telefone 1 do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-full lg:w-72 shadow' />
+                            {/**  
+                             * <label htmlFor='logoFornecedor' className='cursor-pointer ml-auto hidden lg:flex'>
+                                 <Image src={Fornecedor} height={75} width={75} objectFit={'cover'} className='rounded' />
+                               </label>
+                                <input type={'file'} className='hidden' id='logoFornecedor' />
+                             */}
 
                         </div>
-                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2'>
+                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0'>
 
-                            <input type="number" placeholder='Telefone 2 do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-72' />
+                            <input type="number" placeholder='Telefone 2 do fornecedor *' className='px-4 py-2 border  rounded mx-2 w-full lg:w-72 shadow' />
 
-                            <select className='px-4 py-2 border rounded mx-2 w-72 cursor-pointer'>
-                                <option className='text-gray-400'>Categorias</option>
-                                <option>AREIA</option>
-                                <option>SOLOS</option>
-                                <option>GEOTÊXTEIS</option>
+                            <select className='px-4 py-2 border rounded mx-2 w-full lg:w-72 cursor-pointer shadow'>
+                                <option className='text-gray-400'>Tipo de Fornecedor</option>
+                                <option>Nacional</option>
+                                <option>Internacional</option>
+                                <option>UBV</option>
                             </select>
                         </div>
                         <div className='mb-4 flex flex-col lg:flex-row items-center'>
-                            <textarea rows={3} cols={77} className='px-4 py-2 border  rounded mx-2 ' placeholder='Endereço '></textarea>
+                            <textarea rows={3} cols={77} className='px-4 py-2 border  rounded mx-2 shadow w-full lg:w-[590px]' placeholder='Endereço '></textarea>
                         </div>
 
 
-                        <div className='flex justify-start'>
-                            <button className='btn flex items-center space-x-2'>
+                        <div className='flex justify-start ml-3'>
+                            <button className='btn flex items-center space-x-2 shadow'>
                                 <FaSave />
                                 <span>Salvar</span>
                             </button>

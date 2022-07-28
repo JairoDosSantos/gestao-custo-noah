@@ -19,31 +19,31 @@ const TodosProdutos = () => {
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>
                             <thead >
-                                <tr className=' flex items-center justify-around space-x-11 mx-3 my-4 text-center'>
-                                    <th>Descrição</th>
-                                    <th>Preço símples</th>
-                                    <th>Preço c/transporte</th>
-                                    <th>unidade</th>
-                                    <th>Categoria</th>
-                                    <th>Fornecedores</th>
-                                    <th>Editar</th>
-                                    <th>Apagar</th>
+                                <tr className='border flex items-center justify-around mx-2 my-4 text-center p-2 shadow-sm rounded bg-gray-500'>
+                                    <th className='w-1/6'>Descrição</th>
+                                    <th className='w-1/6'>Preço símples</th>
+                                    <th className='w-1/6'>Preço c/transporte</th>
+                                    <th className='w-1/6'>unidade</th>
+                                    <th className='w-1/6'>Categoria</th>
+                                    <th className='w-1/6'>Fornecedores</th>
+                                    <th className='w-1/6'>Editar</th>
+                                    <th className='w-1/6'>Apagar</th>
 
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr
                                     onClick={() => router.push('/produto-info/1')}
-                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2'
+                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'
                                 >
 
-                                    <td className='truncate'>Bloco de 12</td>
-                                    <td>800,00 AKWZ</td>
-                                    <td>1.200,00 AKWZ</td>
-                                    <td>cm</td>
-                                    <td>Alguma</td>
-                                    <td className='truncate'>Jairo, etc. ...</td>
-                                    <td>
+                                    <td className='w-1/6'>Bloco de 6</td>
+                                    <td className='w-1/6'>800,00 AKWZ</td>
+                                    <td className='w-1/6'>1.200,00 AKWZ</td>
+                                    <td className='w-1/6'>cm</td>
+                                    <td className='w-1/6'>Alguma</td>
+                                    <td className='w-1/6'>Jairo, etc. ...</td>
+                                    <td className='w-1/6 flex justify-center'>
                                         <button
                                             className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
                                             title='Editar'
@@ -51,7 +51,7 @@ const TodosProdutos = () => {
                                             <FaEdit />
                                         </button>
                                     </td>
-                                    <td>
+                                    <td className='w-1/6 text-center flex items-center justify-center'>
                                         <button
                                             className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
                                             title='Apagar'
@@ -62,16 +62,16 @@ const TodosProdutos = () => {
                                 </tr>
                                 <tr
                                     onClick={() => router.push('/produto-info/2')}
-                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around space-x-5 my-2 shadow rounded p-2'
+                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'
                                 >
 
-                                    <td className='truncate'>Cimento</td>
-                                    <td>3.600,00 AKWZ</td>
-                                    <td>4.200,00 AKWZ</td>
-                                    <td>cm</td>
-                                    <td>Alguma</td>
-                                    <td className='truncate'>Jairo, etc....</td>
-                                    <td>
+                                    <td className='w-1/6'>Bloco de 12</td>
+                                    <td className='w-1/6'>1.000,00 AKWZ</td>
+                                    <td className='w-1/6'>1.500,00 AKWZ</td>
+                                    <td className='w-1/6'>cm</td>
+                                    <td className='w-1/6'>Alguma</td>
+                                    <td className='w-1/6'>Jairo, Manel. ...</td>
+                                    <td className='w-1/6 flex justify-center'>
                                         <button
                                             className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
                                             title='Editar'
@@ -79,7 +79,7 @@ const TodosProdutos = () => {
                                             <FaEdit />
                                         </button>
                                     </td>
-                                    <td>
+                                    <td className='w-1/6 text-center flex items-center justify-center'>
                                         <button
                                             className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
                                             title='Apagar'

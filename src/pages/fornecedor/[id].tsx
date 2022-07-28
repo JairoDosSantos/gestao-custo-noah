@@ -7,7 +7,7 @@ import Perfil from '../../assets/user.png'
 import { useRouter } from 'next/router';
 
 
-import { FaEdit, FaTrash } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaUser } from 'react-icons/fa'
 
 const FornecedorInfo = () => {
 
@@ -47,12 +47,13 @@ const FornecedorInfo = () => {
                             </div>
                         </div>
                         <div className='flex flex-col justify-center space-y-2'>
-                            <Image src={Perfil} height={150} width={150} className='rounded' objectFit='contain' />
+
+                            <FaUser className='h-44  w-44 text-gray-200' />
                             <div className='flex gap-3'>
-                                <button className='flex space-x-2 items-center btn'>
+                                <button className='flex space-x-2 items-center btn shadow'>
                                     <FaEdit /> <span>Editar</span>
                                 </button>
-                                <button className='flex space-x-2 items-center btn bg-gray-200 text-black'>
+                                <button className='flex space-x-2 items-center btn shadow bg-gray-200 text-black'>
                                     <FaTrash /> <span>Apagar</span>
                                 </button>
                             </div>

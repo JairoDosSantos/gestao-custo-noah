@@ -21,37 +21,44 @@ const Produto = () => {
             <div className='bg-white w-full  sm:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded p-5 min-h-full'>
                     <form >
-                        <div className='my-2 flex sm:justify-end justify-center'>
-                            <Image src={Fornecedor} height={50} width={50} className='rounded-full' />
-                        </div>
+                        {/**
+                         *  <div className='my-2 flex sm:justify-end justify-center'>
+                                <Image src={Fornecedor} height={50} width={50} className='rounded-full' />
+                            </div>
+                         */}
                         <div className='mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
-                            <input type="text" placeholder='Descrição do Material *' className='px-4 py-2 border  rounded mx-2 w-72' />
-                            <input type="number" placeholder='Preço Símples *' className='px-4 py-2 border  rounded mx-2 w-72' />
+                            <input type="text" placeholder='Descrição do Material *' className='px-4 py-2 border  rounded mx-2 w-full shadow' />
+
                         </div>
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
-                            <select className='px-4 py-2 border rounded mx-2 w-72 cursor-pointer'>
-                                <option value="">... Categoria ...</option>
+                            <select className='px-4 py-2 border rounded mx-2 w-72  cursor-pointer shadow'>
+                                <option value="">... Sub-categoria ...</option>
                                 <option value="">Solos</option>
                                 <option value="">Areia</option>
                             </select>
-                            <select className='px-4 py-2 border rounded mx-2 w-72 cursor-pointer'>
+                            <div className=' flex flex-col sm:flex-row items-center justify-between'>
+                                <input type="number" placeholder='Preço com transporte' className='px-4 py-2 border  rounded mx-2 w-72 shadow' />
+                            </div>
+
+                        </div>
+                        <div className='flex justify-between items-end'>
+                            <select className='mt-4 px-4 py-2 border rounded mx-2 w-72 shadow cursor-pointer'>
                                 <option value="#">... Unidade ...</option>
                                 <option value="">cm</option>
                                 <option value="">m</option>
                                 <option value="">m3</option>
                             </select>
+                            <div>
+                                <input type="number" placeholder='Preço Símples *' className='px-4 py-2 border  rounded mx-2 w-72 shadow' />
+                            </div>
                         </div>
-                        <div className='mt-4 flex flex-col sm:flex-row items-center justify-between'>
-                            <input type="number" placeholder='Preço com transporte' className='px-4 py-2 border  rounded mx-2 w-72' />
-                        </div>
-
-                        <div className='flex flex-col sm:flex-row justify-end gap-3'>
+                        <div className='flex flex-col sm:flex-row justify-end gap-3 mt-4'>
                             <button type='button' onClick={() => router.push('/todos-produtos')}
-                                className='btn bg-gray-200 text-black flex space-x-2 items-center'>
+                                className='btn bg-gray-200 text-black flex space-x-2 items-center shadow'>
                                 <FaList />
                                 <span>Lista de Produtos</span>
                             </button>
-                            <button className='btn flex space-x-2 items-center'>
+                            <button className='btn flex space-x-2 items-center shadow'>
                                 <FaSave />
                                 <span>Salvar</span>
                             </button>
