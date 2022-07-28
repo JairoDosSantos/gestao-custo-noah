@@ -71,8 +71,8 @@ const ListaProdutos = () => {
                     </div>
                     <div>
 
-                        <div className='flex print:justify-between justify-end mt-3'>
-                            <div className='print:flex hidden'>
+                        <div className='flex print:justify-start justify-end mt-3'>
+                            <div className='hidden print:inline-block'>
                                 <h4><span className='font-bold'>Gerado por</span> : Jairo dos Santos</h4>
                             </div>
                             <div className='flex gap-3'>

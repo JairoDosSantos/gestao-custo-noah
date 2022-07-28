@@ -7,7 +7,7 @@ import User from '../../assets/user.png'
 import Logo from '../../assets/noah.png'
 
 import { AiOutlineNotification } from 'react-icons/ai'
-import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch } from 'react-icons/fa'
+import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaTrash } from 'react-icons/fa'
 
 const Header = () => {
 
@@ -25,17 +25,33 @@ const Header = () => {
                         <Image src={Logo} height={100} width={100} objectFit='contain' />
                     </div>
                     <div className="print:hidden flex gap-3 relative">
-                        <button onClick={() => setShowNotification(!showNotification)} className="cursor-pointer hover:brightness-75 relative animate-bounce print:hidden">
+                        <button onClick={() => setShowNotification(!showNotification)} className={`cursor-pointer hover:brightness-75 relative ${!showNotification && ' animate-bounce'} print:hidden`}>
                             <AiOutlineNotification />
                             <span
                                 className={`px-2 py-1 text-xs  bg-red-600 animate-pulse text-white rounded-full absolute bottom-2 right-2 ${showNotification ? 'hidden' : 'flex'}`}>
                                 3
                             </span>
                         </button>
-                        <div className={`print:hidden w-80 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 ${showNotification ? 'flex flex-col gap-3' : 'hidden'} `}>
-                            <span className="text-xs truncate">O produto x do fornecedor y actualizado há 2 semanas!</span>
-                            <span className="text-xs truncate">O produto z do fornecedor k actualizado há 4 semanas!</span>
-                            <span className="text-xs truncate">O produto y do fornecedor x actualizado há 8 semanas!</span>
+                        <div className={`print:hidden w-96 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 ${showNotification ? 'flex flex-col gap-3' : 'hidden'} `}>
+                            <p
+                                title="O produto z do fornecedor k actualizado há 4 semanas!"
+                                className="text-xs truncate flex justify-between items-center"
+                            >
+                                O produto z do fornecedor k actualizado há 4 semanas! <FaTrash className="text-blue-700 cursor-pointer" />
+                            </p>
+                            <p
+                                title="O produto z do fornecedor k actualizado há 4 semanas!"
+                                className="text-xs truncate flex justify-between items-center"
+                            >
+                                O produto z do fornecedor k actualizado há 4 semanas! <FaTrash className="text-blue-700 cursor-pointer" />
+                            </p>
+                            <p
+                                title="O produto z do fornecedor k actualizado há 4 semanas!"
+                                className="text-xs truncate flex justify-between items-center"
+                            >
+                                O produto z do fornecedor k actualizado há 4 semanas! <FaTrash className="text-blue-700 cursor-pointer" />
+                            </p>
+
                         </div>
                         <Image src={User} className=' rounded-full' objectFit="cover" height={25} width={25} />
                     </div>
