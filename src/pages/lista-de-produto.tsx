@@ -18,7 +18,7 @@ const ListaProdutos = () => {
                     <h3 className='font-bold text-2xl'>RELATÓRIO - CUSTO DE MATERIAL</h3>
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>
-                            <thead >
+                            <thead>
                                 <tr className='flex items-center justify-around  mx-3 my-4 text-center border p-2 shadow-sm rounded bg-gray-500'>
                                     <th className=' w-1/6'>Fornecedor</th>
                                     <th className=' w-1/6'>Telefone</th>
@@ -36,7 +36,6 @@ const ListaProdutos = () => {
                                     <td className='  w-1/6 text-center'>Projecto nova-vida</td>
                                     <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
                                     <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-
                                 </tr>
                                 <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
                                     <td className=' w-1/6 text-center'>Fornecedor A</td>
@@ -45,7 +44,6 @@ const ListaProdutos = () => {
                                     <td className='  w-1/6 text-center'>Urbanização boa vida</td>
                                     <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
                                     <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-
                                 </tr>
                                 <tr className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
                                     <td className=' w-1/6 text-center'>Fornecedor A</td>
@@ -63,9 +61,7 @@ const ListaProdutos = () => {
                                     <td className='  w-1/6 text-center'>Largo da Maianga</td>
                                     <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
                                     <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-
                                 </tr>
-
                             </tbody>
                         </table>
                     </div>

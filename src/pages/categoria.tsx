@@ -34,10 +34,21 @@ const Categoria = () => {
                 <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto '>
                     <h3 className='text-center font-bold mb-4'>Lista de Categorias</h3>
                     <ul>
-                        <li onClick={() => router.push('categoria/1')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'>Alvenaria</li>
-                        <li onClick={() => router.push('categoria/2')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'>Pisos</li>
-                        <li onClick={() => router.push('categoria/3')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'>Outros </li>
-
+                        <li
+                            onClick={() => router.push('categoria/1')}
+                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                        >Alvenaria
+                        </li>
+                        <li
+                            onClick={() => router.push('categoria/2')}
+                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                        >Pisos
+                        </li>
+                        <li
+                            onClick={() => router.push('categoria/3')}
+                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                        >Outros
+                        </li>
                     </ul>
                     {/**Este botão novo vai chamar uma modal para inserir uma nova categoria */}
                     <button

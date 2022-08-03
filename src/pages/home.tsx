@@ -3,56 +3,64 @@ import Head from 'next/head'
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-import Logo from '../assets/noah.png'
-import Image from 'next/image';
-
-
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
-enum ChartHorizontalAlign {
-    left = 'left',
-    center = 'center',
-    right = 'right'
-}
-
-enum ChartVerticalAlign {
-    top = 'top',
-    middle = 'middle',
-    bottom = 'bottom'
-}
-//import { FaUsers } from 'react-icons/fa';
 
 const Home = () => {
 
     const [optionsChart, setOptionsChart] = useState({
         options: {
             chart: {
-                type: 'bar',
-                stacked: true,
-                stackType: "100%"
+                height: 200,
+                zoom: {
+                    enabled: true
+                }
+            },
+            dataLabels: {
+                enabled: false
             },
             plotOptions: {
                 bar: {
                     horizontal: true
                 }
+            },
+            stroke: {
+                width: 3
+            },
+            colors: ['#2E93fA', '#949c81', '#546E7A'],
+            toolbar: {
+                autoSelected: "pan",
+                show: false
             }
-
+        },
+        tooltip: {
+            theme: 'dark'
         },
         series: [
             {
                 name: "Fornecedor A",
-                data: [31, 40, 16, 10, 100]
+                data: [31, 50, 80, 10, 100]
             },
             {
                 name: "Fornecedor B",
-                data: [31, 40, 16, 10, 99]
+                data: [1, 40, 16, 10, 9]
             },
             {
                 name: "Fornecedor C",
-                data: [31, 33, 16, 10, 99]
+                data: [100, 33, 24, 8, 19]
             }
         ],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        }
+        ,
         legend: {
             position: 'bottom',
             horizontalAlign: "center",
@@ -78,12 +86,12 @@ const Home = () => {
                             <Chart
                                 options={optionsChart.options}
                                 series={optionsChart.series}
-                                type="line"
+                                type="area"
                                 width={400}
-                                height={200}
+
                             />
                         </div>
-                        <div className='border shadow rounded bg-white p-5 w-[30rem] h-64 flex flex-col print:shadow-none print:border-0'>
+                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-64 flex flex-col print:shadow-none print:border-0'>
                             {/** Gráfico à anunciar */}
                             <div className='flex justify-start'>
                                 <input type="date" className='rounded border px-2 cursor-pointer' />
@@ -91,12 +99,13 @@ const Home = () => {
                             <div>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
-                                        <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500 '>
+                                        <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500'>
                                             <th className='w-1/4'>Fornecedor A</th>
                                             <th className='w-1/4'>Fornecedor B</th>
                                             <th className='w-1/4'>Fornecedor C</th>
                                             <th className='w-1/4'>Preço Médio</th>
                                         </tr>
+
                                     </thead>
                                     <tbody className='flex flex-col gap-2'>
                                         <tr className='flex shadow rounded p-1'>
