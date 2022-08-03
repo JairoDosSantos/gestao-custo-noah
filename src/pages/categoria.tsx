@@ -3,15 +3,32 @@ import Head from 'next/head'
 import { FaSave, FaPlus } from 'react-icons/fa'
 
 import { useRouter } from 'next/router'
+
+
+//INSTALAR O yarn add -D @types/sweetalert2-react
+import SweetAlert2 from 'react-sweetalert2';
+import { useState } from 'react';
+
+
 const Categoria = () => {
 
     const router = useRouter()
+    const [showAlert, setShowAlert]=useState(false)
 
     return (
         <div className='-mt-20 p-5 flex lg:flex-row flex-col gap-3'>
             <Head>
                 <title>Criar Categoria</title>
             </Head>
+
+            <SweetAlert2 
+                show={showAlert} 
+                title='Adicionar Categoria' 
+                text='Categoria adicionada com sucesso' 
+                onConfirm={()=>setShowAlert(false)}
+            />
+
+
             <div className='bg-white  lg:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded p-5 min-h-full'>
                     <form className='flex flex-col justify-center items-center space-y-8'>
@@ -52,7 +69,7 @@ const Categoria = () => {
                     </ul>
                     {/**Este botão novo vai chamar uma modal para inserir uma nova categoria */}
                     <button
-                        onClick={() => alert('Você clicou em adicionar uma nova categoria. Uma modal será aberta em breve')}
+                        onClick={() => setShowAlert(true)}
                         className='btn rounded-full py-4 px-4 absolute -top-1 right-1 cursor-pointer shadow'
                         title='Adicionar nova categoria'
                     >
