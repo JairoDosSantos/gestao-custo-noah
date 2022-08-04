@@ -123,14 +123,18 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen }: E
                                                     type="number"
                                                     placeholder='Preço Símples'
                                                     className='border  rounded w-1/2 shadow'
-                                                    {...register('precoSimples')} />
+                                                    {...register('precoSimples', {
+                                                        min: { message: 'Por favor, insira um preço válido', value: 0 }
+                                                    })} />
                                                 {/**Adicionar um auto complete component para categoria ou um select*/}
                                                 {/**  <input type="text" className='rounded shadow w-1/2' placeholder='Sub-Categoria do produto *' /> */}
                                                 <input
                                                     type="number"
                                                     placeholder='Preço com transporte'
                                                     className='px-4 py-2 border  rounded w-1/2 shadow'
-                                                    {...register('precoTransporte')} />
+                                                    {...register('precoTransporte', {
+                                                        min: { message: 'Por favor, insira um preço válido', value: 0 }
+                                                    })} />
                                             </div>
 
                                             <div className="mt-4 flex justify-end ">

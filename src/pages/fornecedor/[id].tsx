@@ -86,11 +86,11 @@ const FornecedorInfo = () => {
 
             />
 
-            <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-y-hidden'>
+            <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
                     <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR {id}</h3>
-                    <div className='flex gap-4 justify-between'>
-                        <div className='flex flex-col space-y-4'>
+                    <div className='flex flex-col lg:flex-row gap-4 lg:justify-between justify-center mt-2 lg:mt-0 '>
+                        <div className='flex flex-col space-y-4 order-2 lg:order-1'>
                             <div>
                                 <label className='font-bold'>Nome : </label><span>Jairo dos Santos</span>
                             </div>
@@ -114,10 +114,12 @@ const FornecedorInfo = () => {
                                 </ul>
                             </div>
                         </div>
-                        <div className='flex flex-col justify-center space-y-2'>
+                        <div className='flex flex-col justify-center align-center  space-y-2 order-1 lg:order-2'>
 
-                            <FaUser className='h-44  w-44 text-gray-200' />
-                            <div className='flex gap-3'>
+                            <div className='flex justify-center align-center'>
+                                <FaUser className='h-44  w-44 text-gray-200' />
+                            </div>
+                            <div className='flex gap-3 justify-center align-center'>
                                 <button
                                     onClick={() => setShowModal(true)}
                                     className='flex space-x-2 items-center btn shadow cursor-pointer'>

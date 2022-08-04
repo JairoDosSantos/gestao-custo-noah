@@ -33,7 +33,11 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen }: NovaModalProps
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        progress: undefined
+        progress: undefined,
+        onClick(event) {
+            setIsOpen(false)
+        },
+
     })
 
     const notifyError = () => toast.error('Erro ao efectuar a operação! 😥', {
@@ -110,6 +114,7 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen }: NovaModalProps
                                                 pauseOnFocusLoss
                                                 draggable
                                                 pauseOnHover
+
                                             />
                                         </div>
                                         <form

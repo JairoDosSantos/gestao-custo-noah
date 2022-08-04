@@ -87,16 +87,16 @@ const InfoProduto = () => {
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-y-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full '>
                     <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO PRODUTO {id}</h3>
-                    <div className='flex gap-4 justify-between'>
-                        <div className='flex flex-col space-y-4'>
+                    <div className='flex flex-col lg:flex-row gap-4 lg:justify-between lg:mt-0 mt-2'>
+                        <div className='flex flex-col  space-y-4'>
                             <div>
                                 <label className='font-bold'>Nome : </label><span>Bloco de 12</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Preço símples : </label><span>1.200,00 AKWZ</span>
+                                <label className='font-bold'>Menor Preço símples : </label><span>1.200,00 AKWZ</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Preço C/transporte : </label><span>1.500,00 AKWZ</span>
+                                <label className='font-bold'>Menor Preço C/transporte : </label><span>1.500,00 AKWZ</span>
                             </div>
                             <div>
                                 <label className='font-bold'>Unidade : </label><span>cm</span>
@@ -119,22 +119,22 @@ const InfoProduto = () => {
                                 </ul>
                             </div>
                         </div>
-                        <div className='flex flex-col align-top space-y-2'>
+                        <div className='flex flex-col align-top  space-y-2'>
 
-                            <div className='flex gap-3'>
+                            <div className='flex flex-wrap  gap-3'>
                                 <button
                                     onClick={() => setOpenModal(true)}
-                                    className='flex space-x-2 items-center btn'
+                                    className='flex space-x-2 items-center btn order-1'
                                 >
                                     <FaEdit /> <span>Editar</span>
                                 </button>
-                                <button className='btn bg-green-400 flex space-x-2 items-center'>
+                                <button className='btn bg-green-400 flex space-x-2 items-center order-3 lg:order-2'>
                                     <FaPrint />
                                     <span>Imprimir</span>
                                 </button>
                                 <button
                                     onClick={() => setShowQuestionAlert(true)}
-                                    className='flex space-x-2 items-center btn bg-gray-200 text-black'>
+                                    className='flex space-x-2 items-center btn bg-gray-200 text-black order-2 lg:order-3 '>
                                     <FaTrash /> <span>Apagar</span>
                                 </button>
                             </div>

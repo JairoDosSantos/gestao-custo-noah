@@ -28,6 +28,7 @@ const TodosProdutos = () => {
 
             {/**Confirm alert */}
             <SweetAlert2
+                backdrop={true}
                 show={showConfirmAlert}
                 title='Sucesso'
                 text='Sub-Categoria adicionada com sucesso'
@@ -46,6 +47,7 @@ const TodosProdutos = () => {
 
             {/**Error Alert */}
             <SweetAlert2
+                backdrop={true}
                 show={showErrorAlert}
                 title='Erro'
                 text='Ocorreu um erro ao efectuar a operação'
@@ -62,6 +64,7 @@ const TodosProdutos = () => {
 
             {/** Question Alert */}
             <SweetAlert2
+                backdrop={true}
                 show={showQuestionAlert}
                 title='Atenção'
                 text='Tem a certeza que deseja efectuar esta operação ?'
@@ -100,7 +103,7 @@ const TodosProdutos = () => {
 
                                     <td
                                         onClick={() => router.push('/produto-info/1')}
-                                        className='w-1/6'>Bloco de 6</td>
+                                        className='w-1/6 underline hover:text-gray-400'>Bloco de 6</td>
                                     <td className='w-1/6'>cm</td>
                                     <td className='w-1/6'>Alguma</td>
                                     <td className='w-1/6 flex justify-center'>
@@ -127,7 +130,7 @@ const TodosProdutos = () => {
 
                                     <td
                                         onClick={() => router.push('/produto-info/2')}
-                                        className='w-1/6'>Bloco de 12</td>
+                                        className='w-1/6 underline hover:text-gray-400'>Bloco de 12</td>
                                     <td className='w-1/6'>cm</td>
                                     <td className='w-1/6'>Alguma</td>
                                     <td className='w-1/6 flex justify-center'>

@@ -117,41 +117,45 @@ const Produto = () => {
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
                             <select
                                 {...register('categoria')}
-                                className='px-4 py-2 border rounded mx-2 w-72  cursor-pointer shadow' >
+                                className='px-4 py-2 border rounded w-full lg:mx-2 lg:w-72  cursor-pointer shadow' >
                                 <option value="">... Sub-categoria ...</option>
                                 <option value="Solos">Solos</option>
                                 <option value="Areia">Areia</option>
                             </select>
-                            <div className=' flex flex-col sm:flex-row items-center justify-between'>
-                                <input
-                                    type="number"
-                                    placeholder='Preço com transporte'
-                                    className='px-4 py-2 border  rounded mx-2 w-72 shadow'
-                                    id='precoTransporte'
-                                    {...register('precoTransporte')} />
-                            </div>
+
+                            <input
+                                type="number"
+                                placeholder='Preço com transporte'
+                                className='px-4 py-2 border  rounded w-full mx-0 lg:mx-2 lg:w-72 shadow'
+                                id='precoTransporte'
+                                {...register('precoTransporte', {
+                                    min: { message: 'Por favor, insira um preço válido', value: 0 }
+                                })} />
+
 
                         </div>
-                        <div className='flex justify-between items-end'>
+                        <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0  items-center justify-between'>
                             <select
                                 {...register('unidade')}
-                                className='mt-4 px-4 py-2 border rounded mx-2 w-72 shadow cursor-pointer'>
+                                className='mt-4 px-4 py-2 border rounded w-full lg:mx-2 lg:w-72 shadow cursor-pointer'>
                                 <option value="#">... Unidade ...</option>
                                 <option value="cm">cm</option>
                                 <option value="m">m</option>
                                 <option value="m3">m3</option>
                             </select>
-                            <div>
-                                <input
-                                    type="number"
-                                    placeholder='Preço Símples *'
-                                    className='px-4 py-2 border  rounded mx-2 w-72 shadow'
-                                    id='precoSimples'
-                                    {...register('precoSimples', {
-                                        required: { message: "Por favor, introduza o preço do produto.", value: true },
-                                        minLength: { message: "Preenchimento obrigatório!", value: 3 },
-                                    })} />
-                            </div>
+
+                            <input
+                                type="number"
+                                placeholder='Preço Símples *'
+                                className='px-4 py-2 border  rounded w-full lg:mx-2 lg:w-72 shadow'
+                                id='precoSimples'
+                                {...register('precoSimples', {
+                                    required: { message: "Por favor, introduza o preço do produto.", value: true },
+                                    minLength: { message: "Preenchimento obrigatório!", value: 3 },
+                                    min: { message: 'Por favor, insira um preço válido', value: 0 }
+
+                                })} />
+
                         </div>
                         <div className='flex flex-col sm:flex-row justify-end gap-3 mt-4'>
                             <button type='button' onClick={() => router.push('/todos-produtos')}
@@ -163,7 +167,7 @@ const Produto = () => {
                                 //onClick={() => { setShowConfirmAlert(true) }}
                                 type='submit'
                                 disabled={!isValid}
-                                className='btn flex space-x-2 items-center shadow disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed'>
+                                className='btn flex justify-center align-center space-x-2 items-center shadow disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed text-center'>
                                 <FaSave />
                                 <span>Salvar</span>
                             </button>

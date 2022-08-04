@@ -136,6 +136,7 @@ export default function EditarModal({ isOpen, setIsOpen }: EditarModalProps) {
                           {...register('telefone1', {
                             required: { message: "Por favor, introduza o número de telefone do fornecedor.", value: true },
                             minLength: { message: "Número de telefone 1 incompleto!", value: 9 },
+                            min: { message: 'Por favor, insira um numéro de telefone válido', value: 900000000 }
                           })} />
                       </div>
                       <div className='flex gap-2 justify-center align-center'>
@@ -146,6 +147,7 @@ export default function EditarModal({ isOpen, setIsOpen }: EditarModalProps) {
                           {...register('telefone2', {
                             required: { message: "Por favor, introduza o número de telefone do fornecedor.", value: true },
                             minLength: { message: "Número de telefone 2 incompleto!", value: 9 },
+                            min: { message: 'Por favor, insira um numéro de telefone 2 válido', value: 900000000 }
                           })} />
 
                         <select

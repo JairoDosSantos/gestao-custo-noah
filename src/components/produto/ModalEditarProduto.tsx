@@ -122,7 +122,16 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
                                             onSubmit={handleSubmit(onSubmit)}>
 
                                             <div className='flex gap-2 justify-center align-center'>
-                                                <input type="text" className='rounded shadow w-1/2' placeholder='Descrição do produto *' />
+                                                <input
+                                                    type="text"
+                                                    className='rounded shadow w-1/2'
+                                                    placeholder='Descrição do produto *'
+                                                    {...register('descricaoMaterial', {
+                                                        required: { message: "Por favor, introduza a descrição do projecto.", value: true },
+                                                        minLength: { message: "Preenchimento obrigatório!", value: 1 },
+
+                                                    })}
+                                                />
                                                 {/**Adicionar um auto complete component para categoria ou um select*/}
                                                 {/**  <input type="text" className='rounded shadow w-1/2' placeholder='Sub-Categoria do produto *' /> */}
                                                 <select
@@ -138,7 +147,12 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
                                                 </select>
                                             </div>
                                             <div className='flex gap-2 justify-center align-center'>
-                                                <select name="unidade" className='rounded shadow w-full cursor-pointer'>
+                                                <select
+                                                    {...register('unidade', {
+                                                        required: { message: "Por favor, introduza a subCategoria.", value: true },
+                                                        minLength: { message: "Preenchimento obrigatório!", value: 1 },
+                                                    })}
+                                                    className='rounded shadow w-full cursor-pointer'>
                                                     <option value="#">Unidade</option>
                                                     <option value="m">cm</option>
                                                     <option value="cm">m</option>
@@ -149,11 +163,12 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
 
                                             <div className="mt-4 flex justify-end ">
                                                 <button
+                                                    disabled={!isValid}
                                                     type="button"
                                                     className="flex align-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
-                          focus-visible:ring-offset-2"
+                          focus-visible:ring-offset-2 disabled:bg-blue-400 disabled:text-gray-200 disabled:cursor-not-allowed"
                                                     onClick={notifyError}
                                                 >
                                                     <FaEdit />
@@ -169,8 +184,8 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
                             </Transition.Child>
                         </div>
                     </div>
-                </Dialog>
-            </Transition>
+                </Dialog >
+            </Transition >
         </>
     )
 }
