@@ -12,20 +12,80 @@ import { useRouter } from 'next/router';
 import { FaEdit, FaTrash, FaUser } from 'react-icons/fa'
 import { useState } from 'react';
 
+import dynamic from 'next/dynamic';
+const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
+
 const FornecedorInfo = () => {
 
     const { query } = useRouter();
     const { id } = query
-    const [showModal,setShowModal]=useState(false)
-    
+    const [showModal, setShowModal] = useState(false)
+
+    const [showConfirmAlert, setShowConfirmAlert] = useState(false)
+    const [showErrorAlert, setShowErrorAlert] = useState(false)
+    const [showQuestionAlert, setShowQuestionAlert] = useState(false)
+
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
                 <title>Fornecedor {id}</title>
             </Head>
-            <EditarModal isOpen={showModal} setIsOpen = {setShowModal}/>
-            
-          
+            {/**Modal para editar fornecedor */}
+            <EditarModal isOpen={showModal} setIsOpen={setShowModal} />
+            {/**Confirm alert**/}
+            <SweetAlert2
+                show={showConfirmAlert}
+                title='Sucesso'
+                text='Sub-Categoria adicionada com sucesso'
+                onConfirm={() => setShowConfirmAlert(false)}
+                didClose={() => setShowConfirmAlert(false)}
+                didDestroy={() => setShowConfirmAlert(false)}
+                icon='question'
+                allowOutsideClick={true}
+                allowEnterKey={true}
+                allowEscapeKey={true}
+                showConfirmButton={true}
+                showLoaderOnConfirm={true}
+                showCancelButton={true}
+                confirmButtonColor="#4051ef"
+            />
+
+            {/**Error Alert */}
+            <SweetAlert2
+                show={showErrorAlert}
+                title='Erro'
+                text='Ocorreu um erro ao efectuar a operação'
+                icon='error'
+                onConfirm={() => setShowErrorAlert(false)}
+                didClose={() => setShowErrorAlert(false)}
+                didDestroy={() => setShowErrorAlert(false)}
+                allowOutsideClick={true}
+                allowEnterKey={true}
+                allowEscapeKey={true}
+                showConfirmButton={true}
+                confirmButtonColor="#4051ef"
+            />
+
+            {/** Question Alert */}
+            <SweetAlert2
+                show={showQuestionAlert}
+                title='Atenção'
+                text='Tem a certeza que deseja efectuar esta operação ?'
+                icon='question'
+                onConfirm={() => setShowQuestionAlert(false)}
+                didClose={() => setShowQuestionAlert(false)}
+                didDestroy={() => setShowQuestionAlert(false)}
+                allowOutsideClick={true}
+                allowEnterKey={true}
+                allowEscapeKey={true}
+                showConfirmButton={true}
+                showCancelButton={true}
+                cancelButtonText='Cancelar'
+                confirmButtonColor="#4051ef"
+                confirmButtonText="Sim"
+
+            />
+
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-y-hidden'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
                     <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR {id}</h3>
@@ -58,11 +118,17 @@ const FornecedorInfo = () => {
 
                             <FaUser className='h-44  w-44 text-gray-200' />
                             <div className='flex gap-3'>
-                                <button className='flex space-x-2 items-center btn shadow cursor-pointer' onClick={()=>setShowModal(true)}>
-                                    <FaEdit /> <span>Editar</span>
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className='flex space-x-2 items-center btn shadow cursor-pointer'>
+                                    <FaEdit />
+                                    <span>Editar</span>
                                 </button>
-                                <button className='flex space-x-2 items-center btn shadow bg-gray-200 text-black'>
-                                    <FaTrash /> <span>Apagar</span>
+                                <button
+                                    onClick={() => setShowQuestionAlert(true)}
+                                    className='flex space-x-2 items-center btn shadow bg-gray-200 text-black'>
+                                    <FaTrash />
+                                    <span>Apagar</span>
                                 </button>
                             </div>
                         </div>

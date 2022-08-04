@@ -9,17 +9,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 
 
-enum ChartHorizontalAlign {
-    left = 'left',
-    center = 'center',
-    right = 'right'
-}
 
-enum ChartVerticalAlign {
-    top = 'top',
-    middle = 'middle',
-    bottom = 'bottom'
-}
 
 const Dashboard: NextPage = () => {
     const Donut = {
@@ -36,9 +26,7 @@ const Dashboard: NextPage = () => {
     const [optionsChart, setOptionsChart] = useState({
         options: {
             chart: {
-                type: 'line',
                 stacked: true,
-                stackType: "100%"
             },
             plotOptions: {
                 bar: {
@@ -89,14 +77,6 @@ const Dashboard: NextPage = () => {
                 <h1 className='font-semibold text-center'>Dashboard</h1>
 
                 <section className='flex gap-3'>
-                    <div>
-                        <Chart
-                            options={Donut.chartOptions}
-                            series={Donut.series}
-                            type="line"
-                            width="200"
-                        />
-                    </div>
                     <div>
                         <Chart
                             options={optionsChart.options}

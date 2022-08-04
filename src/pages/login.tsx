@@ -1,22 +1,24 @@
 import { NextPage } from 'next';
-import Link from 'next/link';
+import Router from 'next/router';
+import Image from 'next/image';
+//import Link from 'next/link';
 
 
 //External Components
-import { ChevronLeftIcon } from '@heroicons/react/solid';
+//import { ChevronLeftIcon } from '@heroicons/react/solid';
 import { FcGoogle } from 'react-icons/fc';
 import { IoLogoFacebook } from 'react-icons/io';
-import Router from 'next/router';
 
+
+//Imagens
+import Noah from '../assets/noah.png';
 
 const Login: NextPage = () => {
     return (
-        <main className='max-w-3xl mx-auto shadow-lg shadow-gray-300 mt-5 p-5 rounded'>
-            <div className='container flex items-center space-x-60'>
-                <Link href='/'>
-                    <ChevronLeftIcon className='w-8 h-8 cursor-pointer' />
-                </Link>
-                <h1 className='text-blue-700 font-bold text-2xl'>My <span className='text-red-500'>Suppliers</span></h1>
+        <main className='max-w-3xl mx-auto  shadow-lg shadow-gray-300 bg-white p-5 rounded -mt-20'>
+            <div className='container  mx-auto w-24  items-center space-x-60'>
+
+                <Image src={Noah} className='w-42' objectFit='cover' />
             </div>
             <div className='container flex flex-col justify-center ml-3 mt-4'>
                 <h1 className='text-xl font-semibold'>Inicie sessão/crie uma conta</h1>
@@ -34,11 +36,11 @@ const Login: NextPage = () => {
                             placeholder='Insira o seu melhor email'
                         />
 
-                        <button onClick={() => Router.push('/dashboard')} className='bg-sky-700 text-white font-bold px-4 py-2'>Seguinte</button>
+                        <button onClick={() => Router.push('/home')} className='bg-sky-700 text-white font-bold px-4 py-2'>Seguinte</button>
                     </div>
                 </div>
                 <div className='p-6 w-1/2'>
-                    <h1 className='font-semibold'>Ou aceda ao "My suppliers" com outra conta</h1>
+                    <h1 className='font-semibold'>Ou aceda ao "sistema" com outra conta</h1>
                     <div className='space-y-2 mt-2'>
                         <button className='login-social-btn'>
                             <FcGoogle className='w-6 h-6' />

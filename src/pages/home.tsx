@@ -68,11 +68,11 @@ const Home = () => {
     })
 
     return (
-        <div className='-mt-20 px-5 py-4 flex gap-3'>
+        <div className='-mt-24 px-5 py-4 flex gap-3 overflow-hide-scroll-bar'>
             <Head>
                 <title>Painel de controlo</title>
             </Head>
-            <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
+            <div className='bg-white  w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0'>
                     <div className='flex justify-between items-center w-[720px] p-2'>
 
@@ -91,11 +91,13 @@ const Home = () => {
 
                             />
                         </div>
-                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-64 flex flex-col print:shadow-none print:border-0'>
+                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-[19rem] flex flex-col print:shadow-none print:border-0'>
                             {/** Gráfico à anunciar */}
-                            <div className='flex justify-start'>
-                                <input type="date" className='rounded border px-2 cursor-pointer' />
-                            </div>
+                            {/**
+                            *  <div className='flex justify-start'>
+                                    <input type="date" className='rounded border px-2 cursor-pointer' />
+                                </div>
+                            */}
                             <div>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>

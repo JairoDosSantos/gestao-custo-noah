@@ -12,7 +12,9 @@
     label,body{
         @apply font-roboto text-[14px]
     }
-  
+  body{
+    @apply overflow-hide-scroll-bar
+  }
 }
 
 @layer components {

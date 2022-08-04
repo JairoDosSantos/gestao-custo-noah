@@ -68,7 +68,7 @@ const Header = () => {
                     <li onClick={() => setActivo('home')} className={`link-menu ${activo === 'home' && 'actived'}`}>
                         <Link href='/home'>
                             <span className="flex items-center space-x-2">
-                                <FaHome /> <span>Página Inicial</span>
+                                <FaHome /> <span>Painel de Controlo</span>
                             </span>
                         </Link>
                     </li>
