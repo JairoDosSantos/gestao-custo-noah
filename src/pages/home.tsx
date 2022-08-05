@@ -28,7 +28,7 @@ const Home = () => {
             stroke: {
                 width: 3
             },
-            colors: ['#2E93fA', '#949c81', '#546E7A'],
+            colors: ['#c0c0c0', '#949c81', '#546E7A'],
             toolbar: {
                 autoSelected: "pan",
                 show: false
@@ -51,6 +51,9 @@ const Home = () => {
                 data: [100, 33, 24, 8, 19]
             }
         ],
+        xaxis: {
+            type: [10, 20, 30, 40, 60]
+        },
         fill: {
             type: 'gradient',
             gradient: {
@@ -121,7 +124,12 @@ const Home = () => {
                                             <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
                                             <td className='w-1/4 flex justify-center items-center font-bold'>20.000,00 AKWZ</td>
                                         </tr>
-
+                                        <tr className='flex shadow rounded p-1'>
+                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center font-bold'>15.000,00 AKWZ</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -130,7 +138,8 @@ const Home = () => {
 
                         {
                             /**
-                             * <div className='border shadow rounded bg-white w-96 p-5 text-left'>
+                             * 
+                                <div className='border shadow rounded bg-white w-96 p-5 text-left'>
                                     <span className='text-blue-700 font-bold'>Total de fornecedores</span>
                                     <div className='flex items-center font-bold justify-between'>
                                         <span>4</span>

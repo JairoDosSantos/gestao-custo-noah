@@ -132,7 +132,6 @@ const Produto = () => {
                                     min: { message: 'Por favor, insira um preço válido', value: 0 }
                                 })} />
 
-
                         </div>
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0  items-center justify-between'>
                             <select
@@ -167,7 +166,8 @@ const Produto = () => {
                                 //onClick={() => { setShowConfirmAlert(true) }}
                                 type='submit'
                                 disabled={!isValid}
-                                className='btn flex justify-center align-center space-x-2 items-center shadow disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed text-center'>
+                                className='btn flex justify-center align-center space-x-2 items-center shadow
+                                 disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed text-center'>
                                 <FaSave />
                                 <span>Salvar</span>
                             </button>

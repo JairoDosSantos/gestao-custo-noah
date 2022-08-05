@@ -145,7 +145,7 @@ const Categoria = () => {
                                 required: { message: "Por favor, introduza a Categoria.", value: true },
                                 minLength: { message: "Preenchimento obrigatório!", value: 1 },
                             })}>
-                            <option value="">Selecione a categoria</option>
+                            <option value="">Selecione a sua categoria *</option>
                             <option value="1">Vigotas</option>
                             <option value="2">Conferragens</option>
                         </select>
