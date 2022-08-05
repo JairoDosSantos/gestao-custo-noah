@@ -107,7 +107,6 @@ const Home = () => {
                                             <th className='w-1/4'>Fornecedor C</th>
                                             <th className='w-1/4'>Preço Médio</th>
                                         </tr>
-
                                     </thead>
                                     <tbody className='flex flex-col gap-2'>
                                         <tr className='flex shadow rounded p-1'>
