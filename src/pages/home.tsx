@@ -2,12 +2,17 @@ import Head from 'next/head'
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 
 const Home = () => {
+
+    //Buscar do redux
+    const { description, page } = useSelector((state: RootState) => state.Search)
 
     const [optionsChart, setOptionsChart] = useState({
         options: {
@@ -28,7 +33,7 @@ const Home = () => {
             stroke: {
                 width: 3
             },
-            colors: ['#c0c0c0', '#949c81', '#546E7A'],
+            colors: ['#606eda', '#bde857', '#546E7A'],
             toolbar: {
                 autoSelected: "pan",
                 show: false
@@ -79,11 +84,11 @@ const Home = () => {
                 <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0'>
                     <div className='flex justify-between items-center w-[720px] p-2'>
 
-                        <h1 className='text-2xl font-bold'>PAINEL DE CONTROLO</h1>
+                        <h1 className='text-2xl font-bold'>{`PAINEL DE CONTROLO - ${page === 'Produto' ? description : 'Todos'}`}</h1>
                     </div>
                     <div className='flex gap-6 flex-wrap items-center justify-center mb-4 mt-2'>
 
-                        <div className='border shadow rounded bg-white  p-3'>
+                        <div className='border shadow rounded bg-white  p-3 order-2'>
                             {/** Gráfico de Preço vs Data */}
                             <h4 className='text-center font-bold'>Gráfico de Custos</h4>
                             <Chart
@@ -94,7 +99,7 @@ const Home = () => {
 
                             />
                         </div>
-                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-[19rem] flex flex-col print:shadow-none print:border-0'>
+                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-[19rem] flex flex-col print:shadow-none print:border-0 order-1'>
                             {/** Gráfico à anunciar */}
                             {/**
                             *  <div className='flex justify-start'>

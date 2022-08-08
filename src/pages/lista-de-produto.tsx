@@ -6,15 +6,25 @@ import Head from 'next/head'
 import Fornecedor from '../assets/user.png'
 
 import { FaPrint } from 'react-icons/fa';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ModalEditarProdutoPorFornecedor from '../components/produto/ModalEditarProdutoPorFornecedor';
+import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { update } from '../redux/searchGeral';
 
 const ListaProdutos = () => {
 
 
     const [isOpenModal, setIsOpenModal] = useState(false);
 
+    const { description, page } = useSelector((state: RootState) => state.Search)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(update({ description, page: 'Produto' }))
+    }, [])
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -26,7 +36,7 @@ const ListaProdutos = () => {
 
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed print:border-0 rounded p-5 min-h-full'>
-                    <h3 className='font-bold text-2xl'>RELATÓRIO - CUSTO DE MATERIAL</h3>
+                    <h3 className='font-bold text-2xl'>{`RELATÓRIO - CUSTO DE MATERIAL - ${page === 'Produto' ? description : 'Todos'}`}</h3>
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>
                             <thead>

@@ -6,13 +6,17 @@ import Head from 'next/head'
 
 import { FaList, FaSave } from 'react-icons/fa'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 
 //Componentes Externos
 import { useForm, SubmitHandler } from 'react-hook-form'
 
 import dynamic from 'next/dynamic'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store'
+import { useDispatch } from 'react-redux'
+import { update } from '../redux/searchGeral'
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
@@ -38,6 +42,15 @@ const Produto = () => {
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
+
+
+    const { description, page } = useSelector((state: RootState) => state.Search)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(update({ description, page: 'Fornecedor' }))
+    }, [])
+
 
     return (
         <div className='-mt-20 p-5 flex flex-col sm:flex-row gap-3'>

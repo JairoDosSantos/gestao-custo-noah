@@ -1,5 +1,5 @@
 //Imagens do Perfil do fornecedor
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import Head from 'next/head'
 //import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -11,6 +11,10 @@ import { FaSave } from 'react-icons/fa'
 import { useForm, SubmitHandler } from 'react-hook-form'
 
 import dynamic from 'next/dynamic';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { update } from '../redux/searchGeral';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
@@ -37,6 +41,14 @@ const fornecedor = () => {
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
+
+
+    const { description, page } = useSelector((state: RootState) => state.Search)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(update({ description, page: 'Fornecedor' }))
+    }, [])
 
     return (
         <div className='-mt-20 p-5 flex flex-col lg:flex-row gap-3'>

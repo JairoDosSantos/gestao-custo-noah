@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -9,10 +9,33 @@ import Logo from '../../assets/noah.png'
 import { AiOutlineNotification } from 'react-icons/ai'
 import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaTrash } from 'react-icons/fa'
 
+//Redux
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import { update } from "../../redux/searchGeral"
+import { SubmitHandler, useForm } from "react-hook-form"
+
+type SearchValue = {
+    search: string
+}
+
+//react-hook-form
+//const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<SearchValue>({ mode: 'onChange' });
+
 const Header = () => {
 
     const [activo, setActivo] = useState('home');
     const [showNotification, setShowNotification] = useState(false)
+
+    const [search, setSearch] = useState('');
+    const dispatch = useDispatch();
+
+
+    const handleSearch = (data: FormEvent) => {
+        setSearch((data.target as HTMLInputElement).value)
+
+        dispatch(update({ description: search, page: 'Produto' }))
+    }
 
     return (
         <header className="bg-gray-50 text-black h-72  py-2 px-8">
@@ -103,13 +126,17 @@ const Header = () => {
                     </li>
                 </ul>
                 <form>
-                    <input type='search' placeholder="Pesquisar" className="placeholder:text-left text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded-md w-[432px] ring-0 focus:ring-0" />
+                    <input
+                        onChange={handleSearch}
+                        type='search'
+                        placeholder="Pesquisar"
+                        className="placeholder:text-left text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded-md w-[432px] ring-0 focus:ring-0" />
                 </form>
-            </nav>
+            </nav >
             <div>
 
             </div>
-        </header>
+        </header >
     )
 }
 
