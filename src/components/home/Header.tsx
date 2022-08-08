@@ -10,15 +10,18 @@ import { AiOutlineNotification } from 'react-icons/ai'
 import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaTrash } from 'react-icons/fa'
 
 //Redux
-import { unwrapResult } from '@reduxjs/toolkit';
-import { useDispatch, useSelector } from 'react-redux';
-import { update } from "../../redux/searchGeral"
-import { SubmitHandler, useForm } from "react-hook-form"
+//import { unwrapResult } from '@reduxjs/toolkit';
 
-type SearchValue = {
+import { useDispatch } from 'react-redux';
+import { update } from "../../redux/searchGeral"
+//Moment
+import moment from 'moment'
+
+/**
+ * type SearchValue = {
     search: string
 }
-
+ */
 //react-hook-form
 //const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<SearchValue>({ mode: 'onChange' });
 
@@ -30,6 +33,16 @@ const Header = () => {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
 
+    const Data1 = moment().format('l');
+    const Data2 = moment('12/12/2022').format('l')
+
+    const dta2 = Number((Data1.split('/'))[1])
+    const dta = Number((Data2.split('/'))[1])
+
+
+    //console.log(moment().format('l'))
+    const data3 = dta - dta2;
+    console.log(data3)
 
     const handleSearch = (data: FormEvent) => {
         setSearch((data.target as HTMLInputElement).value)
@@ -48,14 +61,17 @@ const Header = () => {
                         <Image src={Logo} height={100} width={100} objectFit='contain' />
                     </div>
                     <div className="print:hidden flex gap-3 relative">
-                        <button onClick={() => setShowNotification(!showNotification)} className={`cursor-pointer hover:brightness-75 relative ${!showNotification && ' animate-bounce'} print:hidden`}>
+                        <button onClick={() => setShowNotification(!showNotification)}
+                            className={`cursor-pointer hover:brightness-75 relative ${!showNotification && 'animate__animated animate__pulse animate__infinite'} print:hidden`}>
                             <AiOutlineNotification />
                             <span
-                                className={`px-2 py-1 text-xs  bg-red-600 animate-pulse text-white rounded-full absolute bottom-2 right-2 ${showNotification ? 'hidden' : 'flex'}`}>
+                                className={`px-2 py-1 text-xs  bg-red-600 animate__animated animate__pulse animate__infinite  text-white rounded-full absolute bottom-2 right-2 
+                                        ${showNotification ? 'hidden' : 'flex'}`}>
                                 3
                             </span>
                         </button>
-                        <div className={`print:hidden w-96 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 ${showNotification ? 'flex flex-col gap-3' : 'hidden'} `}>
+                        <div className={`print:hidden w-96 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 
+                                        ${showNotification ? 'flex flex-col gap-3 animate__animated animate__fadeIn ' : ' animate__animated animate__fadeOut'} `}>
                             <p
                                 title="O produto z do fornecedor k actualizado há 4 semanas!"
                                 className="text-xs truncate flex justify-between items-center"

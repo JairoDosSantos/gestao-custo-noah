@@ -20,7 +20,13 @@ import { update } from '../redux/searchGeral'
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
-//Tipagem
+
+import { getStocks, matchStocks } from '../data';
+//import Autocomplete from 'react-autocomplete'
+import AutoCompleta from '../components/AutoCompleta'
+
+
+//Tipagem do formulário
 type FormValues = {
     descricaoMaterial: string;
     precoSimples: number;
@@ -34,6 +40,18 @@ const Produto = () => {
 
     const router = useRouter()
 
+    //estados para controlar os fornecedores
+    const [idFornecedor, setFornecedor] = useState(0)
+    const [backgoundColor1, setBackgroundColor1] = useState('unSelected-item')
+    const [backgoundColor2, setBackgroundColor2] = useState('unSelected-item')
+    const [backgoundColor3, setBackgroundColor3] = useState('unSelected-item')
+
+    //estado para o produto
+    const [newProduto, setNewProduto] = useState('')
+    const [valuePadrao, setValuePadrao] = useState('')
+    const [value, setValue] = useState('')
+
+
     //Estados dos sweetsAlerts
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
     const [showErrorAlert, setShowErrorAlert] = useState(false)
@@ -44,6 +62,7 @@ const Produto = () => {
     const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
 
 
+
     const { description, page } = useSelector((state: RootState) => state.Search)
     const dispatch = useDispatch()
 
@@ -51,6 +70,24 @@ const Produto = () => {
         dispatch(update({ description, page: 'Fornecedor' }))
     }, [])
 
+    const handleSelectOne = () => {
+        setFornecedor(1);
+        setBackgroundColor1('selected-item');
+        setBackgroundColor2('unSelected-item');
+        setBackgroundColor3('unSelected-item')
+    }
+    const handleSelectTwo = () => {
+        setFornecedor(2);
+        setBackgroundColor2('selected-item');
+        setBackgroundColor1('unSelected-item');
+        setBackgroundColor3('unSelected-item')
+    }
+    const handleSelectThree = () => {
+        setFornecedor(3);
+        setBackgroundColor3('selected-item');
+        setBackgroundColor1('unSelected-item');
+        setBackgroundColor2('unSelected-item')
+    }
 
     return (
         <div className='-mt-20 p-5 flex flex-col sm:flex-row gap-3'>
@@ -112,12 +149,43 @@ const Produto = () => {
 
 
             <div className='bg-white w-full  sm:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
-                <div className=' border-2 border-dashed rounded p-5 min-h-full'>
+                <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <form onSubmit={handleSubmit(onSubmit)}>
 
                         <div className='mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
                             {/** Aquí virá um autocomplete component para descrição do material */}
-                            <input
+                            {/**
+                           *   <Autocomplete
+                                value={value}
+                                inputProps={{ id: 'states-autocomplete' }}
+                                items={getStocks()}
+                                getItemValue={item => item.name}
+                                shouldItemRender={matchStocks}
+                                onChange={(event, value) => setValue(value)}
+                                onSelect={value => setValue(value)}
+                                renderMenu={children => (
+                                    <div>
+                                        {children}
+                                    </div>
+                                )}
+                                renderItem={(item, isHighlighted) => (
+                                    <div key={item.abbr}>
+                                        {item.name}
+                                    </div>
+                                )}
+                            />
+                           */}
+                            <AutoCompleta
+                                data={getStocks()}
+                                placeholder={valuePadrao}
+                                newProduto={setNewProduto}
+                                setValuePadrao={setValuePadrao}
+                                value={value}
+                                setValue={setValue}
+
+                            />
+                            {/**
+                           *   <input
                                 type="text"
                                 placeholder='Descrição do Material *'
                                 className='px-4 py-2 border  rounded mx-2 w-full shadow'
@@ -126,6 +194,7 @@ const Produto = () => {
                                     required: { message: "Por favor, introduza a descrição do produto.", value: true },
                                     minLength: { message: "Preenchimento obrigatório!", value: 3 },
                                 })} />
+                           */}
                         </div>
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
                             <select
@@ -195,12 +264,18 @@ const Produto = () => {
                 </div>
             </div >
             <div className='bg-white  flex-1 p-5 rounded shadow-md max-h-96 overflow-hide-scroll-bar'>
-                <div className='border-2 border-dashed rounded p-5 min-h-full'>
+                <div className='border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
-                        <li className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white  selected-item rounded p-2'>Fulano - <span className='text-gray-400 truncate'>Maianga. AREIA, SOLOS...</span></li>
-                        <li className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white  rounded p-2'>Cicrano - <span className='text-gray-400'>Cazenga. FUMIGAÇÃO DE SOLOS, TELA PLÁSTICA...</span></li>
-                        <li className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white  rounded p-2'>Beltrano - <span className='text-gray-400'>Rangel. GEOTÊXTEIS...</span></li>
+                        <li
+                            onClick={handleSelectOne}
+                            className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white ${backgoundColor1}  rounded p-2`}>Fulano - <span className='text-gray-400 truncate'>Maianga. AREIA, SOLOS...</span></li>
+                        <li
+                            onClick={handleSelectTwo}
+                            className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white ${backgoundColor2}  rounded p-2`}>Cicrano - <span className='text-gray-400'>Cazenga. FUMIGAÇÃO DE SOLOS, TELA PLÁSTICA...</span></li>
+                        <li
+                            onClick={handleSelectThree}
+                            className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white ${backgoundColor3}  rounded p-2`}>Beltrano - <span className='text-gray-400'>Rangel. GEOTÊXTEIS...</span></li>
 
                     </ul>
                 </div>

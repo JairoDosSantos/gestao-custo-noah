@@ -44,6 +44,9 @@
     .selected-item{
         @apply bg-blue-700 text-white
     }
+     .unSelected-item{
+        @apply bg-white text-black
+    }
     .overflow-hide-scroll-bar::-webkit-scrollbar {
         display: none;
         }

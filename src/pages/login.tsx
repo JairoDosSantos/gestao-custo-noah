@@ -15,7 +15,7 @@ import Noah from '../assets/noah.png';
 
 const Login: NextPage = () => {
     return (
-        <main className='max-w-3xl mx-auto  shadow-lg shadow-gray-300 bg-white p-5 rounded -mt-20'>
+        <main className='max-w-3xl mx-auto  shadow-lg shadow-gray-300 bg-white p-5 rounded -mt-20 animate__animated animate__fadeIn'>
             <div className='container  mx-auto w-24  items-center space-x-60'>
 
                 <Image src={Noah} className='w-42' objectFit='cover' />

@@ -83,7 +83,7 @@ const TodosProdutos = () => {
 
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
-                <div className=' border-2 border-dashed rounded p-5 min-h-full'>
+                <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <h3 className='font-bold text-2xl'>Relatório - Lista de produtos</h3>
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>

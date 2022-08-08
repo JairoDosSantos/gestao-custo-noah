@@ -111,8 +111,8 @@ const fornecedor = () => {
 
             />
 
-            <div className='bg-white w-full lg:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
-                <div className=' border-2 border-dashed rounded p-5 min-h-full'>
+            <div className='bg-white w-full lg:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar '>
+                <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <form onSubmit={handleSubmit(onSubmit)} >
 
                         <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 justify-center align-center'>
@@ -146,7 +146,7 @@ const fornecedor = () => {
                             }
 
                         </div>
-                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 justify-center align-center'>
+                        <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 justify-center align-center '>
 
                             <input
                                 type="number"
@@ -208,7 +208,7 @@ const fornecedor = () => {
                 </div>
             </div >
             <div className='bg-white   p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
-                <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto'>
+                <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
                         <li onClick={() => router.push('fornecedor/1')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Fulano - <span className='text-gray-400 truncate'>Maianga. AREIA, SOLOS...</span></li>

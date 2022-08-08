@@ -81,10 +81,10 @@ const Home = () => {
                 <title>Painel de controlo</title>
             </Head>
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
-                <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0'>
+                <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0 animate__animated animate__fadeIn'>
                     <div className='flex justify-between items-center w-[720px] p-2'>
 
-                        <h1 className='text-2xl font-bold'>{`PAINEL DE CONTROLO - ${page === 'Produto' ? description : 'Todos'}`}</h1>
+                        <h1 className='text-2xl font-bold'>{`PAINEL DE CONTROLO  ${page === 'Produto' ? '- ' + description : ''}`}</h1>
                     </div>
                     <div className='flex gap-6 flex-wrap items-center justify-center mb-4 mt-2'>
 
@@ -130,9 +130,9 @@ const Home = () => {
                                             <td className='w-1/4 flex justify-center items-center font-bold'>20.000,00 AKWZ</td>
                                         </tr>
                                         <tr className='flex shadow rounded p-1'>
-                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>150.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
+                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
                                             <td className='w-1/4 flex justify-center items-center font-bold'>15.000,00 AKWZ</td>
                                         </tr>
                                     </tbody>

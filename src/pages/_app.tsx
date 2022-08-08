@@ -4,6 +4,7 @@ import Header from '../components/home/Header'
 import Head from 'next/head'
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
+import 'animate.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

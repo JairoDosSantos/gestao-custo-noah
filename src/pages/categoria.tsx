@@ -126,7 +126,7 @@ const Categoria = () => {
                  */
             }
             <div className='bg-white  lg:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
-                <div className=' border-2 border-dashed rounded p-5 min-h-full'>
+                <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className='flex flex-col justify-center items-center space-y-8'>
@@ -167,7 +167,7 @@ const Categoria = () => {
                 </div>
             </div>
             <div className='bg-white  flex-1 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar relative'>
-                <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto '>
+                <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Categorias</h3>
                     <ul>
                         <li

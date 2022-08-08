@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type } from "os";
 import searchGeralReducer from "./searchGeral";
+import ProdutoSlice from "./produtoSlice";
 
 
 
 
 export const store = configureStore({
     reducer: {
-        Search: searchGeralReducer
+        Search: searchGeralReducer,
+        Produto: ProdutoSlice
     }
 })
 
