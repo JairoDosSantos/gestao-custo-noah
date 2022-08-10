@@ -15,16 +15,22 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from '../redux/store';
 import { update } from '../redux/searchGeral';
+import { supabase } from '../utils/supabaseClient';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { fetchFornecedores, insertFornecedor } from '../redux/fornecedorSlicee';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
 //Tipagem
 type FormValues = {
-    nomeFornecedor: string;
-    telefone1: number;
-    telefone2: number;
-    tipoFornecedor: string;
-    endereco: number;
+    id: number;
+    nome_fornecedor: string;
+    telefone1: string;
+    telefone2: string;
+    tipo_fornecedor: string;
+    endereco: string;
+    nomeUser: string
+
 }
 
 const fornecedor = () => {
@@ -37,17 +43,53 @@ const fornecedor = () => {
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
+    //load
+    const [load, setLoad] = useState(false)
+
+
+    const [fornecedores, setFornecedores] = useState<Array<FormValues>>([])
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
-
-
     const { description, page } = useSelector((state: RootState) => state.Search)
-    const dispatch = useDispatch()
+
+
+    const dispatch = useDispatch<any>()
+
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+
+        const fornecedor = await dispatch(insertFornecedor(datas))
+
+        if (fornecedor) {
+            setShowConfirmAlert(true)
+        } else {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    async function fetchAllFornecedores() {
+
+        try {
+            //setPending(true)
+            const Fornecedores = await dispatch(fetchFornecedores())
+            const TodosFornecedores = unwrapResult(Fornecedores)
+            if (TodosFornecedores) {
+
+                setFornecedores(TodosFornecedores)
+            }
+            // setPending(false)
+
+        } catch (error) {
+            //setPending(false)
+            console.log(error)
+        }
+
+    }
 
     useEffect(() => {
         dispatch(update({ description, page: 'Fornecedor' }))
+        fetchAllFornecedores()
     }, [])
 
     return (
@@ -121,7 +163,7 @@ const fornecedor = () => {
                                 type="text"
                                 placeholder='Nome do fornecedor *'
                                 className='px-4 py-2 border  rounded mx-2 w-full lg:w-72 shadow'
-                                {...register('nomeFornecedor', {
+                                {...register('nome_fornecedor', {
                                     required: { message: "Por favor, introduza o nome do fornecedor.", value: true },
                                     minLength: { message: "Preenchimento obrigatório!", value: 1 },
                                 })} />
@@ -135,16 +177,6 @@ const fornecedor = () => {
                                     minLength: { message: "Número de telefone 1 incompleto!", value: 9 },
                                     min: { message: 'Por favor, insira um numéro de telefone válido', value: 900000000 }
                                 })} />
-
-                            {
-                                /**  
-                                 * <label htmlFor='logoFornecedor' className='cursor-pointer ml-auto hidden lg:flex'>
-                                     <Image src={Fornecedor} height={75} width={75} objectFit={'cover'} className='rounded' />
-                                   </label>
-                                    <input type={'file'} className='hidden' id='logoFornecedor' />
-                                 */
-                            }
-
                         </div>
                         <div className='mb-4 flex flex-col lg:flex-row items-center space-y-2 lg:space-y-0 justify-center align-center '>
 
@@ -159,7 +191,7 @@ const fornecedor = () => {
                                 })} />
 
                             <select
-                                {...register('tipoFornecedor')}
+                                {...register('tipo_fornecedor')}
                                 className='px-4 py-2 border rounded mx-2 w-full lg:w-72 cursor-pointer shadow'>
                                 <option className='text-gray-400'>Tipo de Fornecedor</option>
                                 <option>Nacional</option>
@@ -180,9 +212,9 @@ const fornecedor = () => {
                         </div>
 
 
-                        <div className='flex justify-center lg:justify-end lg:w-[660px]'>
+                        <div className='flex justify-center items-center lg:justify-end lg:w-[590px] mx-auto'>
                             <button
-                                disabled={!isValid}
+                                disabled={!isValid || load}
                                 className='btn flex items-center space-x-2 shadow disabled:bg-blue-300 disabled:text-gray-400 disabled:cursor-not-allowed'>
                                 <FaSave />
                                 <span>Salvar</span>
@@ -192,7 +224,7 @@ const fornecedor = () => {
                             <p className='text-sm '>Os campos com * o seu preenchimento é de carácter obrigatório.</p>
 
                             <p className='text-sm'>
-                                {errors.nomeFornecedor && (errors.nomeFornecedor.message)}
+                                {errors.nome_fornecedor && (errors.nome_fornecedor.message)}
                             </p>
                             <p className='text-sm'>
                                 {errors.telefone1 && (errors.telefone1.message)}
@@ -207,20 +239,29 @@ const fornecedor = () => {
                     </form>
                 </div>
             </div >
-            <div className='bg-white   p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
+            <div className='bg-white p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
-                        <li onClick={() => router.push('fornecedor/1')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Fulano - <span className='text-gray-400 truncate'>Maianga. AREIA, SOLOS...</span></li>
-                        <li onClick={() => router.push('fornecedor/2')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Cicrano - <span className='text-gray-400'>Cazenga. FUMIGAÇÃO DE SOLOS, TELA PLÁSTICA...</span></li>
-                        <li onClick={() => router.push('fornecedor/3')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Beltrano - <span className='text-gray-400'>Rangel. GEOTÊXTEIS...</span></li>
-                        <li onClick={() => router.push('fornecedor/4')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Fulano - <span className='text-gray-400 truncate'>Maianga. AREIA, SOLOS...</span></li>
-                        <li onClick={() => router.push('fornecedor/5')} className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white rounded p-2'>Cicrano - <span className='text-gray-400'>Cazenga. FUMIGAÇÃO DE SOLOS, TELA PLÁSTICA...</span></li>
+                        {
 
+                            (fornecedores && fornecedores.length > 0) ? (
+                                fornecedores.map((fornecedor, index) => (
+
+                                    <li
+                                        key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
+                                        className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
+                                        {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
+                                    </li>
+                                ))
+                            ) : (
+                                <li>Não existem fornecedores na base de dados</li>
+                            )
+                        }
                     </ul>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

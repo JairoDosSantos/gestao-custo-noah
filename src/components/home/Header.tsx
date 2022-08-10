@@ -32,18 +32,21 @@ const Header = () => {
 
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
-
-    const Data1 = moment().format('l');
-    const Data2 = moment('12/12/2022').format('l')
-
-    const dta2 = Number((Data1.split('/'))[1])
-    const dta = Number((Data2.split('/'))[1])
-
-
-    //console.log(moment().format('l'))
-    const data3 = dta - dta2;
-    console.log(data3)
-
+    /**
+     * 
+     * 
+        const Data1 = moment().format('l');
+        const Data2 = moment('12/12/2022').format('l')
+    
+        const dta2 = Number((Data1.split('/'))[1])
+        const dta = Number((Data2.split('/'))[1])
+    
+    
+        //console.log(moment().format('l'))
+        const data3 = dta - dta2;
+        console.log(data3)
+    
+     */
     const handleSearch = (data: FormEvent) => {
         setSearch((data.target as HTMLInputElement).value)
 

@@ -1,9 +1,4 @@
 import Head from 'next/head'
-//import Image from 'next/image'
-
-//Imagens do Perfil do fornecedor
-//import Fornecedor from '../assets/user.png'
-
 import { FaList, FaSave } from 'react-icons/fa'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -20,10 +15,7 @@ import { update } from '../redux/searchGeral'
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
-
-import { getStocks, matchStocks } from '../data';
-//import Autocomplete from 'react-autocomplete'
-import AutoCompleta from '../components/AutoCompleta'
+import AutoCompletaProduto from '../components/AutoCompleteProduto'
 
 
 //Tipagem do formulário
@@ -47,10 +39,7 @@ const Produto = () => {
     const [backgoundColor3, setBackgroundColor3] = useState('unSelected-item')
 
     //estado para o produto
-    const [newProduto, setNewProduto] = useState('')
-    const [valuePadrao, setValuePadrao] = useState('')
-    const [value, setValue] = useState('')
-
+    const [produto, setProduto] = useState('')
 
     //Estados dos sweetsAlerts
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
@@ -59,8 +48,22 @@ const Produto = () => {
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
+    const onSubmit: SubmitHandler<FormValues> = (data) => {
+        data.descricaoMaterial = produto;
+        data.fornecedor = idFornecedor;
+        console.log(data);
+        setShowConfirmAlert(true)
+    }
 
+    const isValidated = () => {
+        if (isValid) {
+            if (idFornecedor !== 0 && produto !== '') {
+                return true
+            }
+            return false
+        }
+        return false
+    }
 
 
     const { description, page } = useSelector((state: RootState) => state.Search)
@@ -151,50 +154,9 @@ const Produto = () => {
             <div className='bg-white w-full  sm:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <form onSubmit={handleSubmit(onSubmit)}>
-
                         <div className='mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
                             {/** Aquí virá um autocomplete component para descrição do material */}
-                            {/**
-                           *   <Autocomplete
-                                value={value}
-                                inputProps={{ id: 'states-autocomplete' }}
-                                items={getStocks()}
-                                getItemValue={item => item.name}
-                                shouldItemRender={matchStocks}
-                                onChange={(event, value) => setValue(value)}
-                                onSelect={value => setValue(value)}
-                                renderMenu={children => (
-                                    <div>
-                                        {children}
-                                    </div>
-                                )}
-                                renderItem={(item, isHighlighted) => (
-                                    <div key={item.abbr}>
-                                        {item.name}
-                                    </div>
-                                )}
-                            />
-                           */}
-                            <AutoCompleta
-                                data={getStocks()}
-                                placeholder={valuePadrao}
-                                newProduto={setNewProduto}
-                                setValuePadrao={setValuePadrao}
-                                value={value}
-                                setValue={setValue}
-
-                            />
-                            {/**
-                           *   <input
-                                type="text"
-                                placeholder='Descrição do Material *'
-                                className='px-4 py-2 border  rounded mx-2 w-full shadow'
-                                id='descricaoMaterial'
-                                {...register('descricaoMaterial', {
-                                    required: { message: "Por favor, introduza a descrição do produto.", value: true },
-                                    minLength: { message: "Preenchimento obrigatório!", value: 3 },
-                                })} />
-                           */}
+                            <AutoCompletaProduto setProduto={setProduto} />
                         </div>
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0 items-center justify-between'>
                             <select
@@ -204,7 +166,6 @@ const Produto = () => {
                                 <option value="Solos">Solos</option>
                                 <option value="Areia">Areia</option>
                             </select>
-
                             <input
                                 type="number"
                                 placeholder='Preço com transporte'
@@ -213,18 +174,22 @@ const Produto = () => {
                                 {...register('precoTransporte', {
                                     min: { message: 'Por favor, insira um preço válido', value: 0 }
                                 })} />
-
                         </div>
                         <div className='flex flex-col sm:flex-row space-y-2 sm:space-y-0  items-center justify-between'>
                             <select
                                 {...register('unidade')}
                                 className='mt-4 px-4 py-2 border rounded w-full lg:mx-2 lg:w-72 shadow cursor-pointer'>
                                 <option value="#">... Unidade ...</option>
+                                <option value="mm">mm</option>
                                 <option value="cm">cm</option>
+                                <option value="cm²">cm²</option>
+                                <option value="cm³">cm³</option>
                                 <option value="m">m</option>
-                                <option value="m3">m3</option>
+                                <option value="m²">m²</option>
+                                <option value="m³">m³</option>
+                                <option value="caixa">caixa</option>
+                                <option value="Peça">Peça</option>
                             </select>
-
                             <input
                                 type="number"
                                 placeholder='Preço Símples *'
@@ -234,9 +199,7 @@ const Produto = () => {
                                     required: { message: "Por favor, introduza o preço do produto.", value: true },
                                     minLength: { message: "Preenchimento obrigatório!", value: 3 },
                                     min: { message: 'Por favor, insira um preço válido', value: 0 }
-
                                 })} />
-
                         </div>
                         <div className='flex flex-col sm:flex-row justify-end gap-3 mt-4'>
                             <button type='button' onClick={() => router.push('/todos-produtos')}
@@ -245,9 +208,8 @@ const Produto = () => {
                                 <span>Lista de Produtos</span>
                             </button>
                             <button
-                                //onClick={() => { setShowConfirmAlert(true) }}
                                 type='submit'
-                                disabled={!isValid}
+                                disabled={!isValidated()}
                                 className='btn flex justify-center align-center space-x-2 items-center shadow
                                  disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed text-center'>
                                 <FaSave />
@@ -255,14 +217,13 @@ const Produto = () => {
                             </button>
                         </div>
                         <div className='text-red-700 mt-2 text-center'>
-
                             <p className='text-sm '>Os campos com * o seu preenchimento é de carácter obrigatório.</p>
                             <p className='text-sm '> {errors.descricaoMaterial && (errors.descricaoMaterial.message)}</p>
                             <p className='text-sm '> {errors.precoSimples && (errors.precoSimples.message)}</p>
                         </div>
                     </form>
                 </div>
-            </div >
+            </div>
             <div className='bg-white  flex-1 p-5 rounded shadow-md max-h-96 overflow-hide-scroll-bar'>
                 <div className='border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
@@ -276,11 +237,10 @@ const Produto = () => {
                         <li
                             onClick={handleSelectThree}
                             className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white ${backgoundColor3}  rounded p-2`}>Beltrano - <span className='text-gray-400'>Rangel. GEOTÊXTEIS...</span></li>
-
                     </ul>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 

@@ -9,6 +9,10 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+//Supabase
+import { supabase } from '../../utils/supabaseClient'
+
+
 type NovaModalProps = {
     isOpen: boolean,
     setIsOpen: (valor: boolean) => void
@@ -24,9 +28,23 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen }: NovaModalProps
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); }
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
 
-    const notify = () => toast.success('Categoria salva com sucesso! 😁', {
+        try {
+            const { data, error } = await supabase
+                .from('categoria')
+                .insert([
+                    { descricao: datas.categoria }
+                ])
+                .single()
+            console.log(data)
+            notifySuccess()
+        } catch (error) {
+            notifyError()
+        }
+    }
+
+    const notifySuccess = () => toast.success('Categoria salva com sucesso! 😁', {
         position: 'top-center',
         autoClose: 5000,
         hideProgressBar: false,
@@ -136,12 +154,11 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen }: NovaModalProps
                                             <div className="mt-4 flex justify-end ">
                                                 <button
                                                     disabled={!isValid}
-                                                    type="button"
                                                     className="flex align-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2 disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed"
-                                                    onClick={notify}
+
                                                 >
                                                     <FaEdit />
                                                     <span>Salvar</span>

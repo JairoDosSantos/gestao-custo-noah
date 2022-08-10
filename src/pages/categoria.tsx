@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 import { useRouter } from 'next/router'
@@ -16,12 +16,18 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 //import SweetAlert2 from 'react-sweetalert2';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
+import { supabase } from '../utils/supabaseClient'
 
 
 //Tipagem
 type FormValues = {
     subCategoria: string;
     categoria: number
+}
+
+type CategoryAttribute = {
+    id: number;
+    descricao: string;
 }
 
 const Categoria = () => {
@@ -38,9 +44,56 @@ const Categoria = () => {
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
 
+    //Load
+    const [load, setLoad] = useState(false)
+
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); setShowConfirmAlert(true) }
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+        try {
+            setLoad(true)
+            const { data, error } = await supabase
+                .from('subcategoria')
+                .insert([
+                    { descricao: datas.subCategoria, category_id: datas.categoria }
+                ])
+                .single()
+            setLoad(false)
+            setShowConfirmAlert(true)
+        } catch (error) {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    const [categories, setCategories] = useState<Array<CategoryAttribute>>([])
+
+    async function getAllCategories() {
+        try {
+
+            let { data, error, status } = await supabase
+                .from('categoria')
+                .select(`*`)
+
+            if (error && status !== 406) {
+                setShowErrorAlert(true)
+            }
+
+            if (data) {
+                setCategories(data)
+            }
+        }
+        catch (error) {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    useEffect(() => {
+        getAllCategories()
+    }, [])
+
+
     return (
         <div className='-mt-20 p-5 flex lg:flex-row flex-col gap-3'>
             <Head>
@@ -106,25 +159,6 @@ const Categoria = () => {
                 confirmButtonText="Sim"
 
             />
-            {
-                /**
-                 *  <SweetAlert2
-                        show={showAlert}
-                        title='Atenção'
-                        text='Sub-Categoria adicionada com sucesso'
-                        onConfirm={() => setShowConfirmAlert(false)}
-                        didDestroy={() => setShowConfirmAlert(false)}
-                        didClose={() => setShowConfirmAlert(false)}
-                        icon='question'
-                        allowOutsideClick={false}
-                        allowEnterKey={false}
-                        allowEscapeKey={false}
-                        showLoaderOnConfirm={true}
-                        showConfirmButton={true}
-                        showCancelButton={true}
-                    />
-                 */
-            }
             <div className='bg-white  lg:w-2/3 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <form
@@ -146,12 +180,13 @@ const Categoria = () => {
                                 minLength: { message: "Preenchimento obrigatório!", value: 1 },
                             })}>
                             <option value="">Selecione a sua categoria *</option>
-                            <option value="1">Vigotas</option>
-                            <option value="2">Conferragens</option>
+                            {categories.map((category, index) => (
+                                <option key={index} value={category.id}>{category.descricao}</option>
+                            ))}
                         </select>
 
                         <button
-                            disabled={!isValid}
+                            disabled={!isValid || load}
                             className='btn flex items-center space-x-2 shadow disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed'>
                             <FaSave />
                             <span>Salvar</span>
@@ -170,21 +205,21 @@ const Categoria = () => {
                 <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Categorias</h3>
                     <ul>
-                        <li
-                            onClick={() => router.push('categoria/1')}
-                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
-                        >Alvenaria
-                        </li>
-                        <li
-                            onClick={() => router.push('categoria/2')}
-                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
-                        >Pisos
-                        </li>
-                        <li
-                            onClick={() => router.push('categoria/3')}
-                            className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
-                        >Outros
-                        </li>
+                        {
+                            categories.length > 0 ? (
+                                categories.map((category, index) => (
+                                    <li
+                                        key={category.id}
+                                        onClick={() => router.push(`categoria/${category.id}`)}
+                                        className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                                    >{category.descricao}
+                                    </li>
+                                ))
+                            ) : (
+                                <li>Não existem categorias cadastradas na sua base de dados</li>
+                            )
+                        }
+
                     </ul>
                     {/**Este botão novo vai chamar uma modal para inserir uma nova categoria */}
                     <button

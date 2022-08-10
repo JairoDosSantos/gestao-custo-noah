@@ -1,26 +1,41 @@
 import Head from 'next/head';
 import Image from 'next/image';
 
-
 import Perfil from '../../assets/user.png'
 
 import EditarModal from '../../components/fornecedor/EditarModal';
 
 import { useRouter } from 'next/router';
 
-
 import { FaEdit, FaTrash, FaUser } from 'react-icons/fa'
 import { useState } from 'react';
 
 import dynamic from 'next/dynamic';
+import { GetStaticProps } from 'next';
+import { supabase } from '../../utils/supabaseClient';
+
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
+
+//Tipagem
+type FornecedorProps = {
+    id: number;
+    nome_fornecedor: string;
+    telefone1: number;
+    telefone2: number;
+    tipoFornecedor: string;
+    endereco: number;
+}
 
 const FornecedorInfo = () => {
 
+    //Roteamento
     const { query } = useRouter();
     const { id } = query
+
+    //Modal
     const [showModal, setShowModal] = useState(false)
 
+    //SweetAlert
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
@@ -49,7 +64,6 @@ const FornecedorInfo = () => {
                 showCancelButton={true}
                 confirmButtonColor="#4051ef"
             />
-
             {/**Error Alert */}
             <SweetAlert2
                 show={showErrorAlert}
@@ -65,7 +79,6 @@ const FornecedorInfo = () => {
                 showConfirmButton={true}
                 confirmButtonColor="#4051ef"
             />
-
             {/** Question Alert */}
             <SweetAlert2
                 show={showQuestionAlert}
@@ -83,9 +96,7 @@ const FornecedorInfo = () => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
-
             />
-
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
                     <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR {id}</h3>
@@ -115,7 +126,6 @@ const FornecedorInfo = () => {
                             </div>
                         </div>
                         <div className='flex flex-col justify-center align-center  space-y-2 order-1 lg:order-2'>
-
                             <div className='flex justify-center align-center'>
                                 <FaUser className='h-44  w-44 text-gray-200' />
                             </div>
@@ -143,3 +153,35 @@ const FornecedorInfo = () => {
 }
 
 export default FornecedorInfo
+
+/**
+ * 
+ * export const getStaticPaths = async () => {
+    const { data, error } = await supabase
+        .from('fornecedor')
+        .select('id')
+    const paths = data?.map(fornecedor => ({ params: { id: JSON.stringify(fornecedor.id) } }))
+    return {
+        paths,
+        fallback: true
+    }
+} 
+ * 
+ */
+
+export const getStaticProps = async () => {
+    const { query } = useRouter();
+    const { id } = query
+    console.log(id)
+    const { data } = await supabase
+        .from('fornecedor')
+        .select('*')
+        .filter('id', 'eq', id)
+        .single()
+    console.log(data)
+    return {
+        props: {
+            fornecedor: data
+        }
+    }
+}

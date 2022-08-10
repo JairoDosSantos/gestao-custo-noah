@@ -166,7 +166,7 @@ export default function EditarModal({ isOpen, setIsOpen }: EditarModalProps) {
                         <button
                           disabled={!isValid}
                           type="button"
-                          className="flex align-center justify-center gap-2 rounded-md border border-transparent 
+                          className="flex items-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2 disabled:bg-blue-400 disabled:text-gray-200 disabled:cursor-not-allowed"
