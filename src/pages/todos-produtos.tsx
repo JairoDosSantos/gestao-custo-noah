@@ -1,12 +1,30 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaFilePdf, FaEdit, FaTrash, FaPrint } from 'react-icons/fa'
 
 import dynamic from 'next/dynamic';
 import EditarProdutoModal from '../components/produto/ModalEditarProduto';
+import { useDispatch } from 'react-redux';
+import { fetchAllProdutos } from '../redux/produtoSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
+
+
+type CategoryType = {
+    descricao: string
+}
+
+//Tipagem do Produto
+type ProddutoType = {
+    id: number;
+    descricao: string;
+    nomeuser: string;
+    //    unidade: string;
+    //sub_category_id: CategoryType;
+}
+
 
 const TodosProdutos = () => {
 
@@ -16,6 +34,29 @@ const TodosProdutos = () => {
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
+
+
+    //estado do produto
+    const [produtList, setProdutList] = useState<Array<ProddutoType>>([])
+
+    const dispatch = useDispatch<any>();
+
+    const fetchProduts = async () => {
+
+        const produts = await dispatch(fetchAllProdutos());
+
+        const allProducts = unwrapResult(produts)
+        if (allProducts) {
+            setProdutList(allProducts)
+        }
+    }
+
+
+
+    useEffect(() => {
+        fetchProduts()
+        console.log(produtList)
+    }, [])
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -89,89 +130,84 @@ const TodosProdutos = () => {
                         <table className='min-w-full'>
                             <thead >
                                 <tr className='border flex items-center justify-around mx-2 my-4 text-center p-2 shadow-sm rounded bg-gray-500'>
+                                    <th className='w-1/6'>ID</th>
                                     <th className='w-1/6'>Descrição</th>
-                                    <th className='w-1/6'>unidade</th>
-                                    <th className='w-1/6'>Sub-Categoria</th>
+                                    <th className='w-1/6'>Cadastrador Por</th>
                                     <th className='w-1/6'>Editar</th>
                                     <th className='w-1/6'>Apagar</th>
 
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'>
+                                {
+                                    (produtList && produtList.length > 0) ? (
+                                        produtList.map((produto, index) => {
+                                            if (index < 3) {
+                                                return (
+                                                    <tr
+                                                        key={index}
+                                                        className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'>
 
-                                    <td
-                                        onClick={() => router.push('/produto-info/1')}
-                                        className='w-1/6 underline hover:text-gray-400'>Bloco de 6</td>
-                                    <td className='w-1/6'>cm</td>
-                                    <td className='w-1/6'>Alguma</td>
-                                    <td className='w-1/6 flex justify-center'>
-                                        <button
-                                            onClick={() => setOpenModal(true)}
-                                            className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
-                                            title='Editar'
-                                        >
-                                            <FaEdit />
-                                        </button>
-                                    </td>
-                                    <td className='w-1/6 text-center flex items-center justify-center'>
-                                        <button
-                                            onClick={() => setShowQuestionAlert(true)}
-                                            className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
-                                            title='Apagar'
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr
-                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'>
+                                                        <td className='w-1/6 '>{produto.id}</td>
+                                                        <td
+                                                            onClick={() => router.push(`/produto-info/${produto.id}`)}
+                                                            className='w-1/6 underline hover:text-gray-400'>{produto.descricao}</td>
+                                                        <td className='w-1/6'>{produto.nomeuser}</td>
+                                                        <td className='w-1/6 flex justify-center'>
+                                                            <button
+                                                                onClick={() => setOpenModal(true)}
+                                                                className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
+                                                                title='Editar'
+                                                            >
+                                                                <FaEdit />
+                                                            </button>
+                                                        </td>
+                                                        <td className='w-1/6 text-center flex items-center justify-center'>
+                                                            <button
+                                                                onClick={() => setShowQuestionAlert(true)}
+                                                                className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
+                                                                title='Apagar'
+                                                            >
+                                                                <FaTrash />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            }
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={4} className='text-center'>Não existe produto na base de dados</td>
+                                        </tr>
+                                    )
+                                }
 
-                                    <td
-                                        onClick={() => router.push('/produto-info/2')}
-                                        className='w-1/6 underline hover:text-gray-400'>Bloco de 12</td>
-                                    <td className='w-1/6'>cm</td>
-                                    <td className='w-1/6'>Alguma</td>
-                                    <td className='w-1/6 flex justify-center'>
-                                        <button
-                                            onClick={() => setOpenModal(true)}
-                                            className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
-                                            title='Editar'
-                                        >
-                                            <FaEdit />
-                                        </button>
-                                    </td>
-                                    <td className='w-1/6 text-center flex items-center justify-center'>
-                                        <button
-                                            onClick={() => setShowQuestionAlert(true)}
-                                            className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
-                                            title='Apagar'
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
                     <div>
 
 
-                        <div className='flex justify-end gap-3'>
-                            <button className='btn flex space-x-2 items-center'>
-                                <FaPrint />
-                                <span>Imprimir</span>
-                            </button>
-                            <button className='btn bg-green-400 flex space-x-2 items-center'>
-                                <FaPrint />
-                                <span>Imprimir tudo</span>
-                            </button>
-                        </div>
-                        <div className='text-red-700 mt-2 text-center'>
+                        {
+                            (produtList && produtList.length > 0) && (
+                                <>
+                                    <div className='flex justify-end gap-3'>
+                                        <button className='btn flex space-x-2 items-center'>
+                                            <FaPrint />
+                                            <span>Imprimir</span>
+                                        </button>
+                                        <button className='btn bg-green-400 flex space-x-2 items-center'>
+                                            <FaPrint />
+                                            <span>Imprimir tudo</span>
+                                        </button>
+                                    </div>
+                                    <div className='text-red-700 mt-2 text-center'>
 
-                            <p className='text-sm hidden'>Os campos com * o seu preenchimento é de carácter obrigatório.</p>
-                        </div>
+                                        <p className='text-sm hidden'>Os campos com * o seu preenchimento é de carácter obrigatório.</p>
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
             </div>

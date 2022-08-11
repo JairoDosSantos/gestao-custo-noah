@@ -13,35 +13,151 @@ import { RootState } from '../redux/store';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { update } from '../redux/searchGeral';
+import { fetchAllProdutosFornecedor } from '../redux/produtoSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+
+
+type FornecedorType = {
+    id: number;
+    nome_fornecedor: string;
+    telefone1: string;
+    telefone2: string;
+    tipo_fornecedor: string;
+    endereco: string;
+    nomeUser: string;
+
+}
+type ProdutoType = {
+    id: number;
+    descricao: string;
+}
+
+//Tipagem de ProdutoFornecedor
+type ProdutoFornecedorType = {
+    id: number;
+    produto_id: ProdutoType;
+    fornecedor_id: FornecedorType;
+    precosimples: number;
+    precotransporte: number;
+    nomeuser: string;
+    categoria: number;
+    unidade: string;
+}
+
+type ModalType = {
+    id: number;
+    fornecedor_id: number
+    produto_id: number;
+    precosimples: number;
+    precotransporte: number;
+    nomeuser: string;
+}
+
 
 const ListaProdutos = () => {
 
+    const [data, setData] = useState({} as ModalType);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [allProductsFornecedores, setAllProductsFornecedores] = useState<Array<ProdutoFornecedorType>>([])
+
+    const [searchType, setSearchType] = useState('')
 
     const { description, page } = useSelector((state: RootState) => state.Search)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<any>()
+
+    const getAllProducts = async () => {
+        const prodctsFornecedores = await dispatch(fetchAllProdutosFornecedor());
+        const AllProdutsFornecedores = unwrapResult(prodctsFornecedores);
+
+        if (AllProdutsFornecedores) {
+            setAllProductsFornecedores(AllProdutsFornecedores)
+        }
+    }
+
+    const searchProductByDescriptioAndFornecedor = () => {
+
+        if (description) {
+            if (searchType === 'Produto') {
+                const filteredProducts = allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
+                setAllProductsFornecedores(filteredProducts)
+            } else {
+                const filteredFornecedor = allProductsFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+                setAllProductsFornecedores(filteredFornecedor)
+            }
+        } else {
+
+            getAllProducts();
+        }
+
+    }
 
     useEffect(() => {
+
         dispatch(update({ description, page: 'Produto' }))
+        getAllProducts();
+
     }, [])
 
+    useEffect(() => {
+
+        searchProductByDescriptioAndFornecedor()
+
+    }, [description, searchType])
+
+
+    const handleShowModal = (id: number) => {
+        const produtoFinded = allProductsFornecedores && allProductsFornecedores.find((product) => {
+            return product.id === id
+        })
+
+        if (produtoFinded) {
+            setData(
+                {
+                    id: produtoFinded.id,
+                    fornecedor_id: produtoFinded.fornecedor_id.id,
+                    produto_id: produtoFinded.produto_id.id,
+                    nomeuser: produtoFinded.nomeuser,
+                    precotransporte: produtoFinded.precotransporte,
+                    precosimples: produtoFinded.precosimples,
+                })
+            setIsOpenModal(true)
+        }
+
+    }
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
                 <title>Lista de Produto</title>
             </Head>
 
-            <ModalEditarProdutoPorFornecedor isOpen={isOpenModal} setIsOpen={setIsOpenModal} />
+            <ModalEditarProdutoPorFornecedor isOpen={isOpenModal} setIsOpen={setIsOpenModal} data={data} setData={setData} />
 
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed print:border-0 rounded p-5 min-h-full animate__animated animate__fadeIn'>
-                    <h3 className='font-bold text-2xl'>{`RELATÓRIO - CUSTO DE MATERIAL - ${page === 'Produto' ? description : 'Todos'}`}</h3>
+                    <div className='flex justify-between'>
+                        <h3 className='font-bold text-2xl'>{`RELATÓRIO - CUSTO DE MATERIAL - ${page === 'Produto' ? description : 'Todos'}`}</h3>
+                        <div className='flex gap-3'>
+                            <label
+                                htmlFor="Fornecedor"
+                                className='text-md font-bold cursor-pointer'
+                                onClick={() => setSearchType('Fornecedor')}>
+                                <input type={'radio'} id='Fornecedor' name='Searchtype' className='text-md font-bold cursor-pointer' />
+                                &nbsp; Fornecedor
+                            </label>
+                            <label
+                                htmlFor="Produto"
+                                className='text-md font-bold cursor-pointer'
+                                onClick={() => setSearchType('Produto')}>
+                                <input type={'radio'} id='Produto' name='Searchtype' className='text-md font-bold cursor-pointer' />
+                                &nbsp; Produto
+                            </label>
+                        </div>
+                    </div>
                     <div className='flex gap-5 mt-3'>
                         <table className='min-w-full'>
                             <thead>
                                 <tr
-                                    onClick={() => setIsOpenModal(true)}
                                     className='flex items-center justify-around  mx-3 my-4 text-center border p-2 shadow-sm rounded bg-gray-500'>
                                     <th className=' w-1/6'>Fornecedor</th>
                                     <th className=' w-1/6'>Telefone</th>
@@ -49,50 +165,48 @@ const ListaProdutos = () => {
                                     <th className=' w-1/6'>Endereço</th>
                                     <th className=' w-1/6'>Custo c/transporte</th>
                                     <th className=' w-1/6'>Custo s/transporte</th>
+                                    <th className=' w-1/6'>Unidade</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    onClick={() => setIsOpenModal(true)}
-                                    className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
-                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
-                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
-                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
-                                    <td className='  w-1/6 text-center'>Projecto nova-vida</td>
-                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
-                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-                                </tr>
-                                <tr
-                                    onClick={() => setIsOpenModal(true)}
-                                    className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
-                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
-                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
-                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
-                                    <td className='  w-1/6 text-center'>Urbanização boa vida</td>
-                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
-                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-                                </tr>
-                                <tr
-                                    onClick={() => setIsOpenModal(true)}
-                                    className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
-                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
-                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
-                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
-                                    <td className='  w-1/6 text-center'>Jardim de Rosas</td>
-                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
-                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
+                                {
+                                    (allProductsFornecedores && allProductsFornecedores.length > 0) ? (
+                                        allProductsFornecedores.map((products, index) => {
+                                            if (index < 5) {
+                                                return (
+                                                    <tr
+                                                        key={index}
+                                                        onClick={() => handleShowModal(products.id)}
+                                                        className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.nome_fornecedor}</td>
+                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone1}</td>
+                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone2}</td>
+                                                        <td className='  w-1/6 text-center'>{products.fornecedor_id.endereco}</td>
+                                                        <td className=' w-1/6 text-center'>
+                                                            {Number(products.precotransporte).toLocaleString('pt', {
+                                                                style: 'currency',
+                                                                currency: 'KWZ'
+                                                            })}
+                                                        </td>
 
-                                </tr>
-                                <tr
-                                    onClick={() => setIsOpenModal(true)}
-                                    className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
-                                    <td className=' w-1/6 text-center'>Fornecedor A</td>
-                                    <td className=' w-1/6 text-center'>+244 929-84-89-58</td>
-                                    <td className=' w-1/6 text-center'>+244 928-30-80-96</td>
-                                    <td className='  w-1/6 text-center'>Largo da Maianga</td>
-                                    <td className=' w-1/6 text-center'>60.000,00 AKWZ</td>
-                                    <td className=' w-1/6 text-center'>1.500.000,00 AKWZ</td>
-                                </tr>
+                                                        <td className=' w-1/6 text-center'>
+                                                            {Number(products.precosimples).toLocaleString('pt', {
+                                                                style: 'currency',
+                                                                currency: 'KWZ'
+                                                            })}
+                                                        </td>
+                                                        <td className=' w-1/6 text-center'>{products.unidade}</td>
+                                                    </tr>
+                                                )
+                                            }
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={6} className='text-center'>Não existem produtos de fornecedors na sua base de dados.</td>
+                                        </tr>
+                                    )
+                                }
+
                             </tbody>
                         </table>
                     </div>

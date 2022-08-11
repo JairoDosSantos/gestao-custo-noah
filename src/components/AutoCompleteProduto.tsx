@@ -1,51 +1,71 @@
 import { FormEvent, Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { useDispatch } from 'react-redux';
+import { fetchAllProdutos } from '../redux/produtoSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 
 type PessoasType = {
     id: number;
-    name: string
+    descricao: string;
+    unidade: string;
+    subcategory_id: string;
+    nomeUser: string
 }
 
 type AutoCompleteProps = {
-    setProduto: (produtoName: string) => void
+    setProduto: (produtoName: string) => void;
+    setIdProduto: (id: number) => void
 }
 
 
 
-const people = Array<PessoasType>(
-    { id: 1, name: 'Pladur' },
-    { id: 2, name: 'Mosaico' },
-    { id: 3, name: 'Bloco de 12 cm' },
-    { id: 4, name: 'Cimento' },
-    { id: 5, name: 'Massa de acabamento Cival' },
-    { id: 6, name: 'Cimento cola' })
 
-export default function AutoCompleteProduto({ setProduto }: AutoCompleteProps) {
+export default function AutoCompleteProduto({ setProduto, setIdProduto }: AutoCompleteProps) {
 
-    const [selected, setSelected] = useState({ id: 0, name: '' } as PessoasType)
+    const [selected, setSelected] = useState({ id: 0, descricao: '', unidade: '', subcategory_id: '', nomeUser: '' } as PessoasType)
     const [query, setQuery] = useState('')
 
+
+    const [produtList, setProduts] = useState<Array<PessoasType>>([])
     //Todos os Produtos cujo ID é 0, logo deverá se criar um novo produto
+
+
+    const dispatch = useDispatch<any>();
+
+
+    const fetchProduto = async () => {
+        const produts = await dispatch(fetchAllProdutos());
+        const todosProduts = unwrapResult(produts)
+        if (todosProduts) {
+
+            setProduts(todosProduts)
+        }
+    }
 
     const handleChange = (event: FormEvent) => {
         event.preventDefault();
         const queryValue = event.target as HTMLInputElement
         if (queryValue.value !== '') {
-            setSelected({ id: 0, name: '' })
+            setSelected({ id: 0, descricao: '', unidade: '', subcategory_id: '', nomeUser: '' })
             setQuery(queryValue.value);
             setProduto(queryValue.value)
+
+            setIdProduto(0)
         }
     }
 
     useEffect(() => {
-        const produto = selected.name;
+        const produto = selected.descricao;
         if (produto !== '' || selected.id !== 0) {
             setProduto(produto)
+            setIdProduto(selected.id)
+
         } else {
             setProduto(query)
         }
+        fetchProduto()
     }, [selected])
 
 
@@ -53,9 +73,9 @@ export default function AutoCompleteProduto({ setProduto }: AutoCompleteProps) {
 
     const filteredPeople =
         query === ''
-            ? people
-            : people.filter((person) =>
-                person.name
+            ? produtList
+            : produtList.filter((person) =>
+                person.descricao
                     .toLowerCase()
                     .replace(/\s+/g, '')
                     .includes(query.toLowerCase().replace(/\s+/g, ''))
@@ -72,7 +92,7 @@ export default function AutoCompleteProduto({ setProduto }: AutoCompleteProps) {
                         <Combobox.Input
                             placeholder='Descrição do Produto'
                             className="w-full border bg-white rounded py-3  shadow leading-5 text-gray-900 "
-                            displayValue={(person: PessoasType) => person.name || query}
+                            displayValue={(person: PessoasType) => person.descricao || query}
                             onChange={handleChange}
                         />
                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -112,7 +132,7 @@ export default function AutoCompleteProduto({ setProduto }: AutoCompleteProps) {
                                                     className={`block truncate ${selected ? 'font-medium' : 'font-normal'
                                                         }`}
                                                 >
-                                                    {person.name}
+                                                    {person.descricao}
                                                 </span>
                                                 {selected ? (
                                                     <span

@@ -11,35 +11,39 @@ import 'react-toastify/dist/ReactToastify.css'
 
 //Supabase
 import { supabase } from '../../utils/supabaseClient'
+import { useDispatch } from 'react-redux'
+import { insertCategoria } from '../../redux/categoriaSlices'
 
 
 type NovaModalProps = {
     isOpen: boolean,
-    setIsOpen: (valor: boolean) => void
+    setIsOpen: (valor: boolean) => void,
+    setActualizaListCategoria: (valor: string) => void
 }
 
 //Tipagem
 type FormValues = {
+    id: number;
     categoria: string
 }
 
 
-export default function NovaCategoriaModal({ isOpen, setIsOpen }: NovaModalProps) {
+export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaListCategoria }: NovaModalProps) {
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+    const dispatch = useDispatch<any>();
 
-        try {
-            const { data, error } = await supabase
-                .from('categoria')
-                .insert([
-                    { descricao: datas.categoria }
-                ])
-                .single()
-            console.log(data)
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+        const categoriaInserted = await dispatch(insertCategoria(datas))
+
+        console.log(categoriaInserted)
+
+        if (categoriaInserted.payload) {
+            setActualizaListCategoria(categoriaInserted.payload)
             notifySuccess()
-        } catch (error) {
+        } else {
+            setActualizaListCategoria(categoriaInserted.payload)
             notifyError()
         }
     }

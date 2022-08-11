@@ -16,11 +16,18 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 //import SweetAlert2 from 'react-sweetalert2';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
-import { supabase } from '../utils/supabaseClient'
+
+import { useDispatch } from 'react-redux';
+import { fetchcategorias, insertSubcategoria } from '../redux/categoriaSlices';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { update } from '../redux/searchGeral';
 
 
 //Tipagem
 type FormValues = {
+    id: number;
     subCategoria: string;
     categoria: number
 }
@@ -43,6 +50,13 @@ const Categoria = () => {
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
+    const dispatch = useDispatch<any>()
+
+    //Variável para controlar a busca da requisição das categorias
+    const [actualizaListaCategoria, setActualizaListCategoria] = useState('')
+
+
+    const { description, page } = useSelector((state: RootState) => state.Search)
 
     //Load
     const [load, setLoad] = useState(false)
@@ -50,17 +64,12 @@ const Categoria = () => {
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
-        try {
-            setLoad(true)
-            const { data, error } = await supabase
-                .from('subcategoria')
-                .insert([
-                    { descricao: datas.subCategoria, category_id: datas.categoria }
-                ])
-                .single()
-            setLoad(false)
+
+        const categoryInserted = await dispatch(insertSubcategoria(datas))
+
+        if (categoryInserted.payload) {
             setShowConfirmAlert(true)
-        } catch (error) {
+        } else {
             setShowErrorAlert(true)
         }
 
@@ -68,30 +77,49 @@ const Categoria = () => {
 
     const [categories, setCategories] = useState<Array<CategoryAttribute>>([])
 
-    async function getAllCategories() {
+
+
+    async function fetchAllFornecedores() {
+
         try {
+            //setPending(true)
+            const Categorias = await dispatch(fetchcategorias())
+            const TodasCategorias = unwrapResult(Categorias)
+            if (TodasCategorias) {
 
-            let { data, error, status } = await supabase
-                .from('categoria')
-                .select(`*`)
-
-            if (error && status !== 406) {
-                setShowErrorAlert(true)
+                setCategories(TodasCategorias)
             }
+            // setPending(false)
 
-            if (data) {
-                setCategories(data)
-            }
-        }
-        catch (error) {
-            setShowErrorAlert(true)
+        } catch (error) {
+            //setPending(false)
+            console.log(error)
         }
 
     }
 
+    const searchProductByDescriptioAndFornecedor = () => {
+
+        if (description) {
+            const filteredCategory = categories.filter((category) => category.descricao.toLowerCase().includes(description.toLowerCase()))
+            setCategories(filteredCategory)
+        } else {
+            fetchAllFornecedores();
+        }
+
+    }
+
+
     useEffect(() => {
-        getAllCategories()
-    }, [])
+        dispatch(update({ description, page: 'Categoria' }))
+        fetchAllFornecedores()
+    }, [actualizaListaCategoria])
+
+    useEffect(() => {
+        searchProductByDescriptioAndFornecedor()
+    }, [description])
+
+
 
 
     return (
@@ -101,7 +129,11 @@ const Categoria = () => {
             </Head>
 
             {/** Edit Modal */}
-            <NovaCategoriaModal isOpen={openModal} setIsOpen={setOpenModal} />
+            <NovaCategoriaModal
+                setActualizaListCategoria={setActualizaListCategoria}
+                isOpen={openModal}
+                setIsOpen={setOpenModal}
+            />
 
 
             {/**Confirm alert**/}
@@ -184,13 +216,15 @@ const Categoria = () => {
                                 <option key={index} value={category.id}>{category.descricao}</option>
                             ))}
                         </select>
+                        <div className='w-72 flex justify-end aling-middle'>
 
-                        <button
-                            disabled={!isValid || load}
-                            className='btn flex items-center space-x-2 shadow disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed'>
-                            <FaSave />
-                            <span>Salvar</span>
-                        </button>
+                            <button
+                                disabled={!isValid || load}
+                                className='btn flex items-center space-x-2 shadow disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed'>
+                                <FaSave />
+                                <span>Salvar</span>
+                            </button>
+                        </div>
 
                         <div className='text-red-700 mt-2 text-center'>
 
@@ -207,14 +241,18 @@ const Categoria = () => {
                     <ul>
                         {
                             categories.length > 0 ? (
-                                categories.map((category, index) => (
-                                    <li
-                                        key={category.id}
-                                        onClick={() => router.push(`categoria/${category.id}`)}
-                                        className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
-                                    >{category.descricao}
-                                    </li>
-                                ))
+                                categories.map((category, index) => {
+                                    if (index < 5) {
+                                        return (
+                                            <li
+                                                key={category.id}
+                                                onClick={() => router.push(`categoria/${category.id}`)}
+                                                className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                                            >{category.descricao}
+                                            </li>
+                                        )
+                                    }
+                                })
                             ) : (
                                 <li>Não existem categorias cadastradas na sua base de dados</li>
                             )

@@ -1,5 +1,5 @@
 //Imagens do Perfil do fornecedor
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useId, useState } from 'react';
 import Head from 'next/head'
 //import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -35,6 +35,9 @@ type FormValues = {
 
 const fornecedor = () => {
 
+
+    let control = 0;
+
     const router = useRouter()
 
 
@@ -53,6 +56,7 @@ const fornecedor = () => {
 
     const { description, page } = useSelector((state: RootState) => state.Search)
 
+    const [inserted, setInserted] = useState('')
 
     const dispatch = useDispatch<any>()
 
@@ -60,10 +64,13 @@ const fornecedor = () => {
 
         const fornecedor = await dispatch(insertFornecedor(datas))
 
-        if (fornecedor) {
+        if (fornecedor.payload) {
             setShowConfirmAlert(true)
+            setInserted(fornecedor.payload)
         } else {
+            setInserted(fornecedor.payload)
             setShowErrorAlert(true)
+
         }
 
     }
@@ -87,10 +94,25 @@ const fornecedor = () => {
 
     }
 
+    const searchProductByDescriptioAndFornecedor = () => {
+
+        if (description) {
+            const filteredFornecedor = fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+            setFornecedores(filteredFornecedor)
+        } else {
+            fetchAllFornecedores();
+        }
+
+    }
+
+    useEffect(() => {
+        searchProductByDescriptioAndFornecedor()
+    }, [description])
+
     useEffect(() => {
         dispatch(update({ description, page: 'Fornecedor' }))
         fetchAllFornecedores()
-    }, [])
+    }, [inserted])
 
     return (
         <div className='-mt-20 p-5 flex flex-col lg:flex-row gap-3'>
@@ -119,7 +141,7 @@ const fornecedor = () => {
                 backdrop={true}
                 show={showErrorAlert}
                 title='Erro'
-                text='Ocorreu um erro ao efectuar a operação'
+                text='Ocorreu um erro ao efectuar a operação. Por favor, verifique se o fornecedor já não está cadastrado no sistema!'
                 icon='error'
                 onConfirm={() => setShowErrorAlert(false)}
                 didClose={() => setShowErrorAlert(false)}
@@ -246,14 +268,18 @@ const fornecedor = () => {
                         {
 
                             (fornecedores && fornecedores.length > 0) ? (
-                                fornecedores.map((fornecedor, index) => (
+                                fornecedores.map((fornecedor, index) => {
 
-                                    <li
-                                        key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
-                                        className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
-                                        {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
-                                    </li>
-                                ))
+                                    if (index < 5) {
+                                        return (
+                                            <li
+                                                key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
+                                                className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
+                                                {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
+                                            </li>
+                                        )
+                                    }
+                                })
                             ) : (
                                 <li>Não existem fornecedores na base de dados</li>
                             )

@@ -53,14 +53,29 @@ export const insertFornecedor = createAsyncThunk('/fornecedor/criar', async ({ n
                 { nome_fornecedor, telefone1, telefone2, tipo_fornecedor, endereco }
             ])
             .single()
-        console.log(data)
-        return data
+        if (data) {
+
+            return data
+        }
 
 
     } catch (error) {
-        // console.log(error)
+        return (error)
     }
 
+})
+
+export const updateFornecedor = createAsyncThunk('/fornecedor/update', async ({ id, nome_fornecedor, telefone1, telefone2, tipo_fornecedor, endereco }: FornecedorType) => {
+    try {
+        const { data, error } = await supabase
+            .from('fornecedor')
+            .update([
+                { nome_fornecedor, telefone1, telefone2, tipo_fornecedor, endereco }
+            ])
+            .match({ id })
+    } catch (error) {
+        return (error)
+    }
 })
 
 
@@ -100,6 +115,7 @@ export const fornecedoresSlice = createSlice({
         });
         build.addCase(insertFornecedor.fulfilled, (state, action) => {
             state.fornecedores.push(action.payload as FornecedorType)
+
         });
         build.addCase(findByNameFornecedor.fulfilled, (state, action) => {
 
