@@ -37,8 +37,8 @@ type ProdutoFornecedorType = {
     id: number;
     produto_id: ProdutoType;
     fornecedor_id: FornecedorType;
-    precosimples: number;
-    precotransporte: number;
+    precosimples: string;
+    precotransporte: string;
     nomeuser: string;
     categoria: number;
     unidade: string;
@@ -48,9 +48,11 @@ type ModalType = {
     id: number;
     fornecedor_id: number
     produto_id: number;
-    precosimples: number;
-    precotransporte: number;
+    precosimples: string;
+    precotransporte: string;
     nomeuser: string;
+    categoria: number;
+    unidade: string;
 }
 
 
@@ -61,7 +63,7 @@ const ListaProdutos = () => {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [allProductsFornecedores, setAllProductsFornecedores] = useState<Array<ProdutoFornecedorType>>([])
 
-    const [searchType, setSearchType] = useState('')
+    const [searchType, setSearchType] = useState('Produto')
 
     const { description, page } = useSelector((state: RootState) => state.Search)
     const dispatch = useDispatch<any>()
@@ -120,6 +122,8 @@ const ListaProdutos = () => {
                     nomeuser: produtoFinded.nomeuser,
                     precotransporte: produtoFinded.precotransporte,
                     precosimples: produtoFinded.precosimples,
+                    categoria: produtoFinded.categoria,
+                    unidade: produtoFinded.unidade
                 })
             setIsOpenModal(true)
         }
@@ -136,11 +140,11 @@ const ListaProdutos = () => {
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed print:border-0 rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <div className='flex justify-between'>
-                        <h3 className='font-bold text-2xl'>{`RELATÓRIO - CUSTO DE MATERIAL - ${page === 'Produto' ? description : 'Todos'}`}</h3>
-                        <div className='flex gap-3'>
+                        <h3 className='font-bold text-2xl'>{`RELATÓRIO - CUSTO DE MATERIAL - `} <span className='first-letter:uppercase'>{`${page === 'Produto' ? description : 'Todos'}`}</span></h3>
+                        <div className='flex gap-3 print:invisible'>
                             <label
                                 htmlFor="Fornecedor"
-                                className='text-md font-bold cursor-pointer'
+                                className='text-md font-bold cursor-pointer '
                                 onClick={() => setSearchType('Fornecedor')}>
                                 <input type={'radio'} id='Fornecedor' name='Searchtype' className='text-md font-bold cursor-pointer' />
                                 &nbsp; Fornecedor

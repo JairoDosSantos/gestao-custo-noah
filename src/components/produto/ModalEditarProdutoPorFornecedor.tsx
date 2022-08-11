@@ -1,14 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { FormEvent, Fragment, useEffect, useState } from 'react'
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'
 
-
 //Componentes Externos
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, set } from 'react-hook-form'
 import { ToastContainer, toast } from 'react-toastify'
-
-
-
+import 'react-toastify/dist/ReactToastify.css'
+import { useDispatch } from 'react-redux'
+import { updatePrecoFornecedor } from '../../redux/produtoSlice'
+import { useRouter } from 'next/router'
 
 type FormValues = {
     precosimples: string;
@@ -20,9 +20,11 @@ type FornecedorType = {
     id: number;
     fornecedor_id: number
     produto_id: number;
-    precosimples: number;
-    precotransporte: number;
+    precosimples: string;
+    precotransporte: string;
     nomeuser: string;
+    categoria: number;
+    unidade: string;
 }
 
 type EditarModalProps = {
@@ -34,10 +36,30 @@ type EditarModalProps = {
 
 export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data, setData }: EditarModalProps) {
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (datas) => { console.log(datas); }
+    const dispatch = useDispatch<any>();
+    const [precosimples, setPrecoSimples] = useState(data.precosimples);
+    const [precotransporte, setprecoTransporte] = useState(data.precotransporte);
 
+
+    const watchtransporte = (watch().precotransporte);
+    const watchSimples = (watch().precosimples);
+
+
+    const route = useRouter();
+
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+
+        // setData({ ...data, precosimples: datas.precosimples, precotransporte: datas.precotransporte })
+
+        const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte) }))
+        if (result.payload) {
+            notify()
+        } else {
+            notifyError()
+        }
+    }
 
 
     const notify = () => toast.success('Alteração efectuada com sucesso!😁', {
@@ -61,37 +83,29 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
     })
 
 
+    useEffect(() => {
+        setPrecoSimples(data.precosimples)
+        setprecoTransporte(data.precotransporte)
+    }, [])
 
     function closeModal() {
-        setData(
-            {
-                id: 0,
-                fornecedor_id: 0,
-                produto_id: 0,
-                nomeuser: "",
-                precotransporte: 0,
-                precosimples: 0,
-            })
+
         setIsOpen(false)
+        route.reload()
 
     }
 
+
+    const changePrice = (priceType: string, event: FormEvent) => {
+        if (priceType === 'simples') {
+            const simples = ((event.target as HTMLInputElement).value)
+            setPrecoSimples(simples);
+
+        }
+
+    }
     return (
         <>
-            {
-                /**
-                 * <div className="fixed inset-0 flex items-center justify-center">
-                        <button
-                        type="button"
-                        onClick={openModal}
-                        className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-                        >
-                        Open dialog
-                        </button>
-                    </div>
-                 */
-            }
-
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10 " onClose={closeModal}>
                     <Transition.Child
@@ -143,46 +157,47 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                                             onSubmit={handleSubmit(onSubmit)}>
 
                                             <div className='flex gap-2 justify-center align-center'>
-                                                <input
-                                                    defaultValue={data.precosimples}
-                                                    type="number"
-                                                    min={0}
-                                                    placeholder='Preço Símples'
-                                                    className='border  rounded w-1/2 shadow'
-                                                />
-                                                {/**
-                                                 *  {...register('precosimples', {
-                                                        min: { message: 'Por favor, insira um preço válido', value: 0 },
+                                                <div className='flex flex-col gap-2  '>
+                                                    <div>
+                                                        <label >Preço s/transporte</label>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        min={0}
+                                                        placeholder='Preço Símples'
+                                                        className='border  rounded w-full shadow'
+                                                        {...register('precosimples', {
+                                                            min: { message: 'Por favor, insira um preço válido', value: 0 },
+                                                        })}
+                                                        defaultValue={data.precosimples}
+                                                    />
+                                                </div>
 
-                                                    })}
-                                                 */}
-                                                {/**Adicionar um auto complete component para categoria ou um select*/}
-                                                {/**  <input type="text" className='rounded shadow w-1/2' placeholder='Sub-Categoria do produto *' /> */}
-                                                <input
-                                                    defaultValue={data.precotransporte}
-                                                    type="number"
-                                                    min={0}
-                                                    placeholder='Preço com transporte'
-                                                    className='px-4 py-2 border  rounded w-1/2 shadow'
-                                                />
-                                                {/**
-                                                 *  {...register('precotransporte', {
-                                                        min: { message: 'Por favor, insira um preço válido', value: 0 },
-
-                                                    })}
-                                                 */}
+                                                <div className='flex flex-col gap-2'>
+                                                    <div>
+                                                        <label >Preço c/transporte</label>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        min={0}
+                                                        placeholder='Preço com transporte'
+                                                        className='px-4 py-2 border  rounded w-full shadow'
+                                                        {...register('precotransporte', {
+                                                            min: { message: 'Por favor, insira um preço válido', value: 0 },
+                                                        })}
+                                                        defaultValue={data.precotransporte}
+                                                    />
+                                                </div>
                                             </div>
 
-                                            <div className="mt-4 flex justify-end ">
+                                            <div className="mt-4 flex justify-end">
                                                 <div className="mt-4 flex gap-3">
                                                     <button
                                                         title='Salvar alterações'
-                                                        type="button"
                                                         className="flex align-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2"
-                                                        onClick={notify}
                                                     >
                                                         <FaEdit />
                                                         <span>Salvar</span>
@@ -202,10 +217,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                                                 </div>
                                             </div>
                                         </form>
-
                                     </div>
-
-
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

@@ -44,7 +44,7 @@ export const fetchAllProdutosFornecedor = createAsyncThunk('/produtos/Fornecedor
 
         const { data, error } = await supabase
             .from('produtofornecedor')
-            .select(`id,precotransporte,precosimples,unidade,nomeuser,produto_id(id,descricao),fornecedor_id(id,nome_fornecedor,telefone1,telefone2,endereco),sub_category_id(id,descricao)`).order('id', { ascending: false })
+            .select(`id,precotransporte,precosimples,unidade,nomeuser,produto_id(id,descricao),fornecedor_id(id,nome_fornecedor,telefone1,telefone2,endereco),sub_category_id(id,descricao)`).order('precosimples', { ascending: true })
 
         if (data) {
             return data
@@ -99,6 +99,21 @@ export const insertProdutoFornecedor = createAsyncThunk('/produto/fornecedor/cri
 
 })
 
+export const updatePrecoFornecedor = createAsyncThunk('/preco/update', async ({ id, produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, categoria, unidade }: ProdutoFornecedorType) => {
+    try {
+        const { data, error } = await supabase
+            .from('produtofornecedor')
+            .update([
+                { produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, sub_category_id: categoria, unidade }
+            ])
+            .match({ id })
+
+        return true
+    } catch (error) {
+        return (error)
+    }
+})
+
 
 interface produtoState {
     produtos: Array<ProdutoType>
@@ -135,6 +150,9 @@ export const produtoSlice = createSlice({
         build.addCase(insertProdutoFornecedor.fulfilled, (state, action) => {
             state.produtosfornecedores.push(action.payload as ProdutoFornecedorType)
         });
+        build.addCase(updatePrecoFornecedor.fulfilled, (state, action) => {
+
+        })
 
 
 
