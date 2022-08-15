@@ -98,14 +98,16 @@ const TodosProdutos = () => {
     }, [])
 
 
-    const handleEditProduct = (id: number) => {
+    const handleEditProduct = async (id: number) => {
         const produtoFinded = produtList && produtList.find((product) => {
             return product.id === id
         })
-        setData(produtoFinded as ProddutoType)
+
+        await setData(produtoFinded as ProddutoType)
 
 
         setOpenModal(true)
+
     }
 
     return (

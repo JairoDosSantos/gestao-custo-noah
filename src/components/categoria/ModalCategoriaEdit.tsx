@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
 
@@ -38,7 +38,7 @@ type FormValues = {
 export default function EditarCategoriaModal({ isOpen, setIsOpen, data }: EditarModalProps) {
     //let [isOpen, setIsOpen] = useState(true)
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
     const dispatch = useDispatch<any>();
 
     const [load, setLoad] = useState(false)
@@ -53,7 +53,7 @@ export default function EditarCategoriaModal({ isOpen, setIsOpen, data }: Editar
         if (resultUnwrap) {
             notify();
             setTimeout(function () {
-                setIsOpen(false)
+                closeModal()
             }, 6500);
         } else {
             notifyError();
@@ -81,7 +81,12 @@ export default function EditarCategoriaModal({ isOpen, setIsOpen, data }: Editar
         progress: undefined
     })
 
+    useEffect(() => {
+        reset()
+    }, [])
+
     function closeModal() {
+        reset()
         setIsOpen(false)
     }
 

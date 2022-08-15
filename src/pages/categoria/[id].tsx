@@ -55,12 +55,18 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
 
     const dispatch = useDispatch<any>();
 
-    const removeCategoria = async (id: number) => {
+    const removeCategoria = async () => {
 
-        const categoriaRemovida = await dispatch(deleteCategoria(id))
+        const categoriaRemovida = await dispatch(deleteCategoria(categoria.id))
         const removido = unwrapResult(categoriaRemovida)
         if (removido) {
             setShowConfirmAlert(true)
+
+            setTimeout(() => {
+                route.push('/categoria')
+            }, 2000)
+
+            // route.push('/categoria')
 
         } else {
             setShowErrorAlert(true)
@@ -68,17 +74,18 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
 
     }
 
-    const ConfirmedRemove = async (result: PromiseDelete) => {
-
-        if (result.isConfirmed) {
-            removeCategoria(categoria.id)
-
-            setTimeout(() => {
-                route.push('/categoria')
-            }, 5000)
-        }
-
-    }
+    /**
+     *    const ConfirmedRemove = async (result: PromiseDelete) => {
+   
+           if (result.isConfirmed) {
+               removeCategoria(categoria.id)
+   
+               setTimeout(() => {
+                   route.push('/categoria')
+               }, 5000)
+           }
+       }
+     */
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -91,6 +98,7 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
 
             {/**Confirm alert**/}
             <SweetAlert2
+                backdrop={true}
                 show={showConfirmAlert}
                 title='Sucesso'
                 text='Operação efectuada com sucesso'
@@ -102,12 +110,12 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
                 allowEnterKey={true}
                 allowEscapeKey={true}
                 showConfirmButton={true}
-                showLoaderOnConfirm={true}
                 confirmButtonColor="#4051ef"
             />
 
             {/**Error Alert */}
             <SweetAlert2
+                backdrop={true}
                 show={showErrorAlert}
                 title='Erro'
                 text='Ocorreu um erro ao efectuar a operação'
@@ -124,11 +132,12 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
 
             {/** Question Alert */}
             <SweetAlert2
+                backdrop={true}
                 show={showQuestionAlert}
                 title='Atenção'
                 text='Tem a certeza que deseja efectuar esta operação ?'
                 icon='question'
-                onConfirm={() => setShowQuestionAlert(false)}
+                onConfirm={removeCategoria}
                 didClose={() => setShowQuestionAlert(false)}
                 didDestroy={() => setShowQuestionAlert(false)}
                 allowOutsideClick={true}
@@ -139,9 +148,8 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
-                onResolve={ConfirmedRemove}
-            />
 
+            />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-y-hidden'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
                     <h3 className='text-center font-bold text-xl'>Informações da categoria {categoria.id}</h3>
@@ -169,7 +177,6 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
                                     }
                                 </ul>
                             </div>
-
                         </div>
                         <div className='flex flex-col justify-center space-y-2'>
                             <FaFigma className="h-44 w-44 text-gray-400" />
@@ -189,11 +196,9 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }
-
 
 export const getStaticPaths = async () => {
 

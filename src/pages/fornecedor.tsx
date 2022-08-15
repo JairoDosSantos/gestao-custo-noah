@@ -273,7 +273,7 @@ const fornecedor = () => {
                     </form>
                 </div>
             </div >
-            <div className='bg-white p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
+            <div className='bg-white flex-1 p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className='border-2 border-dashed rounded p-5 min-h-full overflow-auto animate__animated animate__fadeIn'>
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
@@ -293,7 +293,7 @@ const fornecedor = () => {
                                     }
                                 })
                             ) : (
-                                <li>Não existem fornecedores na base de dados</li>
+                                <li className='text-center'>Não existem fornecedores na base de dados.</li>
                             )
                         }
                     </ul>

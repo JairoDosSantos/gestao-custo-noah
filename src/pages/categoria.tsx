@@ -267,7 +267,7 @@ const Categoria = () => {
                                     }
                                 })
                             ) : (
-                                <li>Não existem categorias cadastradas na sua base de dados</li>
+                                <li className='text-center'>Não existem categorias cadastradas na sua base de dados</li>
                             )
                         }
 

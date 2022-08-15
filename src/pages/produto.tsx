@@ -397,7 +397,7 @@ const Produto = () => {
                                     }
                                 })
                             ) : (
-                                <li className='text-center'>Não existem fornecedores no sistema</li>
+                                <li className='text-center'>Não existem fornecedores na base de dados.</li>
                             )
                         }
 

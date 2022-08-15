@@ -43,7 +43,7 @@ type EditarModalProps = {
 
 export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data, setData }: EditarModalProps) {
 
-    const { register, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, watch, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const dispatch = useDispatch<any>();
     const [precosimples, setPrecoSimples] = useState(data.precosimples);
@@ -68,7 +68,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
         if (removido) {
             notify()
             setTimeout(() => {
-                setIsOpen(false)
+                closeModal()
             }, 6500)
 
         } else {
@@ -88,7 +88,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
         if (result.payload) {
             notify()
             setTimeout(function () {
-                setIsOpen(false)
+                closeModal()
             }, 6500);
         } else {
             notifyError()
@@ -118,12 +118,16 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
 
 
     useEffect(() => {
+        reset()
+    }, [data])
+
+    useEffect(() => {
         setPrecoSimples(data.precosimples)
         setprecoTransporte(data.precotransporte)
     }, [])
 
     function closeModal() {
-
+        reset()
         setIsOpen(false)
     }
 

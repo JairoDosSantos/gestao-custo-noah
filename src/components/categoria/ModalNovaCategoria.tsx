@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
 
@@ -33,7 +33,7 @@ type FormValues = {
 
 export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaListCategoria }: NovaModalProps) {
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const [load, setLoad] = useState(false)
 
@@ -48,7 +48,7 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaList
             setActualizaListCategoria(categoriaInserted.payload)
             notifySuccess()
             setTimeout(function () {
-                setIsOpen(false)
+                closeModal()
             }, 6500);
         } else {
             setActualizaListCategoria(categoriaInserted.payload)
@@ -65,7 +65,7 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaList
         draggable: true,
         progress: undefined,
         onClick(event) {
-            setIsOpen(false)
+            closeModal()
         },
 
     })
@@ -80,7 +80,12 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaList
         progress: undefined
     })
 
+    useEffect(() => {
+        reset()
+    }, [])
+
     function closeModal() {
+        reset()
         setIsOpen(false)
     }
 

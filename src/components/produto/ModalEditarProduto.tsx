@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
 //Imagens
@@ -39,21 +39,29 @@ type FormValues = {
 
 export default function EditarProdutoModal({ isOpen, setIsOpen, data }: EditarModalProps) {
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, watch, formState: { errors, isValid }, reset } = useForm<FormValues>({ mode: 'onChange' });
+
+    useEffect(() => {
+        reset()
+    }, [data])
 
     const dispatch = useDispatch<any>();
-
     const [load, setLoad] = useState(false)
+    //const [produto, setProduto] = useState({} as ProddutoType)
+
+
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
         setLoad(true)
         const result = await dispatch(updateProduto({ id: data.id, nomeuser: data.nomeuser, descricaoMaterial: datas.descricaoMaterial }))
         setLoad(false)
         if (result.payload) {
+
             notify();
             setTimeout(function () {
-                setIsOpen(false)
+                closeModal()
             }, 6500);
+
         } else {
             notifyError();
         }
@@ -84,6 +92,7 @@ export default function EditarProdutoModal({ isOpen, setIsOpen, data }: EditarMo
     })
 
     function closeModal() {
+        reset()
         setIsOpen(false)
     }
 
@@ -147,9 +156,8 @@ export default function EditarProdutoModal({ isOpen, setIsOpen, data }: EditarMo
                                                     {...register('descricaoMaterial', {
                                                         required: { message: "Por favor, introduza a descrição do projecto.", value: true },
                                                         minLength: { message: "Preenchimento obrigatório!", value: 1 },
-
                                                     })}
-                                                    defaultValue={data?.descricao}
+                                                    defaultValue={data.descricao}
                                                 />
                                                 {/**Adicionar um auto complete component para categoria ou um select*/}
 
