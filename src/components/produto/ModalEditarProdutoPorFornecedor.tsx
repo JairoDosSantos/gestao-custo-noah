@@ -14,6 +14,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 //Imagens
 import LoadImage from '../../assets/load.gif';
 import Image from 'next/image'
+import { insertUpdatePreco } from '../../redux/painelSlice'
 
 //Tipagens
 type FormValues = {
@@ -31,6 +32,7 @@ type FornecedorType = {
     nomeuser: string;
     categoria: number;
     unidade: string;
+
 }
 
 type EditarModalProps = {
@@ -40,6 +42,15 @@ type EditarModalProps = {
     setData: (objecto: FornecedorType) => void
 }
 
+//Tipagem de relatorio Gráfico
+type RelatorioProdutoType = {
+    id: number;
+    inserted_at: string;
+    updated_at: string;
+    produtofornecedor_id: number;
+    precosimples_antigo: number;
+    precotransporte_antigo: number
+}
 
 export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data, setData }: EditarModalProps) {
 
@@ -63,8 +74,13 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
 
         setLoadDelete(true)
         const produtoFornecedorRemovido = await dispatch(deleteProdutoFornecedor(id))
-        const removido = unwrapResult(produtoFornecedorRemovido)
-        setLoadDelete(false)
+        const removido = unwrapResult(produtoFornecedorRemovido);
+
+
+        setLoadDelete(false);
+
+
+
         if (removido) {
             notify()
             setTimeout(() => {
@@ -75,6 +91,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
             notifyError()
         }
 
+
     }
 
 
@@ -83,15 +100,21 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
         // setData({ ...data, precosimples: datas.precosimples, precotransporte: datas.precotransporte })
         setLoad(true)
         const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte) }))
-        setLoad(false)
+        const resultUnwrap = unwrapResult(result)
+        console.log(resultUnwrap)
+        const relatorioInserted = await dispatch(insertUpdatePreco({ precosimples_antigo: data.precosimples, precotransporte_antigo: data.precotransporte, produtofornecedor_id: resultUnwrap[0].id }))
+        const reportUnwrap = unwrapResult(relatorioInserted)
 
-        if (result.payload) {
-            notify()
-            setTimeout(function () {
-                closeModal()
-            }, 6500);
-        } else {
-            notifyError()
+        setLoad(false)
+        if (reportUnwrap) {
+            if (result.payload) {
+                notify()
+                setTimeout(function () {
+                    closeModal()
+                }, 6500);
+            } else {
+                notifyError()
+            }
         }
     }
 

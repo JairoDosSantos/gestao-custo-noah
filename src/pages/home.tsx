@@ -1,18 +1,55 @@
 import Head from 'next/head'
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { FaUsers } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { fetchAllProdutosFornecedor } from '../redux/painelSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import moment from 'moment';
 
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
 
+//Tipagem do Produto
+type ProdutoType = {
+    id: number;
+    descricaoMaterial: string;
+    nomeuser: string;
+}
+
+//Tipagem do Fornecedor
+type FornecedorType = {
+    id: number;
+    nome_fornecedor: string;
+    endereco: string;
+}
+
+//Tipagem de ProdutoFornecedor
+type ProdutoFornecedorType = {
+    id: number;
+    produto_id: ProdutoType[];
+    fornecedor_id: FornecedorType;
+    precosimples: number;
+    precotransporte: number;
+    nomeuser: string;
+    categoria: number;
+    unidade: string;
+    inserted_at: string;
+    updated_at: string;
+}
+
 const Home = () => {
 
     //Buscar do redux
     const { description, page } = useSelector((state: RootState) => state.Search)
+    const dispatch = useDispatch<any>();
+
+    //Objecto Produto-Fornecedor
+    const [produtosFornecedores, setProdutosFornecedores] = useState<Array<ProdutoFornecedorType>>([])
 
     const [optionsChart, setOptionsChart] = useState({
         options: {
@@ -75,6 +112,29 @@ const Home = () => {
         }
     })
 
+
+    //Método que busca todos os produtos no banco dedados pelo reduxToolkit
+    const getAllProductsByFornecedor = async () => {
+        const datas = await dispatch(fetchAllProdutosFornecedor());
+        const dataUnwrap = unwrapResult(datas);
+
+        if (dataUnwrap) {
+            setProdutosFornecedores(dataUnwrap)
+        }
+
+    }
+
+    //Método que busca todos os produtos não actaulizado há um mês atrás
+    const searchAllProductsNotActualizedOneMonthAgo = () => {
+
+    }
+
+    useEffect(() => {
+        getAllProductsByFornecedor()
+
+        //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
+    }, [])
+
     return (
         <div className='-mt-24 px-5 py-4 flex gap-3 overflow-hide-scroll-bar'>
             <Head>
@@ -99,7 +159,7 @@ const Home = () => {
 
                             />
                         </div>
-                        <div className='border shadow rounded bg-white py-5 px-3 w-[30rem] h-[19rem] flex flex-col print:shadow-none print:border-0 order-1'>
+                        <div className='border shadow rounded bg-white py-5 px-3 w-[35rem] h-[19rem] flex flex-col print:shadow-none print:border-0 order-1'>
                             {/** Gráfico à anunciar */}
                             {/**
                             *  <div className='flex justify-start'>
@@ -110,55 +170,54 @@ const Home = () => {
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
                                         <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500'>
-                                            <th className='w-1/4'>Fornecedor A</th>
-                                            <th className='w-1/4'>Fornecedor B</th>
-                                            <th className='w-1/4'>Fornecedor C</th>
-                                            <th className='w-1/4'>Preço Médio</th>
+
+                                            <th className='w-1/5 text-center'>Nome do fornecedor</th>
+                                            <th className='w-1/5 text-center'>Data actualização recente</th>
+                                            <th className='w-1/5 text-center'>preço s/transporte</th>
+                                            <th className='w-1/5 text-center'>preço c/transporte</th>
+                                            <th className='w-1/5 text-center'>Preço Médio</th>
                                         </tr>
                                     </thead>
                                     <tbody className='flex flex-col gap-2'>
-                                        <tr className='flex shadow rounded p-1'>
-                                            <td className='w-1/4 flex justify-center items-center'>20-02-2022</td>
-                                            <td className='w-1/4 flex justify-center items-center'>30-03-2022</td>
-                                            <td className='w-1/4 flex justify-center items-center'>04-04-2022</td>
-                                            <td className='w-1/4 flex justify-center items-center'>-</td>
-                                        </tr>
-                                        <tr className='flex shadow rounded p-1'>
-                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>20.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center font-bold'>20.000,00 AKWZ</td>
-                                        </tr>
-                                        <tr className='flex shadow rounded p-1'>
-                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center'>15.000,00 AKWZ</td>
-                                            <td className='w-1/4 flex justify-center items-center font-bold'>15.000,00 AKWZ</td>
-                                        </tr>
+                                        {
+                                            produtosFornecedores.length > 0 ? produtosFornecedores.map((pdtFornecedor, index) => {
+
+                                                return (
+                                                    <tr key={index} className='flex shadow rounded p-1'>
+                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
+                                                        <td className='w-1/5 flex justify-center items-center truncate'>{moment(pdtFornecedor.updated_at).format('L')}</td>
+                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precosimples.toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precotransporte.toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+                                                        <td className='w-1/5 flex justify-center items-center truncate'>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+
+                                                    </tr>)
+
+
+                                            }) :
+                                                (<tr className='flex justify-center items-center' >
+                                                    <td colSpan={5} className=' w-full'>Não existe produtos de fornecedores na base de dados</td>
+                                                </tr>)
+
+                                        }
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
-
-                        {
-                            /**
-                             * 
-                                <div className='border shadow rounded bg-white w-96 p-5 text-left'>
-                                    <span className='text-blue-700 font-bold'>Total de fornecedores</span>
-                                    <div className='flex items-center font-bold justify-between'>
-                                        <span>4</span>
-                                        <FaUsers className='text-blue-700 h-14 w-14' />
-                                    </div>
-                                </div>
-                             */
-                        }
                     </div>
 
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }
 

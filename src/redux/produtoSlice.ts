@@ -108,7 +108,7 @@ export const updatePrecoFornecedor = createAsyncThunk('/preco/update', async ({ 
             ])
             .match({ id })
 
-        return true
+        return data
     } catch (error) {
         return (error)
     }
