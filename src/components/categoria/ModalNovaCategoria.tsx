@@ -1,5 +1,6 @@
+import Image from 'next/image'
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
 
@@ -14,6 +15,8 @@ import { supabase } from '../../utils/supabaseClient'
 import { useDispatch } from 'react-redux'
 import { insertCategoria } from '../../redux/categoriaSlices'
 
+//Imagens
+import LoadImage from '../../assets/load.gif';
 
 type NovaModalProps = {
     isOpen: boolean,
@@ -32,16 +35,21 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaList
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
+    const [load, setLoad] = useState(false)
+
     const dispatch = useDispatch<any>();
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+        setLoad(true)
         const categoriaInserted = await dispatch(insertCategoria(datas))
-
-        console.log(categoriaInserted)
+        setLoad(false)
 
         if (categoriaInserted.payload) {
             setActualizaListCategoria(categoriaInserted.payload)
             notifySuccess()
+            setTimeout(function () {
+                setIsOpen(false)
+            }, 6500);
         } else {
             setActualizaListCategoria(categoriaInserted.payload)
             notifyError()
@@ -164,7 +172,14 @@ export default function NovaCategoriaModal({ isOpen, setIsOpen, setActualizaList
                           focus-visible:ring-offset-2 disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed"
 
                                                 >
-                                                    <FaEdit />
+                                                    {
+                                                        load ? (
+                                                            <Image src={LoadImage} height={25} width={25} objectFit='cover' />
+                                                        ) : (
+
+                                                            <FaEdit />
+                                                        )
+                                                    }
                                                     <span>Salvar</span>
                                                 </button>
                                             </div>

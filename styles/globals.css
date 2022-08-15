@@ -10,7 +10,7 @@
     button,
     textarea,
     label,body{
-        @apply font-roboto text-[14px]
+        @apply font-roboto  text-xs
     }
   body{
     @apply overflow-hide-scroll-bar

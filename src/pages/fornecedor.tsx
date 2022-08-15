@@ -18,6 +18,11 @@ import { update } from '../redux/searchGeral';
 import { supabase } from '../utils/supabaseClient';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { fetchFornecedores, insertFornecedor } from '../redux/fornecedorSlicee';
+import Image from 'next/image';
+
+//Imagens
+import LoadImage from '../assets/load.gif';
+
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
@@ -61,9 +66,9 @@ const fornecedor = () => {
     const dispatch = useDispatch<any>()
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
-
+        setLoad(true)
         const fornecedor = await dispatch(insertFornecedor(datas))
-
+        setLoad(false)
         if (fornecedor.payload) {
             setShowConfirmAlert(true)
             setInserted(fornecedor.payload)
@@ -237,8 +242,15 @@ const fornecedor = () => {
                         <div className='flex justify-center items-center lg:justify-end lg:w-[590px] mx-auto'>
                             <button
                                 disabled={!isValid || load}
-                                className='btn flex items-center space-x-2 shadow disabled:bg-blue-300 disabled:text-gray-400 disabled:cursor-not-allowed'>
-                                <FaSave />
+                                className='btn flex items-center space-x-2 shadow disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed'>
+                                {
+                                    load ? (
+                                        <Image src={LoadImage} height={20} width={20} objectFit='cover' />
+                                    ) : (
+
+                                        <FaSave />
+                                    )
+                                }
                                 <span>Salvar</span>
                             </button>
                         </div>

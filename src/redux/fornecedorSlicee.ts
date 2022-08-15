@@ -73,11 +73,28 @@ export const updateFornecedor = createAsyncThunk('/fornecedor/update', async ({ 
                 { nome_fornecedor, telefone1, telefone2, tipo_fornecedor, endereco }
             ])
             .match({ id })
+
+        return true
+
     } catch (error) {
         return (error)
     }
 })
 
+export const deleteFornecedor = createAsyncThunk('/fornecedor/delete', async (id: number) => {
+    try {
+        const { data, error } = await supabase
+            .from('fornecedor')
+            .delete()
+            .match({ id })
+
+        return true
+
+    } catch (error) {
+
+        return error
+    }
+})
 
 
 /**

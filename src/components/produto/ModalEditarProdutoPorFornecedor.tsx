@@ -7,9 +7,15 @@ import { useForm, SubmitHandler, set } from 'react-hook-form'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useDispatch } from 'react-redux'
-import { updatePrecoFornecedor } from '../../redux/produtoSlice'
+import { deleteProdutoFornecedor, updatePrecoFornecedor } from '../../redux/produtoSlice'
 import { useRouter } from 'next/router'
+import { unwrapResult } from '@reduxjs/toolkit'
 
+//Imagens
+import LoadImage from '../../assets/load.gif';
+import Image from 'next/image'
+
+//Tipagens
 type FormValues = {
     precosimples: string;
     precotransporte: string;
@@ -34,6 +40,7 @@ type EditarModalProps = {
     setData: (objecto: FornecedorType) => void
 }
 
+
 export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data, setData }: EditarModalProps) {
 
     const { register, handleSubmit, watch, setValue, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
@@ -43,26 +50,53 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
     const [precotransporte, setprecoTransporte] = useState(data.precotransporte);
 
 
+    const [load, setLoad] = useState(false)
+    const [loadDelete, setLoadDelete] = useState(false)
+
     const watchtransporte = (watch().precotransporte);
     const watchSimples = (watch().precosimples);
 
 
     const route = useRouter();
 
+    const removeProdutoFornecedor = async (id: number) => {
+
+        setLoadDelete(true)
+        const produtoFornecedorRemovido = await dispatch(deleteProdutoFornecedor(id))
+        const removido = unwrapResult(produtoFornecedorRemovido)
+        setLoadDelete(false)
+        if (removido) {
+            notify()
+            setTimeout(() => {
+                setIsOpen(false)
+            }, 6500)
+
+        } else {
+            notifyError()
+        }
+
+    }
+
+
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
 
         // setData({ ...data, precosimples: datas.precosimples, precotransporte: datas.precotransporte })
-
+        setLoad(true)
         const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte) }))
+        setLoad(false)
+
         if (result.payload) {
             notify()
+            setTimeout(function () {
+                setIsOpen(false)
+            }, 6500);
         } else {
             notifyError()
         }
     }
 
 
-    const notify = () => toast.success('Alteração efectuada com sucesso!😁', {
+    const notify = () => toast.success('Operação efectuada com sucesso!😁', {
         position: 'top-center',
         autoClose: 5000,
         hideProgressBar: false,
@@ -91,8 +125,6 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
     function closeModal() {
 
         setIsOpen(false)
-        route.reload()
-
     }
 
 
@@ -199,7 +231,14 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2"
                                                     >
-                                                        <FaEdit />
+                                                        {
+                                                            load ? (
+                                                                <Image src={LoadImage} height={25} width={25} objectFit='cover' />
+                                                            ) : (
+
+                                                                <FaEdit />
+                                                            )
+                                                        }
                                                         <span>Salvar</span>
                                                     </button>
                                                     <button
@@ -209,9 +248,15 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                           bg-gray-400 px-4 py-2 text-sm font-bold text-black hover:brightness-75
                           focus:outline-none focus-visible:ring-2
                           focus-visible:ring-offset-2 "
-                                                        onClick={notifyError}
+                                                        onClick={() => removeProdutoFornecedor(data.id)}
                                                     >
-                                                        <FaTrashAlt />
+                                                        {
+                                                            loadDelete ? (
+                                                                <Image src={LoadImage} height={25} width={25} objectFit='cover' />
+                                                            ) : (
+                                                                <FaTrashAlt />
+                                                            )
+                                                        }
                                                         <span>Apagar</span>
                                                     </button>
                                                 </div>

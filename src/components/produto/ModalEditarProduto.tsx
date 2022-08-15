@@ -1,20 +1,34 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
-
-
+//Imagens
+import LoadImage from '../../assets/load.gif';
 
 //Componentes Externos
 import { useForm, SubmitHandler } from 'react-hook-form'
+
 //Notificações toastify
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useDispatch } from 'react-redux'
+import { updateProduto } from '../../redux/produtoSlice'
+import Image from 'next/image';
 
+
+//Tipagem do Produto
+type ProddutoType = {
+    id: number;
+    descricao: string;
+    nomeuser: string;
+    //    unidade: string;
+    //sub_category_id: CategoryType;
+}
 
 type EditarModalProps = {
     isOpen: boolean,
     setIsOpen: (valor: boolean) => void
+    data: ProddutoType
 }
 
 type FormValues = {
@@ -23,12 +37,31 @@ type FormValues = {
     unidade: string;
 }
 
-export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalProps) {
+export default function EditarProdutoModal({ isOpen, setIsOpen, data }: EditarModalProps) {
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); }
+    const dispatch = useDispatch<any>();
 
+    const [load, setLoad] = useState(false)
+
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+        setLoad(true)
+        const result = await dispatch(updateProduto({ id: data.id, nomeuser: data.nomeuser, descricaoMaterial: datas.descricaoMaterial }))
+        setLoad(false)
+        if (result.payload) {
+            notify();
+            setTimeout(function () {
+                setIsOpen(false)
+            }, 6500);
+        } else {
+            notifyError();
+        }
+
+
+    }
+
+    //console.log(data)
 
     const notify = () => toast.success('Alteração efectuada com sucesso!😁', {
         position: 'top-center',
@@ -56,21 +89,6 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
 
     return (
         <>
-            {
-                /**
-                 * <div className="fixed inset-0 flex items-center justify-center">
-                        <button
-                        type="button"
-                        onClick={openModal}
-                        className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-                        >
-                        Open dialog
-                        </button>
-                    </div>
-                 */
-            }
-
-
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     <Transition.Child
@@ -101,7 +119,7 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
                                         as="h3"
                                         className="text-lg font-bold leading-6 text-gray-900 text-center mb-5"
                                     >
-                                        Edição dos dados do produto
+                                        Edição de produto
                                     </Dialog.Title>
                                     <div className="mt-2 flex flex-col gap-2  justify-center">
                                         <div className='w-[552px]'>
@@ -124,62 +142,41 @@ export default function EditarProdutoModal({ isOpen, setIsOpen }: EditarModalPro
                                             <div className='flex gap-2 justify-center align-center'>
                                                 <input
                                                     type="text"
-                                                    className='rounded shadow w-1/2'
+                                                    className='rounded shadow w-full'
                                                     placeholder='Descrição do produto *'
                                                     {...register('descricaoMaterial', {
                                                         required: { message: "Por favor, introduza a descrição do projecto.", value: true },
                                                         minLength: { message: "Preenchimento obrigatório!", value: 1 },
 
                                                     })}
+                                                    defaultValue={data?.descricao}
                                                 />
                                                 {/**Adicionar um auto complete component para categoria ou um select*/}
-                                                {/**  <input type="text" className='rounded shadow w-1/2' placeholder='Sub-Categoria do produto *' /> */}
-                                                <select
-                                                    className=' border  w-1/2 rounded  shadow cursor-pointer'
-                                                    {...register('subCategoria', {
-                                                        required: { message: "Por favor, introduza a subCategoria.", value: true },
-                                                        minLength: { message: "Preenchimento obrigatório!", value: 1 },
-                                                    })}>
 
-                                                    <option value="">Selecione a Sub-Categoria *</option>
-                                                    <option value="1">Vigotas</option>
-                                                    <option value="2">Conferragens</option>
-                                                </select>
                                             </div>
-                                            <div className='flex gap-2 justify-center align-center'>
-                                                <select
-                                                    {...register('unidade', {
-                                                        required: { message: "Por favor, introduza a subCategoria.", value: true },
-                                                        minLength: { message: "Preenchimento obrigatório!", value: 1 },
-                                                    })}
-                                                    className='rounded shadow w-full cursor-pointer'>
-                                                    <option value="#">Unidade</option>
-                                                    <option value="m">cm</option>
-                                                    <option value="cm">m</option>
-                                                    <option value="cm3">cm3</option>
-                                                    <option value="m3">m3</option>
-                                                </select>
-                                            </div>
+
 
                                             <div className="mt-4 flex justify-end ">
                                                 <button
                                                     disabled={!isValid}
-                                                    type="button"
                                                     className="flex align-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2 disabled:bg-blue-400 disabled:text-gray-200 disabled:cursor-not-allowed"
-                                                    onClick={notifyError}
                                                 >
-                                                    <FaEdit />
+                                                    {
+                                                        load ? (
+                                                            <Image src={LoadImage} height={20} width={20} objectFit='cover' />
+                                                        ) : (
+
+                                                            <FaEdit />
+                                                        )
+                                                    }
                                                     <span>Salvar</span>
                                                 </button>
                                             </div>
                                         </form>
-
                                     </div>
-
-
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>

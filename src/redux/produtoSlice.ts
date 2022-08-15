@@ -114,6 +114,53 @@ export const updatePrecoFornecedor = createAsyncThunk('/preco/update', async ({ 
     }
 })
 
+export const updateProduto = createAsyncThunk('/produto/update', async ({ id, nomeuser, descricaoMaterial }: ProdutoType) => {
+    try {
+        const { data, error } = await supabase
+            .from('produto')
+            .update([
+                { nomeuser, descricao: descricaoMaterial }
+            ])
+            .match({ id })
+
+        return true
+    } catch (error) {
+        return (error)
+    }
+})
+
+export const deleteProduto = createAsyncThunk('/produto/delete', async (id: number) => {
+    try {
+
+        const { data, error } = await supabase
+            .from('produto')
+            .delete()
+            .match({ id })
+
+        return true
+
+    } catch (error) {
+
+        return error
+    }
+})
+
+export const deleteProdutoFornecedor = createAsyncThunk('/produto-fornecedor/delete', async (id: number) => {
+    try {
+
+        const { data, error } = await supabase
+            .from('produtofornecedor')
+            .delete()
+            .match({ id })
+
+        return true
+
+    } catch (error) {
+
+        return error
+    }
+})
+
 
 interface produtoState {
     produtos: Array<ProdutoType>

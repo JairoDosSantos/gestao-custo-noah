@@ -8,29 +8,70 @@ import EditarModal from '../../components/fornecedor/EditarModal';
 import { useRouter } from 'next/router';
 
 import { FaEdit, FaTrash, FaUser } from 'react-icons/fa'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import { GetStaticProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import { supabase } from '../../utils/supabaseClient';
+import { useDispatch } from 'react-redux';
+import { deleteFornecedor, fetchFornecedores } from '../../redux/fornecedorSlicee';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { store } from '../../redux/store';
+import { fetchAllProdutosFornecedor } from '../../redux/produtoSlice';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 //Tipagem
-type FornecedorProps = {
+type FornecedoresType = {
     id: number;
     nome_fornecedor: string;
     telefone1: number;
     telefone2: number;
     tipoFornecedor: string;
-    endereco: number;
+    endereco: string;
+    nomeuser: string;
+    tipo_fornecedor: string;
 }
 
-const FornecedorInfo = () => {
+type ProdutoType = {
+    id: number;
+    descricao: string;
+}
 
-    //Roteamento
-    const { query } = useRouter();
-    const { id } = query
+
+//Tipagem de ProdutoFornecedor
+type ProdutoFornecedorType = {
+    id: number;
+    produto_id: ProdutoType;
+    fornecedor_id: FornecedoresType;
+    precosimples: string;
+    precotransporte: string;
+    nomeuser: string;
+    categoria: number;
+    unidade: string;
+}
+
+type FornecedorTyping = {
+    fornecedo: FornecedoresType;
+    produto: ProdutoFornecedorType[]
+}
+
+type PromiseDelete = {
+    isConfirmed: boolean;
+    isDenied: boolean;
+    isDismissed: boolean
+}
+
+
+const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
+
+    const dispatch = useDispatch<any>()
+    const route = useRouter();
+
+    //Lista de fornecedores
+    const [fornecedor, setFornecedor] = useState<FornecedoresType>({} as FornecedoresType)
+    const [fornecedores, setFornecedores] = useState<Array<FornecedoresType>>([])
+    const [produtosFornecidos, setProdutosFornecidos] = useState<Array<ProdutoFornecedorType>>([])
 
     //Modal
     const [showModal, setShowModal] = useState(false)
@@ -40,29 +81,55 @@ const FornecedorInfo = () => {
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
+
+    const removeFornecedor = async (id: number) => {
+
+        const fornecedorRemivido = await dispatch(deleteFornecedor(id))
+        const removido = unwrapResult(fornecedorRemivido)
+        if (removido) {
+            setShowConfirmAlert(true)
+
+        } else {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    const ConfirmedRemove = async (result: PromiseDelete) => {
+
+        if (result.isConfirmed) {
+            removeFornecedor(fornecedo.id)
+
+            setTimeout(() => {
+                route.push('/fornecedor')
+            }, 5000)
+        }
+
+    }
+
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
-                <title>Fornecedor {id}</title>
+                <title>Fornecedor {fornecedo.nome_fornecedor}</title>
             </Head>
             {/**Modal para editar fornecedor */}
-            <EditarModal isOpen={showModal} setIsOpen={setShowModal} />
+            <EditarModal data={fornecedo} isOpen={showModal} setIsOpen={setShowModal} />
             {/**Confirm alert**/}
             <SweetAlert2
                 show={showConfirmAlert}
                 title='Sucesso'
-                text='Sub-Categoria adicionada com sucesso'
+                text='Fornecedor eliminado do sistema com sucesso'
                 onConfirm={() => setShowConfirmAlert(false)}
                 didClose={() => setShowConfirmAlert(false)}
                 didDestroy={() => setShowConfirmAlert(false)}
-                icon='question'
+                icon='success'
                 allowOutsideClick={true}
                 allowEnterKey={true}
                 allowEscapeKey={true}
                 showConfirmButton={true}
                 showLoaderOnConfirm={true}
-                showCancelButton={true}
                 confirmButtonColor="#4051ef"
+
             />
             {/**Error Alert */}
             <SweetAlert2
@@ -96,32 +163,40 @@ const FornecedorInfo = () => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
+                onResolve={ConfirmedRemove}
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
-                    <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR {id}</h3>
+                    <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR - {fornecedo.nome_fornecedor}</h3>
                     <div className='flex flex-col lg:flex-row gap-4 lg:justify-between justify-center mt-2 lg:mt-0 '>
                         <div className='flex flex-col space-y-4 order-2 lg:order-1'>
                             <div>
-                                <label className='font-bold'>Nome : </label><span>Jairo dos Santos</span>
+                                <label className='font-bold'>ID : </label><span>{fornecedo.id}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Telefone 1 : </label><span>+244 929-84-89-58</span>
+                                <label className='font-bold'>Nome : </label><span>{fornecedo.nome_fornecedor}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Telefone 2 : </label><span>+244 928-30-80-96</span>
+                                <label className='font-bold'>Telefone : </label><span>{fornecedo.telefone1}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Endereço : </label><span>Benfica, espaço girafa.</span>
+                                <label className='font-bold'>Telefone Alternativo: </label><span>{fornecedo.telefone2}</span>
+                            </div>
+                            <div>
+                                <label className='font-bold'>Endereço : </label><span>{fornecedo.endereco}</span>
+                            </div>
+                            <div>
+                                <label className='font-bold'>Tipo de Fornecedor : </label><span>{fornecedo.tipo_fornecedor}</span>
                             </div>
                             <div>
                                 <label className='font-bold mb-2'>Fornecedor de:</label>
                                 <ul className='flex flex-col space-y-2 list-disc ml-8'>
-                                    <li>Brita <span className='text-gray-400 text-xs'>- 3.600,00 AKWZ/m3 sem transporte</span></li>
-                                    <li>Mosaico cerâmico <span className='text-gray-400 text-xs'>- 3.600,00 AKWZ/caixa c/transporte</span></li>
-                                    <li>Tubos <span className='text-gray-400 text-xs'>- 3.600,00 AKWZ/m3 sem transporte</span></li>
-                                    <li>Pladur <span className='text-gray-400 text-xs'>- 4.600,00 AKWZ/folha sem transporte</span></li>
-                                    <li>Portas <span className='text-gray-400 text-xs'>- 3.600,00 AKWZ/m3 c/transporte</span></li>
+                                    {produto.map((product, index) => (
+                                        <li key={index}>{product.produto_id.descricao} <span className='text-gray-400 text-xs'> -&nbsp; &nbsp; {product.precosimples} AKWZ/{product.unidade} sem transporte</span>
+                                            <span className='text-gray-400 text-xs'> - &nbsp; &nbsp;{product.precotransporte} AKWZ/{product.unidade}  com transporte</span>
+                                        </li>
+
+                                    ))}
                                 </ul>
                             </div>
                         </div>
@@ -152,36 +227,44 @@ const FornecedorInfo = () => {
     )
 }
 
-export default FornecedorInfo
 
-/**
- * 
- * export const getStaticPaths = async () => {
+export const getStaticPaths = async () => {
+
     const { data, error } = await supabase
         .from('fornecedor')
-        .select('id')
-    const paths = data?.map(fornecedor => ({ params: { id: JSON.stringify(fornecedor.id) } }))
+        .select('*')
+
+    const paths = data ? data.map(fornecedor => ({ params: { id: JSON.stringify(fornecedor.id) } })) : { params: { id: '' } }
+
     return {
         paths,
         fallback: true
     }
-} 
- * 
- */
+}
 
-export const getStaticProps = async () => {
-    const { query } = useRouter();
-    const { id } = query
-    console.log(id)
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+
+
     const { data } = await supabase
         .from('fornecedor')
         .select('*')
-        .filter('id', 'eq', id)
+        .filter('id', 'eq', params?.id)
         .single()
-    console.log(data)
+
+    const datas = await supabase
+        .from('produtofornecedor')
+        .select('id,precotransporte,precosimples,unidade,nomeuser,produto_id(id,descricao),fornecedor_id,sub_category_id(id,descricao)')
+        .filter('fornecedor_id', 'eq', params?.id)
+
+    const produtos = datas.data
+
     return {
         props: {
-            fornecedor: data
+            fornecedo: data,
+            produto: produtos
         }
     }
 }
+
+export default FornecedorInfo

@@ -100,6 +100,10 @@ const ListaProdutos = () => {
         getAllProducts();
 
     }, [])
+    useEffect(() => {
+        getAllProducts();
+
+    }, [isOpenModal])
 
     useEffect(() => {
 

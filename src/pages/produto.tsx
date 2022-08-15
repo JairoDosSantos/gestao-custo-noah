@@ -22,6 +22,12 @@ import { fetchFornecedores } from '../redux/fornecedorSlicee'
 import { fetchSubcategorias } from '../redux/categoriaSlices'
 
 
+import Image from 'next/image';
+
+//Imagens
+import LoadImage from '../assets/load.gif';
+
+
 //Tipagem do formulário
 type FormValues = {
     id: number;
@@ -57,7 +63,8 @@ type SubCategoriaType = {
 const Produto = () => {
 
     const [idProduto, setIdProduto] = useState(0)
-
+    //load
+    const [load, setLoad] = useState(false)
     const router = useRouter()
 
     //estados para controlar os fornecedores
@@ -84,6 +91,7 @@ const Produto = () => {
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
+        setLoad(true)
         data.descricaoMaterial = produto;
         data.fornecedor_id = idFornecedor;
         data.nomeuser = 'Jairo dos Santos'
@@ -91,11 +99,11 @@ const Produto = () => {
         if (idProduto === 0) {
             //Cadastrar primeiro o produto (porque não existe) depois cadastrar o produto do fornecedor com os seus preços, caso o produto não exista!
             const produtoInserted = await dispatch(insertProduto(data))
-
+            setLoad(false)
             if (produtoInserted.payload) {
                 data.produto_id = produtoInserted.payload.id
                 const ProdutoFornecedor = await dispatch(insertProdutoFornecedor(data));
-
+                setLoad(false)
                 if (ProdutoFornecedor.payload) {
 
                     setShowConfirmAlert(true)
@@ -105,6 +113,7 @@ const Produto = () => {
                 }
 
             } else {
+                setLoad(false)
                 setShowErrorAlert(true)
 
             }
@@ -116,6 +125,7 @@ const Produto = () => {
             //Cadastrar o produto do fornecedor com os seus preços, caso o produto não exista!
             data.produto_id = idProduto;
             const ProdutoFornecedor = await dispatch(insertProdutoFornecedor(data));
+            setLoad(false)
             if (ProdutoFornecedor.payload) {
                 setShowConfirmAlert(true)
             } else {
@@ -345,7 +355,14 @@ const Produto = () => {
                                 disabled={!isValidated()}
                                 className='btn flex justify-center align-center space-x-2 items-center shadow
                                  disabled:bg-blue-500 disabled:text-gray-300 disabled:cursor-not-allowed text-center'>
-                                <FaSave />
+                                {
+                                    load ? (
+                                        <Image src={LoadImage} height={20} width={20} objectFit='cover' />
+                                    ) : (
+
+                                        <FaSave />
+                                    )
+                                }
                                 <span>Salvar</span>
                             </button>
                         </div>

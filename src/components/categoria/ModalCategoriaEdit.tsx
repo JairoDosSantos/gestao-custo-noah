@@ -1,5 +1,7 @@
+import Image from 'next/image'
+
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
 
 
@@ -10,24 +12,54 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+//Redux-toolkit
+import { useDispatch } from 'react-redux'
+import { updateCategorias } from '../../redux/categoriaSlices'
+import { unwrapResult } from '@reduxjs/toolkit'
+
+//Imagens
+import LoadImage from '../../assets/load.gif';
+
 type EditarModalProps = {
     isOpen: boolean,
     setIsOpen: (valor: boolean) => void
+    data: FormValues
 }
 
 //Tipagem
 type FormValues = {
-    categoria: string
+    id: number;
+    descricao: string;
+    nomeuser: string
 }
 
 
 
-export default function EditarCategoriaModal({ isOpen, setIsOpen }: EditarModalProps) {
+export default function EditarCategoriaModal({ isOpen, setIsOpen, data }: EditarModalProps) {
     //let [isOpen, setIsOpen] = useState(true)
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const dispatch = useDispatch<any>();
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => { console.log(data); }
+    const [load, setLoad] = useState(false)
+    const [loadDelete, setLoadDelete] = useState(false)
+
+    const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+
+        setLoad(true)
+        const result = await dispatch(updateCategorias({ id: data.id, categoria: datas.descricao }));
+        const resultUnwrap = unwrapResult(result)
+        setLoad(false)
+        if (resultUnwrap) {
+            notify();
+            setTimeout(function () {
+                setIsOpen(false)
+            }, 6500);
+        } else {
+            notifyError();
+        }
+
+    }
 
     const notify = () => toast.success('Categoria alterada com sucesso! 😁', {
         position: 'top-center',
@@ -55,20 +87,6 @@ export default function EditarCategoriaModal({ isOpen, setIsOpen }: EditarModalP
 
     return (
         <>
-            {
-                /**
-                 * <div className="fixed inset-0 flex items-center justify-center">
-                        <button
-                        type="button"
-                        onClick={openModal}
-                        className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-                        >
-                        Open dialog
-                        </button>
-                    </div>
-                 */
-            }
-
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                     <Transition.Child
@@ -118,24 +136,32 @@ export default function EditarCategoriaModal({ isOpen, setIsOpen }: EditarModalP
                                         <form className='flex flex-col gap-3 justify-center align-center w-[552px] mx-auto' onSubmit={handleSubmit(onSubmit)}>
                                             <div className='flex gap-2 justify-center align-center'>
                                                 <input type="text" className='rounded shadow w-full' placeholder='Descrição da categoria *'
-                                                    {...register('categoria', {
+                                                    {...register('descricao', {
                                                         required: { message: "Por favor, introduza a descrição da categoria.", value: true },
                                                         minLength: { message: "Preenchimento obrigatório!", value: 5 },
-                                                    })} />
+                                                    })}
+
+                                                    defaultValue={data.descricao}
+                                                />
 
                                             </div>
 
                                             <div className="mt-4 flex justify-end ">
                                                 <button
                                                     disabled={!isValid}
-                                                    type="button"
                                                     className="flex align-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500  disabled:bg-blue-400 disabled:text-gray-200 disabled:cursor-not-allowed
                           focus-visible:ring-offset-2"
-                                                    onClick={notifyError}
                                                 >
-                                                    <FaEdit />
+                                                    {
+                                                        load ? (
+                                                            <Image src={LoadImage} height={25} width={25} objectFit='cover' />
+                                                        ) : (
+
+                                                            <FaEdit />
+                                                        )
+                                                    }
                                                     <span>Salvar</span>
                                                 </button>
                                             </div>

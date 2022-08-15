@@ -7,9 +7,60 @@ import { FaEdit, FaPrint, FaTrash } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import EditarProdutoModal from '../../components/produto/ModalEditarProduto';
+import { GetStaticProps } from 'next';
+import { supabase } from '../../utils/supabaseClient';
+import { deleteProduto } from '../../redux/produtoSlice';
+import { useDispatch } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
-const InfoProduto = () => {
+//Tipagem do Produto
+type ProddutoType = {
+    id: number;
+    descricao: string;
+    nomeuser: string;
+    updated_at: string
+    created_at: string
+}
+type FornecedoresType = {
+    id: number;
+    fornecedor_id: FornecedorType;
+    tipoFornecedor: string;
+    endereco: number;
+    precosimples: number;
+    precotransporte: number;
+    unidade: string
+    sub_category_id: CategoryType
+}
+type FornecedorType = {
+    id: number;
+    nome_fornecedor: string;
+    tipoFornecedor: string;
+    endereco: number;
+    telefone1: number;
+    telefone2: number;
+}
+
+type CategoryType = {
+    id: number;
+    descricao: string;
+
+}
+
+type PropsType = {
+    produto: ProddutoType;
+    fornecedores: FornecedoresType[]
+}
+
+type PromiseDelete = {
+    isConfirmed: boolean;
+    isDenied: boolean;
+    isDismissed: boolean
+}
+
+const InfoProduto = ({ produto, fornecedores }: PropsType) => {
+
+
 
     const { query } = useRouter();
     const { id } = query
@@ -22,6 +73,35 @@ const InfoProduto = () => {
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
+    const dispatch = useDispatch<any>()
+    const route = useRouter()
+    const removeFornecedor = async (id: number) => {
+
+        const produtoRemovido = await dispatch(deleteProduto(id))
+        const removido = unwrapResult(produtoRemovido)
+        if (removido) {
+            setShowConfirmAlert(true)
+
+        } else {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    const ConfirmedRemove = async (result: PromiseDelete) => {
+
+        if (result.isConfirmed) {
+            removeFornecedor(produto.id)
+
+            setTimeout(() => {
+                route.push('/todos-produtos')
+            }, 5000)
+        }
+
+    }
+
+
+
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
@@ -29,23 +109,22 @@ const InfoProduto = () => {
             </Head>
 
             {/** Edit Modal */}
-            <EditarProdutoModal isOpen={openModal} setIsOpen={setOpenModal} />
+            <EditarProdutoModal data={produto} isOpen={openModal} setIsOpen={setOpenModal} />
 
             {/**Confirm Alert */}
             <SweetAlert2
                 show={showConfirmAlert}
                 title='Sucesso'
-                text='Sub-Categoria adicionada com sucesso'
+                text='Produto eliminado do sistema com sucesso'
                 onConfirm={() => setShowConfirmAlert(false)}
                 didClose={() => setShowConfirmAlert(false)}
                 didDestroy={() => setShowConfirmAlert(false)}
-                icon='question'
+                icon='success'
                 allowOutsideClick={true}
                 allowEnterKey={true}
                 allowEscapeKey={true}
                 showConfirmButton={true}
                 showLoaderOnConfirm={true}
-                showCancelButton={true}
                 confirmButtonColor="#4051ef"
             />
 
@@ -82,6 +161,7 @@ const InfoProduto = () => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
+                onResolve={ConfirmedRemove}
 
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-y-auto overflow-hide-scroll-bar'>
@@ -90,32 +170,50 @@ const InfoProduto = () => {
                     <div className='flex flex-col lg:flex-row gap-4 lg:justify-between lg:mt-0 mt-2'>
                         <div className='flex flex-col  space-y-4'>
                             <div>
-                                <label className='font-bold'>Nome : </label><span>Bloco de 12</span>
+                                <label className='font-bold'>Nome : </label><span>{produto.descricao}</span>
+                            </div>
+                            {
+                                /**
+                                 * <div>
+                                        <label className='font-bold'>Menor Preço símples : </label><span>{produto.}/span>
+                                    </div>
+                                    <div>
+                                        <label className='font-bold'>Menor Preço C/transporte : </label><span>1.500,00 AKWZ</span>
+                                    </div>
+                                 */
+                            }
+                            <div>
+                                <label className='font-bold'>Cadastrado por : </label><span>{produto.nomeuser}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Menor Preço símples : </label><span>1.200,00 AKWZ</span>
-                            </div>
-                            <div>
-                                <label className='font-bold'>Menor Preço C/transporte : </label><span>1.500,00 AKWZ</span>
-                            </div>
-                            <div>
-                                <label className='font-bold'>Unidade : </label><span>cm</span>
-                            </div>
-                            <div>
-                                <label className='font-bold mb-2'>Categorias a que pertence:</label>
+                                <label className='font-bold mb-2'>Categoria a que pertence:</label>
                                 <ul className='flex flex-col gap-3 mt-1 list-disc ml-8'>
-                                    <li>Primeira </li>
-                                    <li>Segunda </li>
-                                    <li>Terceira</li>
+                                    {
+                                        fornecedores.map((fornecedor, index) => (
+                                            <li key={index}>
+                                                {fornecedor.sub_category_id.descricao}
+                                            </li>
+                                        ))
+                                    }
                                 </ul>
                             </div>
                             <div>
                                 <label className='font-bold mb-2'>Fornecedores:</label>
                                 <ul className='flex flex-col gap-3 mt-1 list-disc ml-8'>
-                                    <li>Jairo dos Santos <span className='text-gray-400 text-xs'>- 1.200,00 AKWZ/m3 sem transporte- +244 929 84 89 58</span></li>
-                                    <li>Manuel Rosário <span className='text-gray-400 text-xs'>- 1.500,00 AKWZ/caixa c/transporte- +244 929 84 89 58</span></li>
-                                    <li>Wladimiro Carvalho <span className='text-gray-400 text-xs'>- 3.600,00 AKWZ/m3 sem transporte- +244 929 84 89 58</span></li>
-                                    <li>Jairo Leandro <span className='text-gray-400 text-xs'>- 4.600,00 AKWZ/folha sem transporte- +244 929 84 89 58</span></li>
+                                    {
+                                        fornecedores.map((fornecedor, index) => (
+                                            <li key={index}>{fornecedor.fornecedor_id.nome_fornecedor}
+                                                <span className='text-gray-400 text-xs'>- {fornecedor.precosimples.toLocaleString('pt', {
+                                                    style: 'currency',
+                                                    currency: 'KWZ'
+                                                })}/{fornecedor.unidade} sem transporte- {fornecedor.precotransporte.toLocaleString('pt', {
+                                                    style: 'currency',
+                                                    currency: 'KWZ'
+                                                })}/{fornecedor.unidade} -  {fornecedor.fornecedor_id.telefone1} - {fornecedor.fornecedor_id.telefone2}</span>
+                                            </li>
+                                        ))
+                                    }
+
                                 </ul>
                             </div>
                         </div>
@@ -146,5 +244,50 @@ const InfoProduto = () => {
         </div>
     )
 }
+
+
+
+export const getStaticPaths = async () => {
+
+
+
+    const { data, error } = await supabase
+        .from('produto')
+        .select('*')
+
+    const paths = data ? data.map(produto => ({ params: { id: JSON.stringify(produto.id) } })) : { params: { id: '' } }
+
+    return {
+        paths,
+        fallback: true
+    }
+}
+
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+
+
+    const { data } = await supabase
+        .from('produto')
+        .select('*')
+        .filter('id', 'eq', params?.id)
+        .single()
+
+    const datas = await supabase
+        .from('produtofornecedor')
+        .select('id,precotransporte,precosimples,unidade,nomeuser,produto_id,fornecedor_id(id,nome_fornecedor,telefone1,telefone2,endereco),sub_category_id(id,descricao)')
+        .filter('produto_id', 'eq', params?.id)
+
+    const fornecedores = datas.data
+
+    return {
+        props: {
+            produto: data,
+            fornecedores: fornecedores
+        }
+    }
+}
+
+
 
 export default InfoProduto

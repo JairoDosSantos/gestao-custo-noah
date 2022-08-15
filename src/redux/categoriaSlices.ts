@@ -84,17 +84,36 @@ export const insertSubcategoria = createAsyncThunk('/subCategoria/criar', async 
 
 export const updateCategorias = createAsyncThunk('/categoria/update', async ({ id, categoria }: categoriaType) => {
     try {
+
         const { data, error } = await supabase
             .from('categoria')
             .update([
                 { descricao: categoria }
             ])
             .match({ id })
+
+        return data
+
     } catch (error) {
         return (error)
     }
 })
 
+export const deleteCategoria = createAsyncThunk('/categoria/delete', async (id: number) => {
+    try {
+
+        const { data, error } = await supabase
+            .from('categoria')
+            .delete()
+            .match({ id })
+
+        return true
+
+    } catch (error) {
+
+        return error
+    }
+})
 
 
 /**

@@ -7,10 +7,19 @@ import { FaFilePdf, FaEdit, FaTrash, FaPrint } from 'react-icons/fa'
 import dynamic from 'next/dynamic';
 import EditarProdutoModal from '../components/produto/ModalEditarProduto';
 import { useDispatch } from 'react-redux';
-import { fetchAllProdutos } from '../redux/produtoSlice';
+import { deleteProduto, fetchAllProdutos } from '../redux/produtoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
+
+
+
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
+
+type PromiseDelete = {
+    isConfirmed: boolean;
+    isDenied: boolean;
+    isDismissed: boolean
+}
 
 type CategoryType = {
     descricao: string
@@ -39,6 +48,12 @@ const TodosProdutos = () => {
     //estado do produto
     const [produtList, setProdutList] = useState<Array<ProddutoType>>([])
 
+    //Estado para edição do Produto
+    const [data, setData] = useState<ProddutoType>({} as ProddutoType)
+
+    //Id do produto a ser deletado
+    const [idP, setidP] = useState(0)
+
     const dispatch = useDispatch<any>();
 
     const fetchProduts = async () => {
@@ -51,12 +66,47 @@ const TodosProdutos = () => {
         }
     }
 
+    const removeProduto = async (id: number) => {
+
+        const produtoRemovido = await dispatch(deleteProduto(id))
+        const removido = unwrapResult(produtoRemovido)
+        if (removido) {
+            setShowConfirmAlert(true)
+        } else {
+            setShowErrorAlert(true)
+        }
+
+    }
+
+    const ConfirmedRemove = async (result: PromiseDelete) => {
+
+        if (result.isConfirmed) {
+            removeProduto(idP)
+        }
+
+    }
 
 
     useEffect(() => {
         fetchProduts()
-        console.log(produtList)
+
+    }, [openModal, showConfirmAlert])
+
+    useEffect(() => {
+        fetchProduts()
+
     }, [])
+
+
+    const handleEditProduct = (id: number) => {
+        const produtoFinded = produtList && produtList.find((product) => {
+            return product.id === id
+        })
+        setData(produtoFinded as ProddutoType)
+
+
+        setOpenModal(true)
+    }
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -65,24 +115,23 @@ const TodosProdutos = () => {
             </Head>
 
             {/**Modal Edit */}
-            <EditarProdutoModal isOpen={openModal} setIsOpen={setOpenModal} />
+            <EditarProdutoModal isOpen={openModal} setIsOpen={setOpenModal} data={data} />
 
             {/**Confirm alert */}
             <SweetAlert2
                 backdrop={true}
                 show={showConfirmAlert}
                 title='Sucesso'
-                text='Sub-Categoria adicionada com sucesso'
+                text='Operação efectuada com sucesso'
                 onConfirm={() => setShowConfirmAlert(false)}
                 didClose={() => setShowConfirmAlert(false)}
                 didDestroy={() => setShowConfirmAlert(false)}
-                icon='question'
+                icon='success'
                 allowOutsideClick={true}
                 allowEnterKey={true}
                 allowEscapeKey={true}
                 showConfirmButton={true}
                 showLoaderOnConfirm={true}
-                showCancelButton={true}
                 confirmButtonColor="#4051ef"
             />
 
@@ -121,6 +170,7 @@ const TodosProdutos = () => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
+                onResolve={ConfirmedRemove}
 
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
@@ -155,7 +205,7 @@ const TodosProdutos = () => {
                                                         <td className='w-1/6'>{produto.nomeuser}</td>
                                                         <td className='w-1/6 flex justify-center'>
                                                             <button
-                                                                onClick={() => setOpenModal(true)}
+                                                                onClick={() => { handleEditProduct(produto.id) }}
                                                                 className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
                                                                 title='Editar'
                                                             >
@@ -164,7 +214,7 @@ const TodosProdutos = () => {
                                                         </td>
                                                         <td className='w-1/6 text-center flex items-center justify-center'>
                                                             <button
-                                                                onClick={() => setShowQuestionAlert(true)}
+                                                                onClick={() => { setShowQuestionAlert(true); setidP(produto.id) }}
                                                                 className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
                                                                 title='Apagar'
                                                             >

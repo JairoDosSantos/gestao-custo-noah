@@ -12,6 +12,11 @@ import NovaCategoriaModal from '../components/categoria/ModalNovaCategoria';
 //Componentes Externos
 import { useForm, SubmitHandler } from 'react-hook-form'
 
+
+//Imagens
+import LoadImage from '../assets/load.gif';
+
+
 //INSTALAR O yarn add -D @types/sweetalert2-react
 //import SweetAlert2 from 'react-sweetalert2';
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
@@ -23,6 +28,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { update } from '../redux/searchGeral';
+import Image from 'next/image';
 
 
 //Tipagem
@@ -41,6 +47,8 @@ const Categoria = () => {
 
     const router = useRouter()
 
+    //Show and Hide Load gif
+    const [load, setLoad] = useState(false)
 
     //Estados do Modal de Edição
     const [openModal, setOpenModal] = useState(false);
@@ -58,15 +66,13 @@ const Categoria = () => {
 
     const { description, page } = useSelector((state: RootState) => state.Search)
 
-    //Load
-    const [load, setLoad] = useState(false)
 
     const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
-
+        setLoad(true)
         const categoryInserted = await dispatch(insertSubcategoria(datas))
-
+        setLoad(false)
         if (categoryInserted.payload) {
             setShowConfirmAlert(true)
         } else {
@@ -141,7 +147,7 @@ const Categoria = () => {
                 backdrop={true}
                 show={showConfirmAlert}
                 title='Sucesso'
-                text='Sub-Categoria adicionada com sucesso'
+                text='Operação efectuada com sucesso'
                 onConfirm={() => setShowConfirmAlert(false)}
                 didClose={() => setShowConfirmAlert(false)}
                 didDestroy={() => setShowConfirmAlert(false)}
@@ -221,7 +227,14 @@ const Categoria = () => {
                             <button
                                 disabled={!isValid || load}
                                 className='btn flex items-center space-x-2 shadow disabled:bg-blue-400 disabled:text-gray-300 disabled:cursor-not-allowed'>
-                                <FaSave />
+                                {
+                                    load ? (
+                                        <Image src={LoadImage} height={20} width={20} objectFit='cover' />
+                                    ) : (
+
+                                        <FaSave />
+                                    )
+                                }
                                 <span>Salvar</span>
                             </button>
                         </div>
