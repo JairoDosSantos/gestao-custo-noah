@@ -14,7 +14,7 @@ import { unwrapResult } from '@reduxjs/toolkit'
 //Imagens
 import LoadImage from '../../assets/load.gif';
 import Image from 'next/image'
-import { insertUpdatePreco } from '../../redux/painelSlice'
+import { insertUpdatePreco, insertUpdatePrecoRefactored } from '../../redux/painelSlice'
 
 //Tipagens
 type FormValues = {
@@ -97,25 +97,59 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
 
-        // setData({ ...data, precosimples: datas.precosimples, precotransporte: datas.precotransporte })
+        // Inciar o load
         setLoad(true)
-        const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte) }))
+        const updated_at = (new Date()).toDateString();
+        //Actualiza o preço primeiro do produto
+        const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte), updated_at }))
         const resultUnwrap = unwrapResult(result)
-        console.log(resultUnwrap)
-        const relatorioInserted = await dispatch(insertUpdatePreco({ precosimples_antigo: data.precosimples, precotransporte_antigo: data.precotransporte, produtofornecedor_id: resultUnwrap[0].id }))
-        const reportUnwrap = unwrapResult(relatorioInserted)
 
-        setLoad(false)
-        if (reportUnwrap) {
-            if (result.payload) {
-                notify()
-                setTimeout(function () {
-                    closeModal()
-                }, 6500);
+        console.log(data.fornecedor_id)
+        console.log(data.produto_id)
+        console.log(data.precosimples)
+        //Pegar o ID do preco/produto que foi cadastrado, e inserir na tabela do relatório gráfico
+        //console.log(datas.precosimples)
+        //console.log(data.precosimples)
+        //console.log(resultUnwrap)
+        if (resultUnwrap) {
+            if (Number(datas.precosimples) !== Number(data.precosimples)) {
+                //  const relatorioInserted = await dispatch(insertUpdatePreco({ precosimples_antigo: data.precosimples, precotransporte_antigo: data.precotransporte, produtofornecedor_id: resultUnwrap[0].id }))
+                const relatorioInserted = await dispatch(insertUpdatePrecoRefactored({ precosimples_antigo: data.precosimples, fornecedor_id: data.fornecedor_id, produto_id: data.produto_id }))
+                const reportUnwrap = unwrapResult(relatorioInserted)
+                //  console.log(reportUnwrap)
+                //Encerrar o load
+                setLoad(false)
+
+                if (reportUnwrap) {
+                    if (result.payload) {
+                        notify()
+                        setTimeout(function () {
+                            closeModal()
+                        }, 6500);
+                    } else {
+                        notifyError()
+                    }
+                }
             } else {
-                notifyError()
+                //Encerrar o load
+                setLoad(false)
+
+
+                if (result.payload) {
+                    notify()
+                    setTimeout(function () {
+                        closeModal()
+                    }, 6500);
+                } else {
+                    notifyError()
+                }
+
             }
+        } else {
+            notifyError()
         }
+
+
     }
 
 

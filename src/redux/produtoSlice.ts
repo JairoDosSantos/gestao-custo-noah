@@ -19,6 +19,7 @@ type ProdutoFornecedorType = {
     nomeuser: string;
     categoria: number;
     unidade: string;
+    updated_at: string
 }
 
 export const fetchAllProdutos = createAsyncThunk('/produtos', async () => {
@@ -99,12 +100,12 @@ export const insertProdutoFornecedor = createAsyncThunk('/produto/fornecedor/cri
 
 })
 
-export const updatePrecoFornecedor = createAsyncThunk('/preco/update', async ({ id, produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, categoria, unidade }: ProdutoFornecedorType) => {
+export const updatePrecoFornecedor = createAsyncThunk('/preco/update', async ({ id, produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, categoria, unidade, updated_at }: ProdutoFornecedorType) => {
     try {
         const { data, error } = await supabase
             .from('produtofornecedor')
             .update([
-                { produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, sub_category_id: categoria, unidade }
+                { produto_id, fornecedor_id, precosimples, precotransporte, nomeuser, sub_category_id: categoria, unidade, updated_at }
             ])
             .match({ id })
 

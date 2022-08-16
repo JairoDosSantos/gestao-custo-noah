@@ -6,9 +6,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { FaUsers } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { fetchAllProdutosFornecedor } from '../redux/painelSlice';
+import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado, fetchAllProdutosFornecedorActualizadoRefatored } from '../redux/painelSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import moment from 'moment';
+import { update } from '../redux/searchGeral';
 
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
@@ -17,7 +18,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 //Tipagem do Produto
 type ProdutoType = {
     id: number;
-    descricaoMaterial: string;
+    descricao: string;
     nomeuser: string;
 }
 
@@ -31,15 +32,30 @@ type FornecedorType = {
 //Tipagem de ProdutoFornecedor
 type ProdutoFornecedorType = {
     id: number;
-    produto_id: ProdutoType[];
+    // produto_id: ProdutoType[];
     fornecedor_id: FornecedorType;
     precosimples: number;
     precotransporte: number;
+    produto_id: ProdutoType
     nomeuser: string;
-    categoria: number;
+    categoria: string;
     unidade: string;
     inserted_at: string;
     updated_at: string;
+}
+
+//ExtraType
+type ExtraType = {
+    produto_id: number;
+    fornecedor_id: number;
+}
+
+//Tipagem de relatorio Gráfico
+type RelatorioProdutoType = {
+    produtofornecedor_id: number;
+    precosimples_antigo: number;
+    precotransporte_antigo: string;
+    inserted_at: string
 }
 
 const Home = () => {
@@ -48,8 +64,17 @@ const Home = () => {
     const { description, page } = useSelector((state: RootState) => state.Search)
     const dispatch = useDispatch<any>();
 
+    const [searchType, setSearchType] = useState('Produto')
+
     //Objecto Produto-Fornecedor
     const [produtosFornecedores, setProdutosFornecedores] = useState<Array<ProdutoFornecedorType>>([])
+    const [reportProdutoByFornecedor, setReportProdutoByFornecedor] = useState<Array<RelatorioProdutoType>>([])
+
+    const [categories, setCategories] = useState<Array<string>>([])
+    const [dataChart, setdataChart] = useState<Array<number>>([])
+
+    const [produtoId, setProdutoId] = useState(0)
+    const [fornecedorId, setFornecedorId] = useState(0)
 
     const [optionsChart, setOptionsChart] = useState({
         options: {
@@ -57,7 +82,16 @@ const Home = () => {
                 height: 200,
                 zoom: {
                     enabled: true
-                }
+                }, toolbar: {
+                    show: false
+                },
+            },
+            xaxis: {
+                type: "datetime" as const,
+                categories: categories
+            },
+            grid: {
+                show: false
             },
             dataLabels: {
                 enabled: false
@@ -71,31 +105,17 @@ const Home = () => {
                 width: 3
             },
             colors: ['#606eda', '#bde857', '#546E7A'],
-            toolbar: {
-                autoSelected: "pan",
-                show: false
-            }
+
         },
         tooltip: {
-            theme: 'dark'
+            show: false
         },
         series: [
             {
-                name: "Fornecedor A",
-                data: [31, 50, 80, 10, 100]
-            },
-            {
-                name: "Fornecedor B",
-                data: [1, 40, 16, 10, 9]
-            },
-            {
-                name: "Fornecedor C",
-                data: [100, 33, 24, 8, 19]
+                name: "Jairo dos Santos",
+                data: [31, 50, 80, 10]
             }
         ],
-        xaxis: {
-            type: [10, 20, 30, 40, 60]
-        },
         fill: {
             type: 'gradient',
             gradient: {
@@ -110,10 +130,13 @@ const Home = () => {
             position: 'bottom',
             horizontalAlign: "center",
         }
+
     })
 
 
-    //Método que busca todos os produtos no banco dedados pelo reduxToolkit
+
+
+    //Método que busca todos os produtos de fornecedores no banco dedados pelo reduxToolkit
     const getAllProductsByFornecedor = async () => {
         const datas = await dispatch(fetchAllProdutosFornecedor());
         const dataUnwrap = unwrapResult(datas);
@@ -124,16 +147,94 @@ const Home = () => {
 
     }
 
-    //Método que busca todos os produtos não actaulizado há um mês atrás
-    const searchAllProductsNotActualizedOneMonthAgo = () => {
+    //Método que busca todos os produtos não actualizado há um mês atrás
+    /**
+     *  const searchAllProductsNotActualizedOneMonthAgo = async () => {
+ 
+         const notActualized = await dispatch(fetchAllProdutosFornecedor())
+         const notActualizedUnwrap = unwrapResult(notActualized);
+         if (notActualizedUnwrap) {
+             const todosAntigos = notActualizedUnwrap.filter((notAct) => {
+                 if (notAct.moment('L')) {
+ 
+                 }
+             })
+         }
+ 
+     }
+     */
+    const searchProduto = () => {
+        if (description) {
+            if (searchType === 'Produto') {
+                const filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
+                setProdutosFornecedores(filteredProducts)
+            } else {
+                const filteredFornecedor = produtosFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+                setProdutosFornecedores(filteredFornecedor)
+            }
+        } else {
+
+            getAllProductsByFornecedor();
+        }
+    }
+    //Get all Refactored busca produto de fornecedor que foram alterados
+    const fetchRefactored = async ({ fornecedor_id, produto_id }: ExtraType) => {
+        const refactored = await dispatch(fetchAllProdutosFornecedorActualizadoRefatored({ fornecedor_id, produto_id }));
+
+        const unwrapValue = unwrapResult(refactored)
+        console.log(unwrapValue)
+    }
+
+    const fetchReport = async () => {
+        const report = await dispatch(fetchAllProdutosFornecedorActualizado({ fornecedor_id: fornecedorId, produto_id: produtoId }));
+        const reportUnwrap = unwrapResult(report);
+
+        if (reportUnwrap) {
+            setReportProdutoByFornecedor(reportUnwrap)
+            console.log(reportUnwrap)
+        }
 
     }
 
     useEffect(() => {
-        getAllProductsByFornecedor()
+
+        searchProduto()
 
         //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
+    }, [description])
+
+    useEffect(() => {
+        dispatch(update({ description, page: 'Produto' }))
+        getAllProductsByFornecedor()
+        fetchReport()
+        if (produtosFornecedores.length > 0) {
+            setProdutoId(produtosFornecedores[1].produto_id.id)
+            setFornecedorId(produtosFornecedores[1].fornecedor_id.id)
+        }
+        //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
     }, [])
+    console.log(produtoId)
+
+    useEffect(() => {
+        const dataArray = new Array<number>();
+
+        const categoryArray = new Array<string>()
+
+        if (reportProdutoByFornecedor && reportProdutoByFornecedor.length > 0) {
+            reportProdutoByFornecedor.forEach((report) => {
+
+                dataArray.push(report.precosimples_antigo)
+                categoryArray.push(report.inserted_at)
+
+
+            })
+        }
+
+        setOptionsChart({ ...optionsChart, series: [{ name: 'Jairo dos Santos', data: dataArray }], options: { ...optionsChart.options, xaxis: { type: 'datetime', categories: categoryArray } } })
+
+
+
+    }, [reportProdutoByFornecedor, description, searchType])
 
     return (
         <div className='-mt-24 px-5 py-4 flex gap-3 overflow-hide-scroll-bar'>
@@ -142,30 +243,40 @@ const Home = () => {
             </Head>
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0 animate__animated animate__fadeIn'>
-                    <div className='flex justify-between items-center w-[720px] p-2'>
+                    <div className='flex justify-between items-center w-full p-2'>
 
                         <h1 className='text-2xl font-bold'>{`PAINEL DE CONTROLO  ${page === 'Produto' ? '- ' + description : ''}`}</h1>
+                        <div className='flex gap-3 print:invisible'>
+                            <label
+                                htmlFor="Fornecedor"
+                                className='text-md font-bold cursor-pointer '
+                                onClick={() => setSearchType('Fornecedor')}>
+                                <input type={'radio'} id='Fornecedor' name='Searchtype' className='text-md font-bold cursor-pointer' />
+                                &nbsp; Fornecedor
+                            </label>
+                            <label
+                                htmlFor="Produto"
+                                className='text-md font-bold cursor-pointer'
+                                onClick={() => setSearchType('Produto')}>
+                                <input type={'radio'} id='Produto' name='Searchtype' className='text-md font-bold cursor-pointer' />
+                                &nbsp; Produto
+                            </label>
+                        </div>
                     </div>
                     <div className='flex gap-6 flex-wrap items-center justify-center mb-4 mt-2'>
 
-                        <div className='border shadow rounded bg-white  p-3 order-2'>
+                        <div className='border shadow rounded bg-white p-3 order-2'>
                             {/** Gráfico de Preço vs Data */}
-                            <h4 className='text-center font-bold'>Gráfico de Custos</h4>
+                            <h4 className='text-left pl-8 font-bold'>Gráfico de Custos</h4>
                             <Chart
                                 options={optionsChart.options}
                                 series={optionsChart.series}
                                 type="area"
                                 width={400}
-
                             />
                         </div>
                         <div className='border shadow rounded bg-white py-5 px-3 w-[35rem] h-[19rem] flex flex-col print:shadow-none print:border-0 order-1'>
-                            {/** Gráfico à anunciar */}
-                            {/**
-                            *  <div className='flex justify-start'>
-                                    <input type="date" className='rounded border px-2 cursor-pointer' />
-                                </div>
-                            */}
+
                             <div>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
@@ -181,27 +292,25 @@ const Home = () => {
                                     <tbody className='flex flex-col gap-2'>
                                         {
                                             produtosFornecedores.length > 0 ? produtosFornecedores.map((pdtFornecedor, index) => {
-
-                                                return (
-                                                    <tr key={index} className='flex shadow rounded p-1'>
-                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
-                                                        <td className='w-1/5 flex justify-center items-center truncate'>{moment(pdtFornecedor.updated_at).format('L')}</td>
-                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precosimples.toLocaleString('pt', {
-                                                            style: 'currency',
-                                                            currency: 'KWZ'
-                                                        })}</td>
-                                                        <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precotransporte.toLocaleString('pt', {
-                                                            style: 'currency',
-                                                            currency: 'KWZ'
-                                                        })}</td>
-                                                        <td className='w-1/5 flex justify-center items-center truncate'>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
-                                                            style: 'currency',
-                                                            currency: 'KWZ'
-                                                        })}</td>
-
-                                                    </tr>)
-
-
+                                                if (index < 5) {
+                                                    return (
+                                                        <tr key={index} className='flex shadow rounded p-1'>
+                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
+                                                            <td className='w-1/5 flex justify-center items-center truncate'>{moment(pdtFornecedor.updated_at).format('L')}</td>
+                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precosimples.toLocaleString('pt', {
+                                                                style: 'currency',
+                                                                currency: 'KWZ'
+                                                            })}</td>
+                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precotransporte.toLocaleString('pt', {
+                                                                style: 'currency',
+                                                                currency: 'KWZ'
+                                                            })}</td>
+                                                            <td className='w-1/5 flex justify-center items-center truncate'>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
+                                                                style: 'currency',
+                                                                currency: 'KWZ'
+                                                            })}</td>
+                                                        </tr>)
+                                                }
                                             }) :
                                                 (<tr className='flex justify-center items-center' >
                                                     <td colSpan={5} className=' w-full'>Não existe produtos de fornecedores na base de dados</td>
@@ -210,6 +319,7 @@ const Home = () => {
                                         }
                                     </tbody>
                                 </table>
+                                <label className='text-left  mt-3 font-bold'>Total geral: {produtosFornecedores.length}</label>
                             </div>
                         </div>
                     </div>
