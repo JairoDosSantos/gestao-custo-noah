@@ -11,7 +11,7 @@ import { FaEdit, FaTrash, FaUser } from 'react-icons/fa'
 import { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextApiRequest } from 'next';
 import { supabase } from '../../utils/supabaseClient';
 import { useDispatch } from 'react-redux';
 import { deleteFornecedor, fetchFornecedores } from '../../redux/fornecedorSlicee';
@@ -266,5 +266,30 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         }
     }
 }
+
+
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
+}
+
+
 
 export default FornecedorInfo

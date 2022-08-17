@@ -26,6 +26,8 @@ import Image from 'next/image';
 
 //Imagens
 import LoadImage from '../assets/load.gif';
+import { NextApiRequest } from 'next'
+import { supabase } from '../utils/supabaseClient'
 
 
 //Tipagem do formulário
@@ -102,7 +104,17 @@ const Produto = () => {
             setLoad(false)
             if (produtoInserted.payload) {
                 data.produto_id = produtoInserted.payload.id
-                const ProdutoFornecedor = await dispatch(insertProdutoFornecedor(data));
+                const ProdutoFornecedor = await dispatch(insertProdutoFornecedor({
+                    id: data.id,
+                    categoria: data.categoria,
+                    fornecedor_id: data.fornecedor_id,
+                    nomeuser: data.nomeuser,
+                    precosimples: data.precosimples,
+                    produto_id: data.produto_id,
+                    precotransporte: data.precotransporte,
+                    unidade: data.unidade,
+                    updated_at: (new Date()).toDateString()
+                }));
                 setLoad(false)
                 if (ProdutoFornecedor.payload) {
 
@@ -124,7 +136,19 @@ const Produto = () => {
 
             //Cadastrar o produto do fornecedor com os seus preços, caso o produto não exista!
             data.produto_id = idProduto;
-            const ProdutoFornecedor = await dispatch(insertProdutoFornecedor(data));
+            const ProdutoFornecedor = await dispatch(insertProdutoFornecedor(
+                {
+                    id: data.id,
+                    categoria: data.categoria,
+                    fornecedor_id: data.fornecedor_id,
+                    nomeuser: data.nomeuser,
+                    precosimples: data.precosimples,
+                    produto_id: data.produto_id,
+                    precotransporte: data.precotransporte,
+                    unidade: data.unidade,
+                    updated_at: (new Date()).toDateString()
+                }
+            ));
             setLoad(false)
             if (ProdutoFornecedor.payload) {
                 setShowConfirmAlert(true)
@@ -406,6 +430,28 @@ const Produto = () => {
             </div>
         </div >
     )
+}
+
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
 }
 
 export default Produto

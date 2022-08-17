@@ -66,13 +66,13 @@ export const fetchAllProdutosFornecedorActualizado = createAsyncThunk('/painel-c
     try {
         //'*, users!inner(*)'  id,precotransporte_antigo,precosimples_antigo,produtofornecedor_id(id,fornecedor_id(id,nome_fornecedor),produto_id(id,descricao)),inserted_at,updated_at
         const { data, error } = await supabase
-            .from('relationgrafico')
-            .select(`inserted_at,precosimples_antigo,produtofornecedor_id(id,produto_id,fornecedor_id)!inner(*)`)
-            .eq('produtofornecedor_id.produto_id', 2)
-            .eq('produtofornecedor_id.fornecedor_id', 3)
-            .order('inserted_at', { ascending: true })
+            .from('relatorio')
+            .select(`created_at,precosimples_antigo,id,produto_id,fornecedor_id(id,nome_fornecedor)`)
+            .match({ produto_id: 21 })
+            .order('created_at', { ascending: true })
             .limit(5)
 
+        //.eq('produtofornecedor_id.fornecedor_id', 3)
         if (data) {
             return data
         } else {

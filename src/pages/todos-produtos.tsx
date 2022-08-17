@@ -11,6 +11,11 @@ import { deleteProduto, fetchAllProdutos } from '../redux/produtoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { NextApiRequest } from 'next';
+import { supabase } from '../utils/supabaseClient';
+
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
@@ -43,6 +48,8 @@ const TodosProdutos = () => {
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
     const [showErrorAlert, setShowErrorAlert] = useState(false)
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
+
+    const doc = new jsPDF();
 
 
     //estado do produto
@@ -84,6 +91,13 @@ const TodosProdutos = () => {
             removeProduto(idP)
         }
 
+    }
+
+    const printTable = () => {
+
+        autoTable(doc, { html: '#tabelaTodosProdutos', theme: 'grid', includeHiddenHtml: true, useCss: true })
+        //doc.autoTable({ html: '#tabelaProdutos' })
+        doc.save('Relatorio-Todos-Material.pdf')
     }
 
 
@@ -175,12 +189,15 @@ const TodosProdutos = () => {
                 onResolve={ConfirmedRemove}
 
             />
-            <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
+            <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar' >
                 <div className=' border-2 border-dashed rounded p-5 min-h-full animate__animated animate__fadeIn'>
                     <h3 className='font-bold text-2xl'>Relatório - Lista de produtos</h3>
                     <div className='flex gap-5 mt-3'>
-                        <table className='min-w-full'>
+                        <table className='min-w-full' id='tabelaTodosProdutos'>
                             <thead >
+                                <tr className='hidden'>
+                                    <th colSpan={5} className='text-xl py-8 '>Lista de Produtos</th>
+                                </tr>
                                 <tr className='border flex items-center justify-around mx-2 my-4 text-center p-2 shadow-sm rounded bg-gray-500'>
                                     <th className='w-1/6'>ID</th>
                                     <th className='w-1/6'>Descrição</th>
@@ -190,7 +207,7 @@ const TodosProdutos = () => {
 
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody >
                                 {
                                     (produtList && produtList.length > 0) ? (
                                         produtList.map((produto, index) => {
@@ -244,11 +261,11 @@ const TodosProdutos = () => {
                             (produtList && produtList.length > 0) && (
                                 <>
                                     <div className='flex justify-end gap-3'>
-                                        <button className='btn flex space-x-2 items-center'>
+                                        <button onClick={printTable} className='btn flex space-x-2 items-center'>
                                             <FaPrint />
                                             <span>Imprimir</span>
                                         </button>
-                                        <button className='btn bg-green-400 flex space-x-2 items-center'>
+                                        <button className='btn hidden bg-green-400 space-x-2 items-center'>
                                             <FaPrint />
                                             <span>Imprimir tudo</span>
                                         </button>
@@ -266,6 +283,29 @@ const TodosProdutos = () => {
 
         </div >
     )
+}
+
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
 }
 
 export default TodosProdutos

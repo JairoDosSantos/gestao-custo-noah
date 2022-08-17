@@ -104,9 +104,9 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
         const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte), updated_at }))
         const resultUnwrap = unwrapResult(result)
 
-        console.log(data.fornecedor_id)
-        console.log(data.produto_id)
-        console.log(data.precosimples)
+        //console.log(data.fornecedor_id)
+        //console.log(data.produto_id)
+        //console.log(data.precosimples)
         //Pegar o ID do preco/produto que foi cadastrado, e inserir na tabela do relatório gráfico
         //console.log(datas.precosimples)
         //console.log(data.precosimples)

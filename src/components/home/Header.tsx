@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -17,36 +17,63 @@ import { update } from "../../redux/searchGeral"
 //Moment
 import moment from 'moment'
 
-/**
- * type SearchValue = {
-    search: string
+import { fetchAllProdutosFornecedor } from "../../redux/produtoSlice"
+import { unwrapResult } from "@reduxjs/toolkit"
+import { supabase } from "../../utils/supabaseClient"
+
+//Tipagem de ProdutoFornecedor
+type ProdutoFornecedorType = {
+    id: number;
+    produto_id: number;
+    fornecedor_id: number;
+    precosimples: string;
+    precotransporte: string;
+    nomeuser: string;
+    categoria: number;
+    unidade: string;
+    updated_at: string
 }
- */
-//react-hook-form
-//const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<SearchValue>({ mode: 'onChange' });
 
 const Header = () => {
+    const user = supabase.auth.user()
+    const session = supabase.auth.session()
+
+    console.log({ user })
+    console.log({ session })
 
     const [activo, setActivo] = useState('home');
     const [showNotification, setShowNotification] = useState(false)
 
     const [search, setSearch] = useState('');
-    const dispatch = useDispatch();
-    /**
-     * 
-     * 
-        const Data1 = moment().format('l');
-        const Data2 = moment('12/12/2022').format('l')
-    
-        const dta2 = Number((Data1.split('/'))[1])
-        const dta = Number((Data2.split('/'))[1])
-    
-    
-        //console.log(moment().format('l'))
-        const data3 = dta - dta2;
-        console.log(data3)
-    
-     */
+    const dispatch = useDispatch<any>();
+
+    const [precosTodos, setPrecosTodos] = useState<Array<ProdutoFornecedorType>>([])
+
+
+    const getAllPrecosByProdutos = async () => {
+        const allPrecos = await dispatch(fetchAllProdutosFornecedor());
+        const allPrecosUnwrap = unwrapResult(allPrecos);
+
+        const dateNow = new Date();
+        const dateNowFormated = moment(dateNow).format('L')
+        // console.log(dateNowFormated)
+        setPrecosTodos(allPrecosUnwrap)
+
+        if (precosTodos && precosTodos.length > 0) {
+            let arrayPrecos = []
+            precosTodos.forEach((produto) => {
+                let dateUpdate = moment(produto.updated_at).format('L')
+                console.log(dateUpdate)
+                //let resutlDate = dateUpdate.diff(dateNowFormated)
+                //console.log(resutlDate)
+            })
+        }
+    }
+
+    useEffect(() => {
+        getAllPrecosByProdutos()
+    }, [])
+
     const handleSearch = (data: FormEvent) => {
         setSearch((data.target as HTMLInputElement).value)
 
@@ -56,20 +83,21 @@ const Header = () => {
     return (
         <header className="bg-gray-50 text-black h-72  py-2 px-8">
             <div className="flex justify-between print:justify-end items-center border-b border-gray-100">
-                <div className="print:hidden">
+                <div className={` ${session ? 'flex' : 'hidden'}`}>
                     <Image src={Logo} height={100} width={100} objectFit='contain' />
                 </div>
                 <div className="flex justify-end items-center gap-3 ">
                     <div className="print:inline-block hidden">
                         <Image src={Logo} height={100} width={100} objectFit='contain' />
                     </div>
-                    <div className="print:hidden flex gap-3 relative">
+                    <div className={`print:hidden ${session ? 'flex' : 'hidden'} gap-3 relative`} >
                         <button onClick={() => setShowNotification(!showNotification)}
-                            className={`cursor-pointer hover:brightness-75 relative ${!showNotification && 'animate__animated animate__pulse animate__infinite'} print:hidden`}>
+                            className={`cursor-pointer hover:brightness-75 relative ${!showNotification && 'animate__animated animate__pulse animate__infinite'} print:hidden`}
+                        >
                             <AiOutlineNotification />
                             <span
                                 className={`px-2 py-1 text-xs  bg-red-600 animate__animated animate__pulse animate__infinite  text-white rounded-full absolute bottom-2 right-2 
-                                        ${showNotification ? 'hidden' : 'flex'}`}>
+                                            ${showNotification ? 'hidden' : 'flex'}`}>
                                 3
                             </span>
                         </button>
@@ -93,19 +121,18 @@ const Header = () => {
                             >
                                 O produto z do fornecedor k actualizado há 4 semanas! <FaTrash className="text-blue-700 cursor-pointer" />
                             </p>
-
                         </div>
                         <Image src={User} className=' rounded-full' objectFit="cover" height={25} width={25} />
                     </div>
                 </div>
-            </div>
-            <div className="flex lg:hidden justify-between items-center print:hidden ">
+            </div >
+            <div className={`${session ? 'flex' : 'hidden'} lg:hidden justify-between items-center print:hidden`}>
                 <FaList />
                 <button className="btn rounded-full bg-gray-200">
                     <FaSearch />
                 </button>
             </div>
-            <nav className="py-5 hidden lg:flex justify-between items-center">
+            <nav className={`py-5 hidden ${session && 'lg:flex'} justify-between items-center`}>
                 <ul className="flex space-x-8 ">
                     <li onClick={() => setActivo('home')} className={`link-menu ${activo === 'home' && 'actived'}`}>
                         <Link href='/home'>
@@ -158,5 +185,7 @@ const Header = () => {
         </header >
     )
 }
+
+
 
 export default Header

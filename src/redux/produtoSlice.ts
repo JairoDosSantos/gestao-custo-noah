@@ -45,7 +45,7 @@ export const fetchAllProdutosFornecedor = createAsyncThunk('/produtos/Fornecedor
 
         const { data, error } = await supabase
             .from('produtofornecedor')
-            .select(`id,precotransporte,precosimples,unidade,nomeuser,produto_id(id,descricao),fornecedor_id(id,nome_fornecedor,telefone1,telefone2,endereco),sub_category_id(id,descricao)`).order('precosimples', { ascending: true })
+            .select(`id,precotransporte,precosimples,unidade,nomeuser,produto_id(id,descricao),fornecedor_id(id,nome_fornecedor,telefone1,telefone2,endereco),sub_category_id(id,descricao),updated_at`).order('precosimples', { ascending: true })
 
         if (data) {
             return data

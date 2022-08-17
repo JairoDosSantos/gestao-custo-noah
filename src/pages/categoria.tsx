@@ -29,6 +29,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { update } from '../redux/searchGeral';
 import Image from 'next/image';
+import { NextApiRequest } from 'next';
+import { supabase } from '../utils/supabaseClient';
 
 
 //Tipagem
@@ -285,5 +287,28 @@ const Categoria = () => {
         </div>
     )
 }
+
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
+}
+
 
 export default Categoria

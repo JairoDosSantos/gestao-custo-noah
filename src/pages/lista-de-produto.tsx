@@ -4,6 +4,7 @@ import Head from 'next/head'
 
 //Imagens do Perfil do fornecedor
 import Fornecedor from '../assets/user.png'
+import Logo from '../assets/noah.png'
 
 import { FaPrint } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,10 @@ import { update } from '../redux/searchGeral';
 import { fetchAllProdutosFornecedor } from '../redux/produtoSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { NextApiRequest } from 'next';
+import { supabase } from '../utils/supabaseClient';
 
 type FornecedorType = {
     id: number;
@@ -58,6 +63,7 @@ type ModalType = {
 
 const ListaProdutos = () => {
 
+    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
     const [data, setData] = useState({} as ModalType);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -67,6 +73,8 @@ const ListaProdutos = () => {
 
     const { description, page } = useSelector((state: RootState) => state.Search)
     const dispatch = useDispatch<any>()
+
+    const doc = new jsPDF('landscape');
 
     const getAllProducts = async () => {
         const prodctsFornecedores = await dispatch(fetchAllProdutosFornecedor());
@@ -92,6 +100,13 @@ const ListaProdutos = () => {
             getAllProducts();
         }
 
+    }
+
+    const printTable = () => {
+
+        autoTable(doc, { html: '#tabelaProdutos', theme: 'grid', includeHiddenHtml: true, useCss: true })
+        //doc.autoTable({ html: '#tabelaProdutos' })
+        doc.save('Relatorio-Custo-Material.pdf')
     }
 
     useEffect(() => {
@@ -163,8 +178,16 @@ const ListaProdutos = () => {
                         </div>
                     </div>
                     <div className='flex gap-5 mt-3'>
-                        <table className='min-w-full'>
+                        <table className='min-w-full' id='tabelaProdutos'>
                             <thead>
+                                <tr className='hidden'>
+                                    <th colSpan={7} className='flex justify-between items-center p-8'>
+                                        <span>
+                                            RELATÓRIO DE CUSTO DE MATERIAL- {description}
+                                        </span>
+                                    </th>
+
+                                </tr>
                                 <tr
                                     className='flex items-center justify-around  mx-3 my-4 text-center border p-2 shadow-sm rounded bg-gray-500'>
                                     <th className=' w-1/6'>Fornecedor</th>
@@ -216,6 +239,12 @@ const ListaProdutos = () => {
                                 }
 
                             </tbody>
+                            <tfoot className='hidden mt-5'>
+                                <tr className='font-bold bg-white py-5'>
+
+                                    <td colSpan={7} className='text-center p-8'>Luanda, aos {(new Date().getDate())} de {meses[(new Date().getMonth()) - 1]}.</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div>
@@ -225,11 +254,11 @@ const ListaProdutos = () => {
                                 <h4><span className='font-bold'>Gerado por</span> : Jairo dos Santos</h4>
                             </div>
                             <div className='flex gap-3'>
-                                <button onClick={() => print()} className='btn flex space-x-2 items-center print:hidden shadow'>
+                                <button onClick={printTable} className='btn flex space-x-2 items-center print:hidden shadow'>
                                     <FaPrint />
                                     <span>Imprimir</span>
                                 </button>
-                                <button onClick={() => print()} className='btn bg-green-400 flex space-x-2 items-center print:hidden shadow'>
+                                <button onClick={() => print()} className='btn hidden bg-green-400  space-x-2 items-center print:hidden shadow'>
                                     <FaPrint />
                                     <span>Imprimir tudo</span>
                                 </button>
@@ -245,6 +274,29 @@ const ListaProdutos = () => {
 
         </div>
     )
+}
+
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
 }
 
 export default ListaProdutos

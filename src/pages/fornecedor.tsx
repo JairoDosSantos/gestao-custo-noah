@@ -22,6 +22,7 @@ import Image from 'next/image';
 
 //Imagens
 import LoadImage from '../assets/load.gif';
+import { GetServerSideProps, NextApiRequest } from 'next';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
@@ -303,4 +304,25 @@ const fornecedor = () => {
     )
 }
 
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
+}
 export default fornecedor

@@ -7,7 +7,7 @@ import { FaEdit, FaPrint, FaTrash } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import EditarProdutoModal from '../../components/produto/ModalEditarProduto';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, NextApiRequest } from 'next';
 import { supabase } from '../../utils/supabaseClient';
 import { deleteProduto } from '../../redux/produtoSlice';
 import { useDispatch } from 'react-redux';
@@ -289,5 +289,27 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 
+export async function getServerSideProps(req: NextApiRequest) {
+
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            user
+        }
+    }
+}
 
 export default InfoProduto

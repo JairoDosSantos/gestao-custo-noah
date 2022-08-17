@@ -10,6 +10,9 @@ import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado, fetc
 import { unwrapResult } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { update } from '../redux/searchGeral';
+import { NextApiRequest } from 'next';
+import { supabase } from '../utils/supabaseClient';
+import { Auth } from '@supabase/ui';
 
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
@@ -57,6 +60,13 @@ type RelatorioProdutoType = {
     precotransporte_antigo: string;
     inserted_at: string
 }
+//Tipagem de relatorio Gráfico
+type RelatorioProdutoTypeRef = {
+    produto_id: number;
+    precosimples_antigo: number;
+    fornecedor_id: number;
+    created_at: string
+}
 
 const Home = () => {
 
@@ -68,7 +78,7 @@ const Home = () => {
 
     //Objecto Produto-Fornecedor
     const [produtosFornecedores, setProdutosFornecedores] = useState<Array<ProdutoFornecedorType>>([])
-    const [reportProdutoByFornecedor, setReportProdutoByFornecedor] = useState<Array<RelatorioProdutoType>>([])
+    const [reportProdutoByFornecedor, setReportProdutoByFornecedor] = useState<Array<RelatorioProdutoTypeRef>>([])
 
     const [categories, setCategories] = useState<Array<string>>([])
     const [dataChart, setdataChart] = useState<Array<number>>([])
@@ -136,7 +146,7 @@ const Home = () => {
 
 
 
-    //Método que busca todos os produtos de fornecedores no banco dedados pelo reduxToolkit
+    //Método que busca todos os produtos de fornecedores no banco de dados pelo reduxToolkit
     const getAllProductsByFornecedor = async () => {
         const datas = await dispatch(fetchAllProdutosFornecedor());
         const dataUnwrap = unwrapResult(datas);
@@ -147,24 +157,10 @@ const Home = () => {
 
     }
 
-    //Método que busca todos os produtos não actualizado há um mês atrás
-    /**
-     *  const searchAllProductsNotActualizedOneMonthAgo = async () => {
- 
-         const notActualized = await dispatch(fetchAllProdutosFornecedor())
-         const notActualizedUnwrap = unwrapResult(notActualized);
-         if (notActualizedUnwrap) {
-             const todosAntigos = notActualizedUnwrap.filter((notAct) => {
-                 if (notAct.moment('L')) {
- 
-                 }
-             })
-         }
- 
-     }
-     */
+
     const searchProduto = () => {
-        if (description) {
+
+        if (description !== '') {
             if (searchType === 'Produto') {
                 const filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
                 setProdutosFornecedores(filteredProducts)
@@ -173,17 +169,10 @@ const Home = () => {
                 setProdutosFornecedores(filteredFornecedor)
             }
         } else {
-
-            getAllProductsByFornecedor();
+            getAllProductsByFornecedor()
         }
     }
-    //Get all Refactored busca produto de fornecedor que foram alterados
-    const fetchRefactored = async ({ fornecedor_id, produto_id }: ExtraType) => {
-        const refactored = await dispatch(fetchAllProdutosFornecedorActualizadoRefatored({ fornecedor_id, produto_id }));
 
-        const unwrapValue = unwrapResult(refactored)
-        console.log(unwrapValue)
-    }
 
     const fetchReport = async () => {
         const report = await dispatch(fetchAllProdutosFornecedorActualizado({ fornecedor_id: fornecedorId, produto_id: produtoId }));
@@ -191,31 +180,16 @@ const Home = () => {
 
         if (reportUnwrap) {
             setReportProdutoByFornecedor(reportUnwrap)
-            console.log(reportUnwrap)
+
         }
 
     }
 
-    useEffect(() => {
 
-        searchProduto()
 
-        //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
-    }, [description])
 
-    useEffect(() => {
-        dispatch(update({ description, page: 'Produto' }))
-        getAllProductsByFornecedor()
+    function start() {
         fetchReport()
-        if (produtosFornecedores.length > 0) {
-            setProdutoId(produtosFornecedores[1].produto_id.id)
-            setFornecedorId(produtosFornecedores[1].fornecedor_id.id)
-        }
-        //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
-    }, [])
-    console.log(produtoId)
-
-    useEffect(() => {
         const dataArray = new Array<number>();
 
         const categoryArray = new Array<string>()
@@ -224,24 +198,46 @@ const Home = () => {
             reportProdutoByFornecedor.forEach((report) => {
 
                 dataArray.push(report.precosimples_antigo)
-                categoryArray.push(report.inserted_at)
-
-
+                categoryArray.push(report.created_at)
             })
         }
-
+        //  setCategories(categoryArray)
+        //setdataChart(dataArray)
+        // console.log(dataChart)
         setOptionsChart({ ...optionsChart, series: [{ name: 'Jairo dos Santos', data: dataArray }], options: { ...optionsChart.options, xaxis: { type: 'datetime', categories: categoryArray } } })
 
+    }
+
+    useEffect(() => {
+
+        dispatch(update({ description, page: 'Produto' }))
+
+        getAllProductsByFornecedor()
+
+        fetchReport()
+
+        if (produtosFornecedores.length > 0) {
+            setProdutoId(produtosFornecedores[0].produto_id.id)
+            setFornecedorId(produtosFornecedores[0].fornecedor_id.id)
+        }
 
 
-    }, [reportProdutoByFornecedor, description, searchType])
+
+        //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
+    }, [])
+
+    useEffect(() => { start(); }, [reportProdutoByFornecedor])
+    useEffect(() => {
+        searchProduto()
+        start();
+    }, [page, description])
 
     return (
         <div className='-mt-24 px-5 py-4 flex gap-3 overflow-hide-scroll-bar'>
             <Head>
                 <title>Painel de controlo</title>
             </Head>
-            <div className='bg-white  w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
+            <div className='bg-white w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0 animate__animated animate__fadeIn'>
                     <div className='flex justify-between items-center w-full p-2'>
 
@@ -329,6 +325,27 @@ const Home = () => {
 
         </div >
     )
+}
+
+export async function getServerSideProps(req: NextApiRequest) {
+    const { user } = await supabase.auth.api.getUserByCookie(req)
+    const session = supabase.auth.session()
+
+    //console.log(session)
+    //  const { user: UserAuth, session: S } = Auth.useUser()
+    //console.log(UserAuth)
+    if (session && !session.user) {
+        // If no user, redirect to index.
+        return { props: {}, redirect: { destination: '/', permanent: false } }
+    }
+
+    // If there is a user, return it.
+    return {
+        props:
+        {
+            session
+        }
+    }
 }
 
 export default Home
