@@ -154,7 +154,7 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                             required: { message: "Por favor, introduza o nome do fornecedor.", value: true },
                             minLength: { message: "Preenchimento obrigatório!", value: 1 },
                           })}
-                          defaultValue={data.nome_fornecedor}
+                          defaultValue={data?.nome_fornecedor}
                         />
 
                         <input
@@ -166,7 +166,7 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                             minLength: { message: "Número de telefone 1 incompleto!", value: 9 },
                             min: { message: 'Por favor, insira um numéro de telefone válido', value: 900000000 }
                           })}
-                          defaultValue={data.telefone1}
+                          defaultValue={data?.telefone1}
                         />
                       </div>
                       <div className='flex gap-2 justify-center align-center'>
@@ -179,12 +179,12 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                             minLength: { message: "Número de telefone 2 incompleto!", value: 9 },
                             min: { message: 'Por favor, insira um numéro de telefone 2 válido', value: 900000000 }
                           })}
-                          defaultValue={data.telefone2}
+                          defaultValue={data?.telefone2}
                         />
 
                         <select
                           {...register('tipo_fornecedor')}
-                          defaultValue={data.tipo_fornecedor}
+                          defaultValue={data?.tipo_fornecedor}
                           className='rounded shadow w-1/2 cursor-pointer'>
                           <option value="#">Tipo de fornecedor</option>
                           <option value="Nacional">Nacional</option>
@@ -195,7 +195,7 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                       <div className='flex gap-2 justify-center align-center'>
                         <textarea
                           {...register('endereco')}
-                          defaultValue={data.endereco}
+                          defaultValue={data?.endereco}
                           rows={3}
                           cols={58}
                           className='px-4 py-2 rounded shadow w-full'
@@ -222,7 +222,6 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                       </div>
                       <div className='text-red-700 mt-2 text-center'>
                         <p className='text-sm '>Os campos com * o seu preenchimento é de carácter obrigatório.</p>
-
                         <p className='text-sm'>
                           {errors.nome_fornecedor && (errors.nome_fornecedor.message)}
                         </p>

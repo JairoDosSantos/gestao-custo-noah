@@ -157,7 +157,7 @@ export default function EditarProdutoModal({ isOpen, setIsOpen, data }: EditarMo
                                                         required: { message: "Por favor, introduza a descrição do projecto.", value: true },
                                                         minLength: { message: "Preenchimento obrigatório!", value: 1 },
                                                     })}
-                                                    defaultValue={data.descricao}
+                                                    defaultValue={data?.descricao}
                                                 />
                                                 {/**Adicionar um auto complete component para categoria ou um select*/}
 

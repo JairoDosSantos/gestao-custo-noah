@@ -146,7 +146,7 @@ export default function EditarCategoriaModal({ isOpen, setIsOpen, data }: Editar
                                                         minLength: { message: "Preenchimento obrigatório!", value: 5 },
                                                     })}
 
-                                                    defaultValue={data.descricao}
+                                                    defaultValue={data?.descricao}
                                                 />
 
                                             </div>

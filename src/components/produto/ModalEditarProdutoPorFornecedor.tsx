@@ -262,7 +262,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                                                         {...register('precosimples', {
                                                             min: { message: 'Por favor, insira um preço válido', value: 0 },
                                                         })}
-                                                        defaultValue={data.precosimples}
+                                                        defaultValue={data?.precosimples}
                                                     />
                                                 </div>
 
@@ -278,7 +278,7 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                                                         {...register('precotransporte', {
                                                             min: { message: 'Por favor, insira um preço válido', value: 0 },
                                                         })}
-                                                        defaultValue={data.precotransporte}
+                                                        defaultValue={data?.precotransporte}
                                                     />
                                                 </div>
                                             </div>
