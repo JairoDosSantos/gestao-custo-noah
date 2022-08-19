@@ -110,7 +110,7 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
-                <title>Fornecedor {fornecedo.nome_fornecedor}</title>
+                <title>Fornecedor {fornecedo?.nome_fornecedor}</title>
             </Head>
             {/**Modal para editar fornecedor */}
             <EditarModal data={fornecedo} isOpen={showModal} setIsOpen={setShowModal} />
@@ -167,26 +167,26 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
-                    <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR - {fornecedo.nome_fornecedor}</h3>
+                    <h3 className='text-center font-bold text-xl'>INFORMAÇÕES DO FORNECEDOR - {fornecedo?.nome_fornecedor}</h3>
                     <div className='flex flex-col lg:flex-row gap-4 lg:justify-between justify-center mt-2 lg:mt-0 '>
                         <div className='flex flex-col space-y-4 order-2 lg:order-1'>
                             <div>
-                                <label className='font-bold'>ID : </label><span>{fornecedo.id}</span>
+                                <label className='font-bold'>ID : </label><span>{fornecedo?.id}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Nome : </label><span>{fornecedo.nome_fornecedor}</span>
+                                <label className='font-bold'>Nome : </label><span>{fornecedo?.nome_fornecedor}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Telefone : </label><span>{fornecedo.telefone1}</span>
+                                <label className='font-bold'>Telefone : </label><span>{fornecedo?.telefone1}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Telefone Alternativo: </label><span>{fornecedo.telefone2}</span>
+                                <label className='font-bold'>Telefone Alternativo: </label><span>{fornecedo?.telefone2}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Endereço : </label><span>{fornecedo.endereco}</span>
+                                <label className='font-bold'>Endereço : </label><span>{fornecedo?.endereco}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Tipo de Fornecedor : </label><span>{fornecedo.tipo_fornecedor}</span>
+                                <label className='font-bold'>Tipo de Fornecedor : </label><span>{fornecedo?.tipo_fornecedor}</span>
                             </div>
                             <div>
                                 <label className='font-bold mb-2'>Fornecedor de:</label>

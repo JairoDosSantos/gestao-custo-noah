@@ -170,12 +170,12 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                     <div className='flex flex-col lg:flex-row gap-4 lg:justify-between lg:mt-0 mt-2'>
                         <div className='flex flex-col  space-y-4'>
                             <div>
-                                <label className='font-bold'>Nome : </label><span>{produto.descricao}</span>
+                                <label className='font-bold'>Nome : </label><span>{produto?.descricao}</span>
                             </div>
                             {
                                 /**
                                  * <div>
-                                        <label className='font-bold'>Menor Preço símples : </label><span>{produto.}/span>
+                                        <label className='font-bold'>Menor Preço símples : </label><span>{produto?.}/span>
                                     </div>
                                     <div>
                                         <label className='font-bold'>Menor Preço C/transporte : </label><span>1.500,00 AKWZ</span>
@@ -183,7 +183,7 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                                  */
                             }
                             <div>
-                                <label className='font-bold'>Cadastrado por : </label><span>{produto.nomeuser}</span>
+                                <label className='font-bold'>Cadastrado por : </label><span>{produto?.nomeuser}</span>
                             </div>
                             <div>
                                 <label className='font-bold mb-2'>Categoria a que pertence:</label>

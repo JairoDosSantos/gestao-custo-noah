@@ -90,7 +90,7 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
-                <title>Categoria {categoria.descricao}</title>
+                <title>Categoria {categoria?.descricao}</title>
             </Head>
 
             {/** Edit Modal */}
@@ -152,20 +152,20 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-y-hidden'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>
-                    <h3 className='text-center font-bold text-xl'>Informações da categoria {categoria.id}</h3>
+                    <h3 className='text-center font-bold text-xl'>Informações da categoria {categoria?.id}</h3>
                     <div className='flex gap-4 justify-between'>
                         <div className='flex flex-col space-y-4'>
                             <div>
-                                <label className='font-bold'>ID : </label><span>{categoria.id}</span>
+                                <label className='font-bold'>ID : </label><span>{categoria?.id}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Descrição : </label><span>{categoria.descricao}</span>
+                                <label className='font-bold'>Descrição : </label><span>{categoria?.descricao}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Data de cadastro : </label><span>{categoria.created_at}</span>
+                                <label className='font-bold'>Data de cadastro : </label><span>{categoria?.created_at}</span>
                             </div>
                             <div>
-                                <label className='font-bold'>Cadastrado por : </label><span>{categoria.nomeuser}</span>
+                                <label className='font-bold'>Cadastrado por : </label><span>{categoria?.nomeuser}</span>
                             </div>
                             <div>
                                 <label className='font-bold'>Sub-Categorias : </label>
