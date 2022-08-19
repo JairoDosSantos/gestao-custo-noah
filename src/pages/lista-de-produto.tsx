@@ -277,7 +277,8 @@ const ListaProdutos = () => {
     )
 }
 
-export async function getServerSideProps(req: NextApiRequest) {
+/**
+ * export async function getServerSideProps(req: NextApiRequest) {
 
     // const { user } = await supabase.auth.api.getUserByCookie(req)
     //const session = supabase.auth.session()
@@ -301,5 +302,6 @@ export async function getServerSideProps(req: NextApiRequest) {
         }
     }
 }
+ */
 
 export default ListaProdutos

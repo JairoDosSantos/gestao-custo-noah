@@ -285,7 +285,8 @@ const TodosProdutos = () => {
         </div >
     )
 }
-
+/**
+ * 
 export async function getServerSideProps(req: NextApiRequest) {
 
     // const { user } = await supabase.auth.api.getUserByCookie(req)
@@ -310,5 +311,6 @@ export async function getServerSideProps(req: NextApiRequest) {
         }
     }
 }
+ */
 
 export default TodosProdutos

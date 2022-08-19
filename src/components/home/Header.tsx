@@ -98,9 +98,10 @@ const Header = () => {
 
         dispatch(update({ description: search, page: 'Produto' }))
     }
+    //isAuthed
     return (
         <header className="bg-gray-50 text-black h-72">
-            <div className={` ${(isAuthed) ? 'flex flex-col' : 'hidden'}   py-2 px-8`}>
+            <div className={` ${(routes.pathname === '/') ? 'hidden' : 'flex flex-col'}   py-2 px-8`}>
                 <div>
                     <div className="flex justify-between items-center border-b border-gray-100">
 
