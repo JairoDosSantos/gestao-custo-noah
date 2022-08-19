@@ -4,13 +4,18 @@ export const searchGeral = createSlice({
     name: 'Search',
     initialState: {
         description: '',
-        page: ''
+        page: '',
+        userAuth: ''
     },
     reducers: {
         update: (state, action) => {
             state.description = action.payload.description;
             state.page = action.payload.page
+        },
+        updateUser: (state, action) => {
+            state.userAuth = action.payload.userAuth
         }
+
     }
 })
 

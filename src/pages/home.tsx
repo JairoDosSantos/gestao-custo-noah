@@ -13,6 +13,7 @@ import { update } from '../redux/searchGeral';
 import { NextApiRequest } from 'next';
 import { supabase } from '../utils/supabaseClient';
 import { Auth } from '@supabase/ui';
+import api from '../service/api';
 
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
@@ -288,7 +289,7 @@ const Home = () => {
                                     <tbody className='flex flex-col gap-2'>
                                         {
                                             produtosFornecedores.length > 0 ? produtosFornecedores.map((pdtFornecedor, index) => {
-                                                if (index < 5) {
+                                                if (index < 4) {
                                                     return (
                                                         <tr key={index} className='flex shadow rounded p-1'>
                                                             <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
@@ -328,22 +329,35 @@ const Home = () => {
 }
 
 export async function getServerSideProps(req: NextApiRequest) {
-    const { user } = await supabase.auth.api.getUserByCookie(req)
-    const session = supabase.auth.session()
+    //  const { user } = await supabase.auth.api.getUserByCookie(req)
+    // const session = supabase.auth.session()
 
-    //console.log(session)
-    //  const { user: UserAuth, session: S } = Auth.useUser()
+    // console.log(user)
+    //const user = supabase.auth.user()
     //console.log(UserAuth)
-    if (session && !session.user) {
+
+    // const response = await fetch(`http://localhost:3000/api/getUser`).then((response) =>
+    //   response.json()
+    //);
+    const res = await api.get('api/getUser');
+
+    const { user } = res.data;
+
+    if (!user) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
+
+    //https://www.freecodecamp.org/news/the-complete-guide-to-full-stack-development-with-supabas/   doc-full stack supabase App with Nextjs
+    //https://jitsu.com/blog/supabase-nextjs-middleware
+    //https://github.com/vercel/next.js/blob/canary/examples/with-supabase-auth-realtime-db/pages/index.js
+    //https://nextjs.org/docs/authentication
 
     // If there is a user, return it.
     return {
         props:
         {
-            session
+            user
         }
     }
 }

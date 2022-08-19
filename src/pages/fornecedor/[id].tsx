@@ -268,7 +268,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 }
 
 
-export async function getServerSideProps(req: NextApiRequest) {
+/**
+ * export async function getServerSideProps(req: NextApiRequest) {
 
     const { user } = await supabase.auth.api.getUserByCookie(req)
 
@@ -277,7 +278,7 @@ export async function getServerSideProps(req: NextApiRequest) {
     //console.log(session)
     //  const { user: UserAuth, session: S } = Auth.useUser()
     //console.log(UserAuth)
-    if (session && !session.user) {
+    if (user) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
@@ -289,7 +290,7 @@ export async function getServerSideProps(req: NextApiRequest) {
         }
     }
 }
-
+ */
 
 
 export default FornecedorInfo

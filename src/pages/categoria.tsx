@@ -31,6 +31,7 @@ import { update } from '../redux/searchGeral';
 import Image from 'next/image';
 import { NextApiRequest } from 'next';
 import { supabase } from '../utils/supabaseClient';
+import api from '../service/api';
 
 
 //Tipagem
@@ -290,14 +291,16 @@ const Categoria = () => {
 
 export async function getServerSideProps(req: NextApiRequest) {
 
-    const { user } = await supabase.auth.api.getUserByCookie(req)
+    // const { user } = await supabase.auth.api.getUserByCookie(req)
+    //const session = supabase.auth.session()
+    const res = await api.get('api/getUser');
 
-    const session = supabase.auth.session()
+    const { user } = res.data;
 
     //console.log(session)
     //  const { user: UserAuth, session: S } = Auth.useUser()
     //console.log(UserAuth)
-    if (session && !session.user) {
+    if (!user) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }

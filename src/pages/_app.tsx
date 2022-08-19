@@ -7,19 +7,37 @@ import { store } from '../redux/store';
 import 'animate.css'
 import { Auth } from '@supabase/ui'
 import { supabase } from '../utils/supabaseClient';
+import { useEffect, useState } from 'react';
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async () => checkUser()
+    )
+    checkUser()
+    return () => {
+      authListener?.unsubscribe()
+    };
+  }, [])
+
+  async function checkUser() {
+    const user = supabase.auth.user()
+    //setUser(user)
+  }
+
   return (
     <Provider store={store}>
 
-      <Auth.UserContextProvider supabaseClient={supabase}>
-        <Header />
-        <Head>
-          <title>Sistema de gestão de preços por fornecedores</title>
-          <link rel="icon" href='/noah.png' />
-        </Head>
-        <Component {...pageProps} />
-      </Auth.UserContextProvider >
+      <Header />
+      <Head>
+        <title>Sistema de gestão de preços por fornecedores</title>
+        <link rel="icon" href='/noah.png' />
+      </Head>
+      <Component {...pageProps} />
+
     </Provider>
   )
 }
