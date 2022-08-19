@@ -189,7 +189,7 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                                 <label className='font-bold mb-2'>Categoria a que pertence:</label>
                                 <ul className='flex flex-col gap-3 mt-1 list-disc ml-8'>
                                     {
-                                        fornecedores.length > 0 && fornecedores.map((fornecedor, index) => (
+                                        fornecedores && fornecedores.map((fornecedor, index) => (
                                             <li key={index}>
                                                 {fornecedor.sub_category_id.descricao}
                                             </li>
@@ -201,7 +201,7 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                                 <label className='font-bold mb-2'>Fornecedores:</label>
                                 <ul className='flex flex-col gap-3 mt-1 list-disc ml-8'>
                                     {
-                                        fornecedores.length > 0 && fornecedores.map((fornecedor, index) => (
+                                        fornecedores && fornecedores.map((fornecedor, index) => (
                                             <li key={index}>{fornecedor.fornecedor_id.nome_fornecedor}
                                                 <span className='text-gray-400 text-xs'>- {fornecedor.precosimples.toLocaleString('pt', {
                                                     style: 'currency',
