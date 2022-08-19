@@ -171,7 +171,7 @@ const CategoriaItem = ({ categoria, subcategoria }: CategoryProps) => {
                                 <label className='font-bold'>Sub-Categorias : </label>
                                 <ul className="ml-6">
                                     {
-                                        subcategoria && subcategoria.map((sub, index) => (
+                                        subcategoria.length > 0 && subcategoria.map((sub, index) => (
                                             <li key={index} className='list-disc'> {sub.descricao}</li>
                                         ))
                                     }
