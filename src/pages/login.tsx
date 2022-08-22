@@ -110,8 +110,8 @@ const Login: NextPage = () => {
                 <h2 className='text-lg font-extralight'>Insira o seu e-mail e a senha para começar</h2>
             </div>
 
-            <div className='container mt-4 flex space-x-2'>
-                <div className='border-r p-6 w-1/2'>
+            <div className='container mt-4 flex flex-col lg:flex-row  space-x-2'>
+                <div className='border-r p-6 lg:w-1/2'>
                     <form className='flex flex-col' onSubmit={signInUser}>
                         <label htmlFor="email" className='font-bold'>E-mail</label>
                         <input
@@ -141,7 +141,7 @@ const Login: NextPage = () => {
                         <div className={`px-4 py-3 mt-2  flex justify-center border border-green-400 text-green-400 font-bold shadow-sm ${showSuccess}`}>Login efectuado com sucesso.</div>
                     </form>
                 </div>
-                <div className='p-6 w-1/2'>
+                <div className='p-6 lg:w-1/2'>
                     <h1 className='font-semibold'>Ou aceda ao "sistema" com outra conta</h1>
                     <div className='space-y-2 mt-2'>
                         <button className='login-social-btn' onClick={logOut}>
