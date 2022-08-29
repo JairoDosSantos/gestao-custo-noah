@@ -13,10 +13,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
-import { NextApiRequest } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
 import { supabase } from '../utils/supabaseClient';
 import api from '../service/api';
-
+import nookies from 'nookies'
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
@@ -58,7 +60,7 @@ const TodosProdutos = () => {
 
     //Estado para edição do Produto
     const [data, setData] = useState<ProddutoType>({} as ProddutoType)
-
+    const { description, page } = useSelector((state: RootState) => state.Search)
     //Id do produto a ser deletado
     const [idP, setidP] = useState(0)
 
@@ -73,6 +75,8 @@ const TodosProdutos = () => {
             setProdutList(allProducts)
         }
     }
+
+    const fetechedProducts = description ? produtList.filter(produto => produto.descricao.toLowerCase().includes(description.toLowerCase())) : []
 
     const removeProduto = async (id: number) => {
 
@@ -208,9 +212,10 @@ const TodosProdutos = () => {
 
                                 </tr>
                             </thead>
-                            <tbody >
+                            <tbody>
                                 {
-                                    (produtList && produtList.length > 0) ? (
+
+                                    (produtList && produtList.length > 0 && fetechedProducts && fetechedProducts.length === 0) ?
                                         produtList.map((produto, index) => {
                                             if (index < 3) {
                                                 return (
@@ -245,11 +250,41 @@ const TodosProdutos = () => {
                                                 )
                                             }
                                         })
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={4} className='text-center'>Não existe produto na base de dados</td>
-                                        </tr>
-                                    )
+                                        : (fetechedProducts && fetechedProducts.length > 0 && fetechedProducts.map((produto, index) => {
+                                            return (
+                                                <tr
+                                                    key={index}
+                                                    className=' hover:cursor-pointer flex mx-3 items-center justify-around my-2 shadow rounded p-2 text-center'>
+
+                                                    <td className='w-1/6 '>{produto.id}</td>
+                                                    <td
+                                                        onClick={() => router.push(`/produto-info/${produto.id}`)}
+                                                        className='w-1/6 underline hover:text-gray-400'>{produto.descricao}</td>
+                                                    <td className='w-1/6'>{produto.nomeuser}</td>
+                                                    <td className='w-1/6 flex justify-center'>
+                                                        <button
+                                                            onClick={() => { handleEditProduct(produto.id) }}
+                                                            className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
+                                                            title='Editar'
+                                                        >
+                                                            <FaEdit />
+                                                        </button>
+                                                    </td>
+                                                    <td className='w-1/6 text-center flex items-center justify-center'>
+                                                        <button
+                                                            onClick={() => { setShowQuestionAlert(true); setidP(produto.id) }}
+                                                            className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
+                                                            title='Apagar'
+                                                        >
+                                                            <FaTrash />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+
+                                        )
+
                                 }
 
                             </tbody>
@@ -285,20 +320,19 @@ const TodosProdutos = () => {
         </div >
     )
 }
-/**
- * 
-export async function getServerSideProps(req: NextApiRequest) {
+
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
     // const { user } = await supabase.auth.api.getUserByCookie(req)
     //const session = supabase.auth.session()
-    const res = await api.get('api/getUser');
+    //const res = await api.get('api/getUser');
 
-    const { user } = res.data;
-
+    //const { user } = res.data;
+    const cookie = nookies.get(context)
     //console.log(session)
     //  const { user: UserAuth, session: S } = Auth.useUser()
     //console.log(UserAuth)
-    if (!user) {
+    if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
@@ -307,10 +341,9 @@ export async function getServerSideProps(req: NextApiRequest) {
     return {
         props:
         {
-            user
+            cookie
         }
     }
 }
- */
 
 export default TodosProdutos

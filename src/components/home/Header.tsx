@@ -194,13 +194,13 @@ const Header = () => {
                             </Link>
                         </li>
                     </ul>
-                    <form>
-                        <input
-                            onChange={(event) => dispatch(update({ description: event.target.value, page: 'Produto' }))}
-                            type='search'
-                            placeholder="Pesquisar"
-                            className=" text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded-md w-[432px] ring-0 focus:ring-0" />
-                    </form>
+
+                    <input
+                        onChange={(event) => dispatch(update({ description: event.target.value, page: 'Produto' }))}
+                        type='search'
+                        placeholder="Pesquisar"
+                        className=" text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded w-[432px] " />
+
                 </nav >
                 <div>
 

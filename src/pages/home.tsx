@@ -10,11 +10,11 @@ import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado, fetc
 import { unwrapResult } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { update } from '../redux/searchGeral';
-import { NextApiRequest } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
 import { supabase } from '../utils/supabaseClient';
 import { Auth } from '@supabase/ui';
 import api from '../service/api';
-
+import nookies from 'nookies'
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
@@ -239,7 +239,7 @@ const Home = () => {
                 <title>Painel de controlo</title>
             </Head>
             <div className='bg-white w-full p-5 rounded shadow-md max-h-[30rem] overflow-auto overflow-hide-scroll-bar print:shadow-none'>
-                <div className=' border-2 border-dashed rounded px-5 min-h-full text-center print:border-0 animate__animated animate__fadeIn'>
+                <div className=' border-2 border-dashed rounded px-5  text-center print:border-0 animate__animated animate__fadeIn overflow-auto overflow-hide-scroll-bar'>
                     <div className='flex justify-between items-center w-full p-2'>
 
                         <h1 className='text-2xl font-bold'>{`PAINEL DE CONTROLO  ${page === 'Produto' ? '- ' + description : ''}`}</h1>
@@ -272,13 +272,14 @@ const Home = () => {
                                 width={400}
                             />
                         </div>
-                        <div className='border shadow rounded bg-white py-5 px-3 w-[35rem] h-[19rem] flex flex-col print:shadow-none print:border-0 order-1'>
+                        <div className='border shadow rounded bg-white py-5 px-3  max-w-5xl h-[19rem]  overflow-auto overflow-hide-scroll-bar flex flex-col print:shadow-none print:border-0 order-1'>
 
-                            <div>
+                            <div className='w-full'>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
                                         <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500'>
 
+                                            <th className='w-1/5 text-center'>Descrição</th>
                                             <th className='w-1/5 text-center'>Nome do fornecedor</th>
                                             <th className='w-1/5 text-center'>Data actualização recente</th>
                                             <th className='w-1/5 text-center'>preço s/transporte</th>
@@ -292,17 +293,18 @@ const Home = () => {
                                                 if (index < 4) {
                                                     return (
                                                         <tr key={index} className='flex shadow rounded p-1'>
-                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
-                                                            <td className='w-1/5 flex justify-center items-center truncate'>{moment(pdtFornecedor.updated_at).format('L')}</td>
-                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precosimples.toLocaleString('pt', {
+                                                            <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.produto_id.descricao}</td>
+                                                            <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
+                                                            <td className='w-1/5 flex justify-center items-center '>{moment(pdtFornecedor.updated_at).format('L')}</td>
+                                                            <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.precosimples.toLocaleString('pt', {
                                                                 style: 'currency',
                                                                 currency: 'KWZ'
                                                             })}</td>
-                                                            <td className='w-1/5 flex justify-center items-center truncate'>{pdtFornecedor.precotransporte.toLocaleString('pt', {
+                                                            <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.precotransporte.toLocaleString('pt', {
                                                                 style: 'currency',
                                                                 currency: 'KWZ'
                                                             })}</td>
-                                                            <td className='w-1/5 flex justify-center items-center truncate'>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
+                                                            <td className='w-1/5 flex justify-center items-center '>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
                                                                 style: 'currency',
                                                                 currency: 'KWZ'
                                                             })}</td>
@@ -328,11 +330,10 @@ const Home = () => {
     )
 }
 
-/**
- * export async function getServerSideProps(req: NextApiRequest) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
     //  const { user } = await supabase.auth.api.getUserByCookie(req)
     // const session = supabase.auth.session()
-
+    const cookie = nookies.get(context)
     // console.log(user)
     //const user = supabase.auth.user()
     //console.log(UserAuth)
@@ -340,11 +341,11 @@ const Home = () => {
     // const response = await fetch(`http://localhost:3000/api/getUser`).then((response) =>
     //   response.json()
     //);
-    const res = await api.get('api/getUser');
+    //const res = await api.get('api/getUser');
 
-    const { user } = res.data;
-
-    if (!user) {
+    //const { user } = res.data;
+    //console.log(cookie)
+    if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
@@ -358,10 +359,10 @@ const Home = () => {
     return {
         props:
         {
-            user
+            cookie
         }
     }
 }
 
- */
+
 export default Home

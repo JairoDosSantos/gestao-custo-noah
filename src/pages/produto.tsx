@@ -26,9 +26,8 @@ import Image from 'next/image';
 
 //Imagens
 import LoadImage from '../assets/load.gif';
-import { NextApiRequest } from 'next'
-import { supabase } from '../utils/supabaseClient'
-import api from '../service/api'
+import { GetServerSidePropsContext, NextApiRequest } from 'next'
+import nookies from 'nookies'
 
 
 //Tipagem do formulário
@@ -355,8 +354,11 @@ const Produto = () => {
                                 <option value="m">m</option>
                                 <option value="m²">m²</option>
                                 <option value="m³">m³</option>
-                                <option value="caixa">caixa</option>
-                                <option value="Peça">Peça</option>
+                                <option value="caixa">cx</option>
+                                <option value="Peça">un</option>
+                                <option value="Peça">L</option>
+                                <option value="Peça">kg</option>
+                                <option value="Peça">K</option>
                             </select>
                             <input
                                 type="number"
@@ -433,30 +435,38 @@ const Produto = () => {
     )
 }
 
-/**
- * export async function getServerSideProps(req: NextApiRequest) {
-
-    // const { user } = await supabase.auth.api.getUserByCookie(req)
-    //const session = supabase.auth.session()
-    const res = await api.get('api/getUser');
-
-    const { user } = res.data;
-    //console.log(session)
-    //  const { user: UserAuth, session: S } = Auth.useUser()
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    //  const { user } = await supabase.auth.api.getUserByCookie(req)
+    // const session = supabase.auth.session()
+    const cookie = nookies.get(context)
+    // console.log(user)
+    //const user = supabase.auth.user()
     //console.log(UserAuth)
-    if (!user) {
+
+    // const response = await fetch(`http://localhost:3000/api/getUser`).then((response) =>
+    //   response.json()
+    //);
+    //const res = await api.get('api/getUser');
+
+    //const { user } = res.data;
+    //console.log(cookie)
+    if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
+
+    //https://www.freecodecamp.org/news/the-complete-guide-to-full-stack-development-with-supabas/   doc-full stack supabase App with Nextjs
+    //https://jitsu.com/blog/supabase-nextjs-middleware
+    //https://github.com/vercel/next.js/blob/canary/examples/with-supabase-auth-realtime-db/pages/index.js
+    //https://nextjs.org/docs/authentication
 
     // If there is a user, return it.
     return {
         props:
         {
-            user
+            cookie
         }
     }
 }
- */
 
 export default Produto

@@ -191,8 +191,11 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                             <div>
                                 <label className='font-bold mb-2'>Fornecedor de:</label>
                                 <ul className='flex flex-col space-y-2 list-disc ml-8'>
+
                                     {produto && produto.map((product, index) => (
-                                        <li key={index}>{product.produto_id.descricao} <span className='text-gray-400 text-xs'> -&nbsp; &nbsp; {product.precosimples} AKWZ/{product.unidade} sem transporte</span>
+
+                                        <li key={index} > {product.produto_id.descricao}
+                                            <span className='text-gray-400 text-xs' >- &nbsp; &nbsp; {product.precosimples} AKWZ/{product.unidade} sem transporte</span>
                                             <span className='text-gray-400 text-xs'> - &nbsp; &nbsp;{product.precotransporte} AKWZ/{product.unidade}  com transporte</span>
                                         </li>
 
@@ -221,9 +224,9 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
-        </div>
+        </div >
     )
 }
 

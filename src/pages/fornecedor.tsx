@@ -20,9 +20,11 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { fetchFornecedores, insertFornecedor } from '../redux/fornecedorSlicee';
 import Image from 'next/image';
 
+import nookies from 'nookies';
+
 //Imagens
 import LoadImage from '../assets/load.gif';
-import { GetServerSideProps, NextApiRequest } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
 import api from '../service/api';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
@@ -68,13 +70,16 @@ const fornecedor = () => {
     const dispatch = useDispatch<any>()
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+
         setLoad(true)
         const fornecedor = await dispatch(insertFornecedor(datas))
         setLoad(false)
+
         if (fornecedor.payload) {
             setShowConfirmAlert(true)
             setInserted(fornecedor.payload)
         } else {
+
             setInserted(fornecedor.payload)
             setShowErrorAlert(true)
 
@@ -305,18 +310,18 @@ const fornecedor = () => {
     )
 }
 
-/**
- * export async function getServerSideProps(req: NextApiRequest) {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
     // const { user } = await supabase.auth.api.getUserByCookie(req)
     //const session = supabase.auth.session()
-    const res = await api.get('api/getUser');
+    //const res = await api.get('api/getUser');
 
-    const { user } = res.data;
+    //const { user } = res.data;
+    const cookie = nookies.get(context)
     //console.log(session)
     //  const { user: UserAuth, session: S } = Auth.useUser()
     //console.log(UserAuth)
-    if (!user) {
+    if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
@@ -325,9 +330,9 @@ const fornecedor = () => {
     return {
         props:
         {
-            user
+            cookie
         }
     }
 }
- */
+
 export default fornecedor

@@ -21,6 +21,7 @@
     "jspdf-autotable": "^3.5.25",
     "moment": "^2.29.4",
     "next": "latest",
+    "nookies": "^2.5.2",
     "react": "18.1.0",
     "react-apexcharts": "^1.4.0",
     "react-autocomplete": "^1.8.1",

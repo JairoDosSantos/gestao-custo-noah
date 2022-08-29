@@ -43,19 +43,21 @@ const Login: NextPage = () => {
     const [showSuccess, setShowSuccess] = useState('hidden')
 
     const loadPermitted = async (email: string) => {
+
         const { data, error } = await supabase
             .from('permitted')
-            .select('email,senha,nomeuser').filter('email', 'eq', email)
+            .select('*')
+            .match({ email })
+            .single()
 
-        console.log(error)
-        if (data && data.length > 0) {
+        if (data) {
             return true
         } else {
             return false
         }
     }
 
-    const { user: UserAuth, session } = Auth.useUser()
+    //   const { user: UserAuth, session } = Auth.useUser()
 
 
     const router = useRouter();
@@ -68,10 +70,10 @@ const Login: NextPage = () => {
         setLoad(true)
 
         const hasCount = await loadPermitted(email);
-
+        console.log(hasCount)
         if (hasCount) {
             setShowHide('hidden')
-            setShowSuccess('flex')
+
 
 
             // console.log({ session, user, error })
@@ -82,9 +84,7 @@ const Login: NextPage = () => {
 
             setLoad(false)
 
-
-
-            if (response.data) router.push(`/home`);
+            if (response.data) setShowSuccess('flex')
         } else {
             setShowHide('flex')
             setShowSuccess('hidden')
@@ -118,7 +118,7 @@ const Login: NextPage = () => {
                         />
                         <label htmlFor="email" className='font-bold'>Password</label>
                         <input
-                            onChange={(event) => { setEmail(event.target.value); event.target.value === '' && setShowHide('hidden') }}
+                            onChange={(event) => { setPassword(event.target.value); event.target.value === '' && setShowHide('hidden') }}
                             type="password"
                             id='password'
                             className='px-4 py-2 caret-blue-600 border mt-2 mb-4'
@@ -133,7 +133,7 @@ const Login: NextPage = () => {
                             <span>Seguinte</span>
                         </button>
                         <div className={`px-4 py-3 mt-2 text-center border border-red-400 text-red-400 font-bold ${showHide}`}>Você não tem permissão para aceder o sistema</div>
-                        <div className={`px-4 py-3 mt-2 text-center border border-green-400 text-green-400 font-bold shadow-sm ${showSuccess}`}>Verifique o seu e-mail, enviamos o link de confirmação.</div>
+                        <div className={`px-4 py-3 mt-2 text-center border border-green-400 text-green-400 font-bold shadow-sm ${showSuccess}`}>Usuário criado com sucesso.</div>
                     </form>
                 </div>
 

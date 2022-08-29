@@ -1,5 +1,5 @@
 import { supabase } from "../../utils/supabaseClient";
-
+import nookies from 'nookies'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -11,6 +11,12 @@ export default async function registerUser(req: NextApiRequest, res: NextApiResp
         email,
         password
     });
+
+
+    nookies.set({ res }, 'USER_LOGGED', JSON.stringify(user), {
+        maxAge: 86400,
+        path: '/',
+    })
 
     //window.localStorage.setItem(email, JSON.stringify(session));
 

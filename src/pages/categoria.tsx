@@ -29,9 +29,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { update } from '../redux/searchGeral';
 import Image from 'next/image';
-import { NextApiRequest } from 'next';
-import { supabase } from '../utils/supabaseClient';
-import api from '../service/api';
+import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
+
+import nookies from 'nookies';
 
 
 //Tipagem
@@ -289,31 +289,29 @@ const Categoria = () => {
     )
 }
 
-/**
- * export async function getServerSideProps(req: NextApiRequest) {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
     // const { user } = await supabase.auth.api.getUserByCookie(req)
     //const session = supabase.auth.session()
-    const res = await api.get('api/getUser');
+    //const res = await api.get('api/getUser');
 
-    const { user } = res.data;
-
+    //const { user } = res.data;
+    const cookie = nookies.get(context)
     //console.log(session)
     //  const { user: UserAuth, session: S } = Auth.useUser()
     //console.log(UserAuth)
-    if (!user) {
+    if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
     }
+
     // If there is a user, return it.
     return {
         props:
         {
-            user
+            cookie
         }
     }
 }
-
- */
 
 export default Categoria
