@@ -236,10 +236,7 @@ export default function EditarModal({ isOpen, setIsOpen, data }: EditarModalProp
                         </p>
                       </div>
                     </form>
-
                   </div>
-
-
                 </Dialog.Panel>
               </Transition.Child>
             </div>

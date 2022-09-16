@@ -59,7 +59,7 @@ const TodosProdutos = () => {
 
     //Estado para edição do Produto
     const [data, setData] = useState<ProddutoType>({} as ProddutoType)
-    const { description, page } = useSelector((state: RootState) => state.Search)
+    const { description } = useSelector((state: RootState) => state.Search)
     //Id do produto a ser deletado
     const [idP, setidP] = useState(0)
 
@@ -89,21 +89,12 @@ const TodosProdutos = () => {
 
     }
 
-    const ConfirmedRemove = async (result: PromiseDelete) => {
-
-        if (result.isConfirmed) {
-            removeProduto(idP)
-        }
-
-    }
-
     const printTable = () => {
 
         autoTable(doc, { html: '#tabelaTodosProdutos', theme: 'grid', includeHiddenHtml: true, useCss: true })
         //doc.autoTable({ html: '#tabelaProdutos' })
         doc.save('Relatorio-Todos-Material.pdf')
     }
-
 
     useEffect(() => {
         fetchProduts()
@@ -115,18 +106,10 @@ const TodosProdutos = () => {
 
     }, [])
 
-
-    const handleEditProduct = async (id: number) => {
-        const produtoFinded = produtList && produtList.find((product) => {
-            return product.id === id
-        })
-
-        await setData(produtoFinded as ProddutoType)
-
+    const handleEditProduct = async (produto: ProddutoType) => {
+        setData(produto)
         setOpenModal(true)
-
     }
-
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
@@ -178,7 +161,7 @@ const TodosProdutos = () => {
                 title='Atenção'
                 text='Tem a certeza que deseja efectuar esta operação ?'
                 icon='question'
-                onConfirm={() => setShowQuestionAlert(false)}
+                onConfirm={() => removeProduto(idP)}
                 didClose={() => setShowQuestionAlert(false)}
                 didDestroy={() => setShowQuestionAlert(false)}
                 allowOutsideClick={true}
@@ -189,7 +172,7 @@ const TodosProdutos = () => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
-                onResolve={ConfirmedRemove}
+
 
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar' >
@@ -228,7 +211,7 @@ const TodosProdutos = () => {
                                                         <td className='w-1/6'>{produto.nomeuser}</td>
                                                         <td className='w-1/6 flex justify-center'>
                                                             <button
-                                                                onClick={() => { handleEditProduct(produto.id) }}
+                                                                onClick={() => { handleEditProduct(produto) }}
                                                                 className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
                                                                 title='Editar'
                                                             >
@@ -261,7 +244,7 @@ const TodosProdutos = () => {
                                                     <td className='w-1/6'>{produto.nomeuser}</td>
                                                     <td className='w-1/6 flex justify-center'>
                                                         <button
-                                                            onClick={() => { handleEditProduct(produto.id) }}
+                                                            onClick={() => { handleEditProduct(produto) }}
                                                             className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
                                                             title='Editar'
                                                         >
@@ -321,15 +304,9 @@ const TodosProdutos = () => {
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
-    // const { user } = await supabase.auth.api.getUserByCookie(req)
-    //const session = supabase.auth.session()
-    //const res = await api.get('api/getUser');
 
-    //const { user } = res.data;
     const cookie = nookies.get(context)
-    //console.log(session)
-    //  const { user: UserAuth, session: S } = Auth.useUser()
-    //console.log(UserAuth)
+
     if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }

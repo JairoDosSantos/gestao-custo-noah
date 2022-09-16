@@ -18,6 +18,7 @@ import { deleteFornecedor, fetchFornecedores } from '../../redux/fornecedorSlice
 import { unwrapResult } from '@reduxjs/toolkit';
 import { store } from '../../redux/store';
 import { fetchAllProdutosFornecedor } from '../../redux/produtoSlice';
+import { truncate } from 'fs';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
@@ -88,24 +89,18 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
         const removido = unwrapResult(fornecedorRemivido)
         if (removido) {
             setShowConfirmAlert(true)
+            setTimeout(() => {
+                route.push('/fornecedor')
+            }, 2000)
 
         } else {
             setShowErrorAlert(true)
+            return false
         }
 
     }
 
-    const ConfirmedRemove = async (result: PromiseDelete) => {
 
-        if (result.isConfirmed) {
-            removeFornecedor(fornecedo.id)
-
-            setTimeout(() => {
-                route.push('/fornecedor')
-            }, 5000)
-        }
-
-    }
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -152,7 +147,7 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                 title='Atenção'
                 text='Tem a certeza que deseja efectuar esta operação ?'
                 icon='question'
-                onConfirm={() => setShowQuestionAlert(false)}
+                onConfirm={removeFornecedor}
                 didClose={() => setShowQuestionAlert(false)}
                 didDestroy={() => setShowQuestionAlert(false)}
                 allowOutsideClick={true}
@@ -163,7 +158,6 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
-                onResolve={ConfirmedRemove}
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar'>
                 <div className=' border-2 border-dashed rounded px-5 py-3 min-h-full overflow-y-auto'>

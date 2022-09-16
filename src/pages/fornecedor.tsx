@@ -317,8 +317,7 @@ const fornecedor = () => {
     )
 }
 
-/**
- * export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
 
     const cookie = nookies.get(context)
@@ -336,7 +335,7 @@ const fornecedor = () => {
         }
     }
 }
- */
+
 
 
 export default fornecedor

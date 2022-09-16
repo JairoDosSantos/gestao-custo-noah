@@ -425,20 +425,9 @@ const Produto = () => {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    //  const { user } = await supabase.auth.api.getUserByCookie(req)
-    // const session = supabase.auth.session()
+
     const cookie = nookies.get(context)
-    // console.log(user)
-    //const user = supabase.auth.user()
-    //console.log(UserAuth)
 
-    // const response = await fetch(`http://localhost:3000/api/getUser`).then((response) =>
-    //   response.json()
-    //);
-    //const res = await api.get('api/getUser');
-
-    //const { user } = res.data;
-    //console.log(cookie)
     if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }

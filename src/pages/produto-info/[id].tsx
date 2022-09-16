@@ -74,33 +74,24 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
     const [showQuestionAlert, setShowQuestionAlert] = useState(false)
 
     const dispatch = useDispatch<any>()
-    const route = useRouter()
-    const removeFornecedor = async (id: number) => {
 
-        const produtoRemovido = await dispatch(deleteProduto(id))
+    const route = useRouter()
+
+    const removeFornecedor = async () => {
+
+        const produtoRemovido = await dispatch(deleteProduto(produto.id))
+
         const removido = unwrapResult(produtoRemovido)
+
         if (removido) {
             setShowConfirmAlert(true)
-
+            setTimeout(() => {
+                route.push('/todos-produtos')
+            }, 2000)
         } else {
             setShowErrorAlert(true)
         }
-
     }
-
-    const ConfirmedRemove = async (result: PromiseDelete) => {
-
-        if (result.isConfirmed) {
-            removeFornecedor(produto.id)
-
-            setTimeout(() => {
-                route.push('/todos-produtos')
-            }, 5000)
-        }
-
-    }
-
-
 
     return (
         <div className='-mt-20 p-5 flex gap-3'>
@@ -150,7 +141,7 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                 title='Atenção'
                 text='Tem a certeza que deseja efectuar esta operação ?'
                 icon='question'
-                onConfirm={() => setShowQuestionAlert(false)}
+                onConfirm={removeFornecedor}
                 didClose={() => setShowQuestionAlert(false)}
                 didDestroy={() => setShowQuestionAlert(false)}
                 allowOutsideClick={true}
@@ -161,7 +152,6 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                 cancelButtonText='Cancelar'
                 confirmButtonColor="#4051ef"
                 confirmButtonText="Sim"
-                onResolve={ConfirmedRemove}
 
             />
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-y-auto overflow-hide-scroll-bar'>
