@@ -193,24 +193,13 @@ const Produto = () => {
 
     }
 
-    const searchFornecedor = () => {
 
-        if (description) {
-            const filteredFornecedor = fornecedoresLista.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-            setFornecedores(filteredFornecedor)
-        } else {
-            fetchAllFornecedores();
-        }
-
+    if (description) {
+        const filteredFornecedor = fornecedoresLista.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+        setFornecedores(filteredFornecedor)
+    } else {
+        fetchAllFornecedores();
     }
-
-    useEffect(() => {
-        searchFornecedor()
-    }, [description])
-
-
-
-
 
     useEffect(() => {
         dispatch(update({ description, page: 'Fornecedor' }))

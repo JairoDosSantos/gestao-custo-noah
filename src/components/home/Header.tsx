@@ -55,22 +55,21 @@ const Header = () => {
     const [precosTodos, setPrecosTodos] = useState<Array<ProdutoFornecedorType>>([])
 
     const [isAuthed, setAuthStatus] = useState(false);
-    const routes = useRouter()
 
     const getUser = async () => {
         const user = await api.get('api/getUser')
-        if (user.data) return setAuthStatus(true)
-        return setAuthStatus(false)
+        if (user.data) {
+            setAuthStatus(true)
+            return user.data
+        }
+
+        setAuthStatus(false)
+        return null
     }
 
+
     useEffect(() => {
-        /**
-         *   fetch("./api/getUser")
-              .then((response) => response.json())
-              .then((result) => {
-                  setAuthStatus(result.user && result.user.role === "authenticated");
-              });
-         */
+
         getUser()
 
     }, []);
@@ -80,7 +79,9 @@ const Header = () => {
         const allPrecosUnwrap = unwrapResult(allPrecos);
 
         const dateNow = new Date();
+
         const dateNowFormated = moment(dateNow).format('L')
+
         // console.log(dateNowFormated)
         setPrecosTodos(allPrecosUnwrap)
 
@@ -93,11 +94,6 @@ const Header = () => {
                 //console.log(resutlDate)
             })
         }
-    }
-
-    const getUserAuth = async (req: NextApiRequest) => {
-        const { user } = await supabase.auth.api.getUserByCookie(req)
-        return user;
     }
 
     useEffect(() => {

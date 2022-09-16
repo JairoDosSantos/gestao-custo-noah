@@ -107,28 +107,17 @@ const Categoria = () => {
 
     }
 
-    const searchProductByDescriptioAndFornecedor = () => {
-
-        if (description) {
-            const filteredCategory = categories.filter((category) => category.descricao.toLowerCase().includes(description.toLowerCase()))
-            setCategories(filteredCategory)
-        } else {
-            fetchAllFornecedores();
-        }
-
+    if (description) {
+        const filteredCategory = categories.filter((category) => category.descricao.toLowerCase().includes(description.toLowerCase()))
+        setCategories(filteredCategory)
+    } else {
+        fetchAllFornecedores();
     }
-
 
     useEffect(() => {
         dispatch(update({ description, page: 'Categoria' }))
         fetchAllFornecedores()
     }, [actualizaListaCategoria])
-
-    useEffect(() => {
-        searchProductByDescriptioAndFornecedor()
-    }, [description])
-
-
 
 
     return (

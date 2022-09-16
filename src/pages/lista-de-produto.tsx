@@ -87,21 +87,18 @@ const ListaProdutos = () => {
         }
     }
 
-    const searchProductByDescriptioAndFornecedor = () => {
 
-        if (description) {
-            if (searchType === 'Produto') {
-                const filteredProducts = allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
-                setAllProductsFornecedores(filteredProducts)
-            } else {
-                const filteredFornecedor = allProductsFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-                setAllProductsFornecedores(filteredFornecedor)
-            }
+    if (description) {
+        if (searchType === 'Produto') {
+            const filteredProducts = allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
+            setAllProductsFornecedores(filteredProducts)
         } else {
-
-            getAllProducts();
+            const filteredFornecedor = allProductsFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+            setAllProductsFornecedores(filteredFornecedor)
         }
+    } else {
 
+        getAllProducts();
     }
 
     const printTable = () => {
@@ -121,12 +118,6 @@ const ListaProdutos = () => {
         getAllProducts();
 
     }, [isOpenModal])
-
-    useEffect(() => {
-
-        searchProductByDescriptioAndFornecedor()
-
-    }, [description, searchType])
 
 
     const handleShowModal = (id: number) => {

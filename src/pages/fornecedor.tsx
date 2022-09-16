@@ -106,20 +106,17 @@ const fornecedor = () => {
 
     }
 
-    const searchProductByDescriptioAndFornecedor = () => {
 
-        if (description) {
-            const filteredFornecedor = fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-            setFornecedores(filteredFornecedor)
-        } else {
-            fetchAllFornecedores();
-        }
-
+    if (description) {
+        const filteredFornecedor = fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+        setFornecedores(filteredFornecedor)
+    } else {
+        fetchAllFornecedores();
     }
 
-    useEffect(() => {
-        searchProductByDescriptioAndFornecedor()
-    }, [description])
+
+
+
 
     useEffect(() => {
         dispatch(update({ description, page: 'Fornecedor' }))
