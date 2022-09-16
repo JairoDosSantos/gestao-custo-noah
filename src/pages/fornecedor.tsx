@@ -107,12 +107,14 @@ const fornecedor = () => {
     }
 
 
-    if (description) {
-        const filteredFornecedor = fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-        setFornecedores(filteredFornecedor)
-    } else {
-        fetchAllFornecedores();
-    }
+    //if (description) {
+    const filteredFornecedor = description ? fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase())) : []
+    /**
+     *    setFornecedores(filteredFornecedor)
+   } else {
+       fetchAllFornecedores();
+   }
+     */
 
 
 
@@ -282,23 +284,31 @@ const fornecedor = () => {
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
                         {
+                            (fornecedores.length === 0) ? (<li className='text-center'>Não existem fornecedores na base de dados</li>) :
+                                (fornecedores && fornecedores.length > 0) ? (
+                                    fornecedores.map((fornecedor, index) => {
 
-                            (fornecedores && fornecedores.length > 0) ? (
-                                fornecedores.map((fornecedor, index) => {
+                                        if (index < 5) {
+                                            return (
+                                                <li
+                                                    key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
+                                                    className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
+                                                    {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
+                                                </li>
+                                            )
+                                        }
+                                    })
+                                ) : filteredFornecedor ? filteredFornecedor.map((fornecedor, index) => (
+                                    <li
+                                        key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
+                                        className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
+                                        {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
+                                    </li>
+                                )) : (
+                                    <li className='text-center'>Fornecedores não encontrado na base de dados</li>
+                                )
 
-                                    if (index < 5) {
-                                        return (
-                                            <li
-                                                key={index} onClick={() => router.push(`fornecedor/${fornecedor.id}`)}
-                                                className='my-2 cursor-pointer text-black hover:bg-blue-600 hover:text-white rounded p-2'>
-                                                {fornecedor.nome_fornecedor} - <span className='text-gray-400 '>{fornecedor.endereco}</span>
-                                            </li>
-                                        )
-                                    }
-                                })
-                            ) : (
-                                <li className='text-center'>Não existem fornecedores na base de dados.</li>
-                            )
+
                         }
                     </ul>
                 </div>
@@ -307,7 +317,8 @@ const fornecedor = () => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+/**
+ * export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
 
     const cookie = nookies.get(context)
@@ -325,6 +336,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 }
+ */
 
 
 export default fornecedor

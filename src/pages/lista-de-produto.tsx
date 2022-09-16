@@ -66,7 +66,7 @@ type ModalType = {
 const ListaProdutos = () => {
 
     const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-    const [data, setData] = useState({} as ModalType);
+    const [data, setData] = useState<ProdutoFornecedorType>({} as ProdutoFornecedorType);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [allProductsFornecedores, setAllProductsFornecedores] = useState<Array<ProdutoFornecedorType>>([])
@@ -88,18 +88,10 @@ const ListaProdutos = () => {
     }
 
 
-    if (description) {
-        if (searchType === 'Produto') {
-            const filteredProducts = allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
-            setAllProductsFornecedores(filteredProducts)
-        } else {
-            const filteredFornecedor = allProductsFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-            setAllProductsFornecedores(filteredFornecedor)
-        }
-    } else {
 
-        getAllProducts();
-    }
+
+    const filteredProducts = description ? allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase())) : []
+
 
     const printTable = () => {
 
@@ -120,25 +112,29 @@ const ListaProdutos = () => {
     }, [isOpenModal])
 
 
-    const handleShowModal = (id: number) => {
-        const produtoFinded = allProductsFornecedores && allProductsFornecedores.find((product) => {
-            return product.id === id
-        })
-
-        if (produtoFinded) {
-            setData(
-                {
-                    id: produtoFinded.id,
-                    fornecedor_id: produtoFinded.fornecedor_id.id,
-                    produto_id: produtoFinded.produto_id.id,
-                    nomeuser: produtoFinded.nomeuser,
-                    precotransporte: produtoFinded.precotransporte,
-                    precosimples: produtoFinded.precosimples,
-                    categoria: produtoFinded.categoria,
-                    unidade: produtoFinded.unidade
-                })
-            setIsOpenModal(true)
-        }
+    const handleShowModal = (produto: ProdutoFornecedorType) => {
+        /**
+         *     const produtoFinded = allProductsFornecedores && allProductsFornecedores.find((product) => {
+                return product.id === id
+            })
+    
+            if (produtoFinded) {
+                setData(
+                    {
+                        id: produtoFinded.id,
+                        fornecedor_id: produtoFinded.fornecedor_id.id,
+                        produto_id: produtoFinded.produto_id.id,
+                        nomeuser: produtoFinded.nomeuser,
+                        precotransporte: produtoFinded.precotransporte,
+                        precosimples: produtoFinded.precosimples,
+                        categoria: produtoFinded.categoria,
+                        unidade: produtoFinded.unidade
+                    })
+                setIsOpenModal(true)
+            }
+         */
+        setData(produto)
+        setIsOpenModal(true)
 
     }
     return (
@@ -147,7 +143,7 @@ const ListaProdutos = () => {
                 <title>Lista de Produto</title>
             </Head>
 
-            <ModalEditarProdutoPorFornecedor isOpen={isOpenModal} setIsOpen={setIsOpenModal} data={data} setData={setData} />
+            <ModalEditarProdutoPorFornecedor isOpen={isOpenModal} setIsOpen={setIsOpenModal} data={data} />
 
             <div className='bg-white  w-full p-5 rounded shadow-md max-h-96 overflow-auto overflow-hide-scroll-bar print:shadow-none'>
                 <div className=' border-2 border-dashed print:border-0 rounded p-5 min-h-full animate__animated animate__fadeIn'>
@@ -195,42 +191,68 @@ const ListaProdutos = () => {
                             </thead>
                             <tbody>
                                 {
-                                    (allProductsFornecedores && allProductsFornecedores.length > 0) ? (
-                                        allProductsFornecedores.map((products, index) => {
-                                            if (index < 5) {
-                                                return (
-                                                    <tr
-                                                        key={index}
-                                                        onClick={() => handleShowModal(products.id)}
-                                                        className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
-                                                        <td className=' w-1/6 text-center'>{products.produto_id.descricao}</td>
-                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.nome_fornecedor}</td>
-                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone1}</td>
-                                                        <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone2}</td>
-                                                        <td className='  w-1/6 text-center'>{products.fornecedor_id.endereco}</td>
-                                                        <td className=' w-1/6 text-center'>
-                                                            {Number(products.precotransporte).toLocaleString('pt', {
-                                                                style: 'currency',
-                                                                currency: 'KWZ'
-                                                            })}
-                                                        </td>
+                                    (allProductsFornecedores.length === 0) ? (<tr>
+                                        <td colSpan={6} className='text-center'>Não existem produtos de fornecedores na sua base de dados.</td>
+                                    </tr>) :
+                                        (allProductsFornecedores && allProductsFornecedores.length > 0) ? (
+                                            allProductsFornecedores.map((products, index) => {
+                                                if (index < 5) {
+                                                    return (
+                                                        <tr
+                                                            key={index}
+                                                            onClick={() => handleShowModal(products)}
+                                                            className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                                            <td className=' w-1/6 text-center'>{products.produto_id.descricao}</td>
+                                                            <td className=' w-1/6 text-center'>{products.fornecedor_id.nome_fornecedor}</td>
+                                                            <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone1}</td>
+                                                            <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone2}</td>
+                                                            <td className='  w-1/6 text-center'>{products.fornecedor_id.endereco}</td>
+                                                            <td className=' w-1/6 text-center'>
+                                                                {Number(products.precotransporte).toLocaleString('pt', {
+                                                                    style: 'currency',
+                                                                    currency: 'KWZ'
+                                                                })}
+                                                            </td>
 
-                                                        <td className=' w-1/6 text-center'>
-                                                            {Number(products.precosimples).toLocaleString('pt', {
-                                                                style: 'currency',
-                                                                currency: 'KWZ'
-                                                            })}
-                                                        </td>
-                                                        <td className=' w-1/6 text-center'>{products.unidade}</td>
-                                                    </tr>
-                                                )
-                                            }
+                                                            <td className=' w-1/6 text-center'>
+                                                                {Number(products.precosimples).toLocaleString('pt', {
+                                                                    style: 'currency',
+                                                                    currency: 'KWZ'
+                                                                })}
+                                                            </td>
+                                                            <td className=' w-1/6 text-center'>{products.unidade}</td>
+                                                        </tr>
+                                                    )
+                                                }
+                                            })
+                                        ) : filteredProducts.map((products, index) => {
+                                            return (
+                                                <tr
+                                                    key={index}
+                                                    onClick={() => handleShowModal(products)}
+                                                    className=' hover:brightness-75 hover:cursor-pointer flex mx-3 items-center justify-around  my-2 shadow rounded p-2 border '>
+                                                    <td className=' w-1/6 text-center'>{products.produto_id.descricao}</td>
+                                                    <td className=' w-1/6 text-center'>{products.fornecedor_id.nome_fornecedor}</td>
+                                                    <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone1}</td>
+                                                    <td className=' w-1/6 text-center'>{products.fornecedor_id.telefone2}</td>
+                                                    <td className='  w-1/6 text-center'>{products.fornecedor_id.endereco}</td>
+                                                    <td className=' w-1/6 text-center'>
+                                                        {Number(products.precotransporte).toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}
+                                                    </td>
+
+                                                    <td className=' w-1/6 text-center'>
+                                                        {Number(products.precosimples).toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}
+                                                    </td>
+                                                    <td className=' w-1/6 text-center'>{products.unidade}</td>
+                                                </tr>
+                                            )
                                         })
-                                    ) : (
-                                        <tr>
-                                            <td colSpan={6} className='text-center'>Não existem produtos de fornecedores na sua base de dados.</td>
-                                        </tr>
-                                    )
                                 }
 
                             </tbody>

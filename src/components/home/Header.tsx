@@ -6,8 +6,8 @@ import Link from "next/link"
 import User from '../../assets/user.png'
 import Logo from '../../assets/noah.png'
 
-import { AiOutlineNotification } from 'react-icons/ai'
-import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaTrash } from 'react-icons/fa'
+import { AiFillCloseCircle, AiOutlineNotification } from 'react-icons/ai'
+import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaSignOutAlt } from 'react-icons/fa'
 
 //Redux
 //import { unwrapResult } from '@reduxjs/toolkit';
@@ -19,8 +19,7 @@ import moment from 'moment'
 
 import { fetchAllProdutosFornecedor } from "../../redux/produtoSlice"
 import { unwrapResult } from "@reduxjs/toolkit"
-import { supabase } from "../../utils/supabaseClient"
-import { NextApiRequest } from "next"
+
 import { useRouter } from "next/router"
 import api from "../../service/api"
 
@@ -39,14 +38,11 @@ type ProdutoFornecedorType = {
 
 const Header = () => {
 
-    // const user = supabase.auth.user()
-    const session = supabase.auth.session()
-
-    // console.log({ user })
-    //console.log({ session })
 
 
-    const [activo, setActivo] = useState('home');
+    const route = useRouter()
+
+    const [activo, setActivo] = useState(route.pathname);
     const [showNotification, setShowNotification] = useState(false)
 
     const [search, setSearch] = useState('');
@@ -55,11 +51,13 @@ const Header = () => {
     const [precosTodos, setPrecosTodos] = useState<Array<ProdutoFornecedorType>>([])
 
     const [isAuthed, setAuthStatus] = useState(false);
+    const [emailUser, setEmailUser] = useState('')
 
     const getUser = async () => {
         const user = await api.get('api/getUser')
         if (user.data) {
             setAuthStatus(true)
+            setEmailUser(user.data.email)
             return user.data
         }
 
@@ -67,6 +65,10 @@ const Header = () => {
         return null
     }
 
+    const logOut = async () => {
+        const response = await api.post('api/logout')
+        if (response.data) route.push('/')
+    }
 
     useEffect(() => {
 
@@ -100,11 +102,8 @@ const Header = () => {
         getAllPrecosByProdutos();
     }, [])
 
-    const handleSearch = (data: FormEvent) => {
-        setSearch((data.target as HTMLInputElement).value)
+    search && dispatch(update({ description: search, page: 'Produto' }))
 
-        dispatch(update({ description: search, page: 'Produto' }))
-    }
     //isAuthed
     return (
         <header className="bg-gray-50 text-black h-72">
@@ -119,8 +118,11 @@ const Header = () => {
                             <div className="print:flex hidden">
                                 <Image src={Logo} height={100} width={100} objectFit='contain' />
                             </div>
-                            <div className="flex print:hidden gap-3 relative" >
-                                <button onClick={() => setShowNotification(!showNotification)}
+                            <div className="flex print:hidden gap-3 relative items-center" >
+
+                                {/**
+                                *  
+                                *  <button onClick={() => setShowNotification(!showNotification)}
                                     className={`cursor-pointer hover:brightness-75 relative ${!showNotification && 'animate__animated animate__pulse animate__infinite'} print:hidden`}
                                 >
                                     <AiOutlineNotification />
@@ -130,7 +132,7 @@ const Header = () => {
                                         3
                                     </span>
                                 </button>
-                                <div className={`print:hidden w-96 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 
+                                * <div className={`print:hidden w-96 h-40 shadow rounded px-2 py-3 bg-white absolute top-6 right-8 
                                         ${showNotification ? 'flex flex-col gap-3 animate__animated animate__fadeIn ' : ' animate__animated animate__fadeOut'} `}>
                                     <p
                                         title="O produto z do fornecedor k actualizado há 4 semanas!"
@@ -151,49 +153,76 @@ const Header = () => {
                                         O produto z do fornecedor k actualizado há 4 semanas! <FaTrash className="text-blue-700 cursor-pointer" />
                                     </p>
                                 </div>
-                                <Image src={User} className=' rounded-full' objectFit="cover" height={25} width={25} />
+                                */}
+                                <Image
+                                    src={User}
+                                    className=' rounded-full'
+                                    objectFit="cover"
+                                    height={25}
+                                    width={25}
+                                    title={emailUser}
+                                />
+                                <FaSignOutAlt
+                                    className='text-gray-400 text-lg cursor-pointer'
+                                    title="Terminar Sessão"
+                                    onClick={logOut}
+                                />
                             </div>
                         </div>
                     </div >
                     <div className='flex lg:hidden print:hidden justify-between items-center'>
-                        <FaList />
-                        <button className="btn rounded-full bg-gray-200">
+                        <FaList
+                            title="Menú"
+                        />
+                        <button
+                            className="btn rounded-full bg-gray-200"
+                            title="Pesquisar"
+                        >
                             <FaSearch />
                         </button>
                     </div>
                 </div>
-                <nav className='py-5 hidden lg:flex justify-between items-center'>
+                <nav className='hidden lg:flex lg:justify-between  max-h-10 mt-4'>
                     <ul className="flex space-x-8 ">
-                        <li onClick={() => setActivo('home')} className={`link-menu ${activo === 'home' && 'actived'}`}>
+                        <li
+                            onClick={() => setActivo('/home')}
+                            className={`link-menu ${activo === '/home' && 'actived'}`}>
                             <Link href='/home'>
                                 <span className="flex items-center space-x-2">
                                     <FaHome /> <span>Painel de Controlo</span>
                                 </span>
                             </Link>
                         </li>
-                        <li onClick={() => setActivo('produto')} className={`link-menu ${activo === 'produto' && 'actived'}`}>
+                        <li
+                            onClick={() => setActivo('/produto')}
+                            className={`link-menu ${activo === '/produto' && 'actived'}`}>
                             <Link href='/produto' >
                                 <span className="flex items-center space-x-2">
                                     <FaList /><span>Produto</span>
                                 </span>
                             </Link>
                         </li>
-                        <li onClick={() => setActivo('produtolista')} className={`link-menu ${activo === 'produtolista' && 'actived'}`}>
+                        <li
+                            onClick={() => setActivo('/lista-de-produto')}
+                            className={`link-menu ${activo === '/lista-de-produto' && 'actived'}`}>
                             <Link href='/lista-de-produto'>
                                 <span className="flex items-center space-x-2">
                                     <FaListAlt /><span>Produtos</span>
                                 </span>
                             </Link>
                         </li>
-                        <li onClick={() => setActivo('fornecedor')} className={`link-menu ${activo === 'fornecedor' && 'actived'}`}>
+                        <li
+                            onClick={() => setActivo('/fornecedor')}
+                            className={`link-menu ${activo === '/fornecedor' && 'actived'}`}>
                             <Link href='/fornecedor'>
                                 <span className="flex items-center space-x-2">
                                     <FaUsers /> <span>Fornecedores</span>
                                 </span>
                             </Link>
-
                         </li>
-                        <li onClick={() => setActivo('categoria')} className={`link-menu ${activo === 'categoria' && 'actived'}`}>
+                        <li
+                            onClick={() => setActivo('/categoria')}
+                            className={`link-menu ${activo === '/categoria' && 'actived'}`}>
                             <Link href='/categoria'>
                                 <span className="flex items-center space-x-2">
                                     <FaFigma /><span>Categoria</span>
@@ -203,15 +232,15 @@ const Header = () => {
                     </ul>
 
                     <input
-                        onChange={(event) => dispatch(update({ description: event.target.value, page: 'Produto' }))}
+                        onChange={(event) => setSearch(event.target.value)}
                         type='search'
                         placeholder="Pesquisar"
-                        className=" text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded w-[432px] " />
+                        className=" text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded w-[432px] "
+                    />
 
-                </nav >
-                <div>
 
-                </div>
+                </nav>
+
             </div>
         </header >
     )

@@ -23,7 +23,8 @@ type FormValues = {
     unidade: string;
 }
 
-type FornecedorType = {
+/**
+ * type FornecedorType = {
     id: number;
     fornecedor_id: number
     produto_id: number;
@@ -32,14 +33,41 @@ type FornecedorType = {
     nomeuser: string;
     categoria: number;
     unidade: string;
+}
 
+ */
+
+type FornecedorType = {
+    id: number;
+    nome_fornecedor: string;
+    telefone1: string;
+    telefone2: string;
+    tipo_fornecedor: string;
+    endereco: string;
+    nomeUser: string;
+
+}
+type ProdutoType = {
+    id: number;
+    descricao: string;
+}
+
+//Tipagem de ProdutoFornecedor
+type ProdutoFornecedorType = {
+    id: number;
+    produto_id: ProdutoType;
+    fornecedor_id: FornecedorType;
+    precosimples: string;
+    precotransporte: string;
+    nomeuser: string;
+    categoria: number;
+    unidade: string;
 }
 
 type EditarModalProps = {
     isOpen: boolean,
     setIsOpen: (valor: boolean) => void
-    data: FornecedorType;
-    setData: (objecto: FornecedorType) => void
+    data: ProdutoFornecedorType;
 }
 
 //Tipagem de relatorio Gráfico
@@ -52,9 +80,9 @@ type RelatorioProdutoType = {
     precotransporte_antigo: number
 }
 
-export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data, setData }: EditarModalProps) {
+export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, data }: EditarModalProps) {
 
-    const { register, handleSubmit, watch, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const dispatch = useDispatch<any>();
     const [precosimples, setPrecoSimples] = useState(data.precosimples);
@@ -64,11 +92,8 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
     const [load, setLoad] = useState(false)
     const [loadDelete, setLoadDelete] = useState(false)
 
-    const watchtransporte = (watch().precotransporte);
-    const watchSimples = (watch().precosimples);
 
 
-    const route = useRouter();
 
     const removeProdutoFornecedor = async (id: number) => {
 
@@ -78,7 +103,6 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
 
 
         setLoadDelete(false);
-
 
 
         if (removido) {
@@ -101,20 +125,14 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
         setLoad(true)
         const updated_at = (new Date()).toDateString();
         //Actualiza o preço primeiro do produto
-        const result = await dispatch(updatePrecoFornecedor({ ...data, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte), updated_at }))
+        const result = await dispatch(updatePrecoFornecedor({ ...data, fornecedor_id: data.fornecedor_id.id, produto_id: data.produto_id.id, precosimples: String(datas.precosimples), precotransporte: String(datas.precotransporte), updated_at }))
         const resultUnwrap = unwrapResult(result)
 
-        //console.log(data.fornecedor_id)
-        //console.log(data.produto_id)
-        //console.log(data.precosimples)
-        //Pegar o ID do preco/produto que foi cadastrado, e inserir na tabela do relatório gráfico
-        //console.log(datas.precosimples)
-        //console.log(data.precosimples)
-        //console.log(resultUnwrap)
+
         if (resultUnwrap) {
             if (Number(datas.precosimples) !== Number(data.precosimples)) {
                 //  const relatorioInserted = await dispatch(insertUpdatePreco({ precosimples_antigo: data.precosimples, precotransporte_antigo: data.precotransporte, produtofornecedor_id: resultUnwrap[0].id }))
-                const relatorioInserted = await dispatch(insertUpdatePrecoRefactored({ precosimples_antigo: data.precosimples, fornecedor_id: data.fornecedor_id, produto_id: data.produto_id }))
+                const relatorioInserted = await dispatch(insertUpdatePrecoRefactored({ precosimples_antigo: data.precosimples, fornecedor_id: data.fornecedor_id.id, produto_id: data.produto_id.id }))
                 const reportUnwrap = unwrapResult(relatorioInserted)
                 //  console.log(reportUnwrap)
                 //Encerrar o load

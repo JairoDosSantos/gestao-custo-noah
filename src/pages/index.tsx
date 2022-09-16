@@ -70,7 +70,7 @@ const Login: NextPage = () => {
 
     setLoad(true)
 
-    if (!loadPermitted(email)) return
+    if (email === '' || password === '' || !loadPermitted(email)) { setLoad(false); return }
 
     const response = await api.post('api/login', {
       email: email,

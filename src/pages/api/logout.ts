@@ -8,5 +8,5 @@ export default async function logoutUser(req: NextApiRequest, res: NextApiRespon
     if (!error) nookies.destroy(null, 'USER_LOGGED', { path: '/' })
     else return res.status(401).json({ error: error.message });
 
-    return res.status(200).json({ body: "Sessão terminada com sucesso" });
+    return res.status(200).json({ logout: true });
 }
