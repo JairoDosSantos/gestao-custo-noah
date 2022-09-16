@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import { useEffect, useState } from 'react';
-import { FaFilePdf, FaEdit, FaTrash, FaPrint } from 'react-icons/fa'
+import { FaEdit, FaTrash, FaPrint } from 'react-icons/fa'
 
 import dynamic from 'next/dynamic';
 import EditarProdutoModal from '../components/produto/ModalEditarProduto';
@@ -13,9 +13,8 @@ import { unwrapResult } from '@reduxjs/toolkit';
 
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
-import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
-import { supabase } from '../utils/supabaseClient';
-import api from '../service/api';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+
 import nookies from 'nookies'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -123,7 +122,6 @@ const TodosProdutos = () => {
         })
 
         await setData(produtoFinded as ProddutoType)
-
 
         setOpenModal(true)
 

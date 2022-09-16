@@ -106,7 +106,7 @@ const Login: NextPage = () => {
             </div>
 
             <div className='container mt-4 flex justify-center items-center'>
-                <div className='border-r border-l p-6 w-1/2'>
+                <div className='p-6 lg:w-3/4 w-full'>
                     <form className='flex flex-col' onSubmit={signUpUser}>
                         <label htmlFor="email" className='font-bold'>E-mail</label>
                         <input

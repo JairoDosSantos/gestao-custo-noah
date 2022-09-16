@@ -4,16 +4,13 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { FaUsers } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado, fetchAllProdutosFornecedorActualizadoRefatored } from '../redux/painelSlice';
+import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado } from '../redux/painelSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { update } from '../redux/searchGeral';
-import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
-import { supabase } from '../utils/supabaseClient';
-import { Auth } from '@supabase/ui';
-import api from '../service/api';
+import { GetServerSidePropsContext } from 'next';
+
 import nookies from 'nookies'
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
@@ -159,20 +156,20 @@ const Home = () => {
     }
 
 
-    const searchProduto = () => {
+    //Search Produto
 
-        if (description !== '') {
-            if (searchType === 'Produto') {
-                const filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
-                setProdutosFornecedores(filteredProducts)
-            } else {
-                const filteredFornecedor = produtosFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-                setProdutosFornecedores(filteredFornecedor)
-            }
+    if (description !== '') {
+        if (searchType === 'Produto') {
+            const filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
+            setProdutosFornecedores(filteredProducts)
         } else {
-            getAllProductsByFornecedor()
+            const filteredFornecedor = produtosFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+            setProdutosFornecedores(filteredFornecedor)
         }
+    } else {
+        getAllProductsByFornecedor()
     }
+
 
 
     const fetchReport = async () => {
@@ -228,8 +225,9 @@ const Home = () => {
     }, [])
 
     useEffect(() => { start(); }, [reportProdutoByFornecedor])
+
     useEffect(() => {
-        searchProduto()
+        // searchProduto()
         start();
     }, [page, description])
 

@@ -312,15 +312,9 @@ const fornecedor = () => {
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
 
-    // const { user } = await supabase.auth.api.getUserByCookie(req)
-    //const session = supabase.auth.session()
-    //const res = await api.get('api/getUser');
 
-    //const { user } = res.data;
     const cookie = nookies.get(context)
-    //console.log(session)
-    //  const { user: UserAuth, session: S } = Auth.useUser()
-    //console.log(UserAuth)
+
     if (!cookie.USER_LOGGED) {
         // If no user, redirect to index.
         return { props: {}, redirect: { destination: '/', permanent: false } }
@@ -334,5 +328,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 }
+
 
 export default fornecedor

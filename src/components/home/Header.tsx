@@ -22,6 +22,7 @@ import { unwrapResult } from "@reduxjs/toolkit"
 import { supabase } from "../../utils/supabaseClient"
 import { NextApiRequest } from "next"
 import { useRouter } from "next/router"
+import api from "../../service/api"
 
 //Tipagem de ProdutoFornecedor
 type ProdutoFornecedorType = {
@@ -56,13 +57,23 @@ const Header = () => {
     const [isAuthed, setAuthStatus] = useState(false);
     const routes = useRouter()
 
+    const getUser = async () => {
+        const user = await api.get('api/getUser')
+        if (user.data) return setAuthStatus(true)
+        return setAuthStatus(false)
+    }
+
     useEffect(() => {
-        fetch("./api/getUser")
-            .then((response) => response.json())
-            .then((result) => {
-                setAuthStatus(result.user && result.user.role === "authenticated");
-            });
-    }, [routes.pathname]);
+        /**
+         *   fetch("./api/getUser")
+              .then((response) => response.json())
+              .then((result) => {
+                  setAuthStatus(result.user && result.user.role === "authenticated");
+              });
+         */
+        getUser()
+
+    }, []);
 
     const getAllPrecosByProdutos = async () => {
         const allPrecos = await dispatch(fetchAllProdutosFornecedor());
@@ -101,7 +112,7 @@ const Header = () => {
     //isAuthed
     return (
         <header className="bg-gray-50 text-black h-72">
-            <div className={` ${(routes.pathname === '/') ? 'hidden' : 'flex flex-col'}   py-2 px-8`}>
+            <div className={` ${!isAuthed ? 'hidden' : 'flex flex-col'}   py-2 px-8`}>
                 <div>
                     <div className="flex justify-between items-center border-b border-gray-100">
 
