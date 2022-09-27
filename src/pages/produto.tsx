@@ -26,7 +26,7 @@ import Image from 'next/image';
 
 //Imagens
 import LoadImage from '../assets/load.gif';
-import { GetServerSidePropsContext, NextApiRequest } from 'next'
+import { GetServerSidePropsContext } from 'next'
 import nookies from 'nookies'
 
 
@@ -62,7 +62,12 @@ type SubCategoriaType = {
     categoria: number
 }
 
-const Produto = () => {
+type ProdutoProps = {
+    userEmail: any
+
+}
+
+const Produto = ({ userEmail }: ProdutoProps) => {
 
     const [idProduto, setIdProduto] = useState(0)
     //load
@@ -90,13 +95,14 @@ const Produto = () => {
     const dispatch = useDispatch<any>()
     const { description, page } = useSelector((state: RootState) => state.Search)
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoad(true)
+
         data.descricaoMaterial = produto;
         data.fornecedor_id = idFornecedor;
-        data.nomeuser = 'Jairo dos Santos'
+        data.nomeuser = userEmail.email
 
         if (idProduto === 0) {
             //Cadastrar primeiro o produto (porque não existe) depois cadastrar o produto do fornecedor com os seus preços, caso o produto não exista!
@@ -194,12 +200,9 @@ const Produto = () => {
     }
 
 
-    if (description) {
-        const filteredFornecedor = fornecedoresLista.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-        setFornecedores(filteredFornecedor)
-    } else {
-        fetchAllFornecedores();
-    }
+
+    const filteredFornecedor = description ? fornecedoresLista.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase())) : []
+
 
     useEffect(() => {
         dispatch(update({ description, page: 'Fornecedor' }))
@@ -237,7 +240,11 @@ const Produto = () => {
             setBackgroundColor2(false)
         }
     }
+    /**
+     *   const { produtos } = useSelector((state: RootState) => state.Produto)
+        console.log(produtos)
 
+    */
 
     return (
         <div className='-mt-20 p-5 flex flex-col sm:flex-row gap-3'>
@@ -395,7 +402,8 @@ const Produto = () => {
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
                         {
-                            (fornecedoresLista && fornecedoresLista.length > 0) ? (
+
+                            (fornecedoresLista && fornecedoresLista.length > 0 && filteredFornecedor.length === 0) ? (
                                 fornecedoresLista.map((fornecedor, index) => {
                                     if (index < 3) {
                                         return (
@@ -412,9 +420,21 @@ const Produto = () => {
                                         )
                                     }
                                 })
-                            ) : (
-                                <li className='text-center'>Não existem fornecedores na base de dados.</li>
-                            )
+                            ) : filteredFornecedor.map((fornecedor, index) => {
+                                if (index < 3) {
+                                    return (
+                                        <li
+                                            key={index}
+                                            onClick={() => handleSelectOne(index, fornecedor.id)}
+                                            className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white 
+                                                ${(index === 2 && backgoundColor3) ? 'selected-item' : ''} 
+                                                ${(index === 1 && backgoundColor2) ? 'selected-item' : ''} 
+                                                ${(index === 0 && backgoundColor1) ? 'selected-item' : ''}  
+                                                rounded p-2`}>{fornecedor.nome_fornecedor} - <span className='text-gray-400 truncate'>{fornecedor.endereco}</span>
+                                        </li>
+                                    )
+                                }
+                            })
                         }
 
                     </ul>
@@ -442,7 +462,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
         props:
         {
-            cookie
+            userEmail: JSON.parse(cookie.USER_LOGGED)
         }
     }
 }

@@ -68,25 +68,30 @@ const Login: NextPage = () => {
 
     event.preventDefault();
 
-    setLoad(true)
+    try {
+      setLoad(true)
 
-    if (email === '' || password === '' || !loadPermitted(email)) { setLoad(false); return }
+      if (email === '' || password === '' || !loadPermitted(email)) { setLoad(false); return }
 
-    const response = await api.post('api/login', {
-      email: email,
-      password: password
-    })
+      const response = await api.post('api/login', {
+        email: email,
+        password: password
+      })
 
 
-    const { user } = response.data
-    const status = response.status
+      const { user } = response.data
+      const status = response.status
 
-    setLoad(false)
-    if (user) {
-      setShowSuccess('flex')
-      router.push('/home')
+      setLoad(false)
+      if (user) {
+        setShowSuccess('flex')
+        router.push('/home')
 
-    } else if (status === 401) {
+      } else if (status === 401) {
+        setShowHide('flex')
+      }
+    } catch (error) {
+      setLoad(false)
       setShowHide('flex')
     }
   };

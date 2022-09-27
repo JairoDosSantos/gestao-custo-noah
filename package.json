@@ -31,6 +31,7 @@
     "react-redux": "^8.0.2",
     "react-sweetalert2": "^0.5.2",
     "react-toastify": "^9.0.3",
+    "recharts": "^2.1.9",
     "sweetalert2-react": "^0.8.3"
   },
   "devDependencies": {

@@ -18,6 +18,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import nookies from 'nookies'
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import Pagination from '../components/Pagination';
 
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
@@ -270,7 +271,9 @@ const TodosProdutos = () => {
 
                             </tbody>
                         </table>
+
                     </div>
+                    <Pagination />
                     <div>
 
 

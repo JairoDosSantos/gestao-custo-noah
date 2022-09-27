@@ -189,8 +189,15 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                                     {produto && produto.map((product, index) => (
 
                                         <li key={index} > {product.produto_id.descricao}
-                                            <span className='text-gray-400 text-xs' >- &nbsp; &nbsp; {product.precosimples} AKWZ/{product.unidade} sem transporte</span>
-                                            <span className='text-gray-400 text-xs'> - &nbsp; &nbsp;{product.precotransporte} AKWZ/{product.unidade}  com transporte</span>
+                                            <span className='text-gray-400 text-xs' >- &nbsp; &nbsp; {Number(product.precosimples).toLocaleString('pt', {
+                                                style: 'currency',
+                                                currency: 'KWZ'
+                                            })} /{product.unidade} sem transporte
+                                            </span>
+                                            <span className='text-gray-400 text-xs'> - &nbsp; &nbsp;{Number(product.precotransporte).toLocaleString('pt', {
+                                                style: 'currency',
+                                                currency: 'KWZ'
+                                            })} /{product.unidade}  com transporte</span>
                                         </li>
 
                                     ))}

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
-import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado } from '../redux/painelSlice';
+import { fetchAllProdutosFornecedor, fetchAllProdutosFornecedorActualizado, relatorioData } from '../redux/painelSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { update } from '../redux/searchGeral';
@@ -15,6 +15,7 @@ import nookies from 'nookies'
 //External Components
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false })
 
+//import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 //Tipagem do Produto
 type ProdutoType = {
@@ -71,7 +72,7 @@ const Home = () => {
     //Buscar do redux
     const { description, page } = useSelector((state: RootState) => state.Search)
     const dispatch = useDispatch<any>();
-
+    const data = [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 }, { name: 'Page B', uv: 500, pv: 3400, amt: 3400 }];
     const [searchType, setSearchType] = useState('Produto')
 
     //Objecto Produto-Fornecedor
@@ -155,55 +156,74 @@ const Home = () => {
 
     }
 
-
     //Search Produto
-
+    let filteredProducts: ProdutoFornecedorType[] = []
     if (description !== '') {
         if (searchType === 'Produto') {
-            const filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
-            setProdutosFornecedores(filteredProducts)
+            filteredProducts = produtosFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase()))
+
         } else {
-            const filteredFornecedor = produtosFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
-            setProdutosFornecedores(filteredFornecedor)
+            filteredProducts = produtosFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase()))
+
         }
-    } else {
-        getAllProductsByFornecedor()
     }
 
 
 
-    const fetchReport = async () => {
-        const report = await dispatch(fetchAllProdutosFornecedorActualizado({ fornecedor_id: fornecedorId, produto_id: produtoId }));
-        const reportUnwrap = unwrapResult(report);
+    /**
+     *  const fetchReport = async () => {
+         const report = await dispatch(fetchAllProdutosFornecedorActualizado({ fornecedor_id: fornecedorId, produto_id: produtoId }));
+         const reportUnwrap = unwrapResult(report);
+         console.log('Report', report)
+         if (reportUnwrap) {
+             setReportProdutoByFornecedor(reportUnwrap)
+ 
+             console.log('Unwrap', reportUnwrap)
+         }
+ 
+     }
+     */
 
-        if (reportUnwrap) {
-            setReportProdutoByFornecedor(reportUnwrap)
 
-        }
-
-    }
-
-
-
-
-    function start() {
-        fetchReport()
+    async function start() {
+        //fetchReport()
         const dataArray = new Array<number>();
 
         const categoryArray = new Array<string>()
+        const data = await teste();
 
-        if (reportProdutoByFornecedor && reportProdutoByFornecedor.length > 0) {
-            reportProdutoByFornecedor.forEach((report) => {
+        if (data?.length > 0) {
+            data.forEach((report: any) => {
 
                 dataArray.push(report.precosimples_antigo)
                 categoryArray.push(report.created_at)
+
             })
         }
-        //  setCategories(categoryArray)
-        //setdataChart(dataArray)
-        // console.log(dataChart)
-        setOptionsChart({ ...optionsChart, series: [{ name: 'Jairo dos Santos', data: dataArray }], options: { ...optionsChart.options, xaxis: { type: 'datetime', categories: categoryArray } } })
 
+        /**
+         *  if (reportProdutoByFornecedor && reportProdutoByFornecedor.length > 0) {
+             reportProdutoByFornecedor.forEach((report) => {
+ 
+                 dataArray.push(report.precosimples_antigo)
+                 categoryArray.push(report.created_at)
+ 
+                 console.log('Array Data', dataArray)
+                 console.log('Array  Category', categoryArray)
+             })
+         }
+         */
+        //setCategories(categoryArray)
+        //setdataChart(dataArray)
+        //console.log(dataChart)
+        setOptionsChart({ ...optionsChart, series: [{ name: 'Média', data: dataArray }], options: { ...optionsChart.options, xaxis: { type: 'datetime', categories: categoryArray } } })
+
+    }
+
+    const teste = async () => {
+        const res = await dispatch(relatorioData())
+        if (res.payload) return res.payload
+        else return null
     }
 
     useEffect(() => {
@@ -212,19 +232,16 @@ const Home = () => {
 
         getAllProductsByFornecedor()
 
-        fetchReport()
+        //  fetchReport()
 
         if (produtosFornecedores.length > 0) {
             setProdutoId(produtosFornecedores[0].produto_id.id)
             setFornecedorId(produtosFornecedores[0].fornecedor_id.id)
         }
-
-
-
         //setOptionsChart({ ...optionsChart, series: produtosFornecedores })
     }, [])
 
-    useEffect(() => { start(); }, [reportProdutoByFornecedor])
+    //ver este código porque gera um loop infinito useEffect(() => { start(); }, [reportProdutoByFornecedor])
 
     useEffect(() => {
         // searchProduto()
@@ -263,19 +280,31 @@ const Home = () => {
                         <div className='border shadow rounded bg-white p-3 order-2'>
                             {/** Gráfico de Preço vs Data */}
                             <h4 className='text-left pl-8 font-bold'>Gráfico de Custos</h4>
+                            {
+                                /**
+                                 *  
+                                   <LineChart width={500} height={300} data={data}>
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                                        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+                                        <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+                                    </LineChart>
+                                 */
+                            }
                             <Chart
                                 options={optionsChart.options}
                                 series={optionsChart.series}
                                 type="area"
-                                width={400}
-                            />
+                                width={400} />
+
                         </div>
                         <div className='border shadow rounded bg-white py-5 px-3  max-w-5xl h-[19rem]  overflow-auto overflow-hide-scroll-bar flex flex-col print:shadow-none print:border-0 order-1'>
 
                             <div className='w-full'>
                                 <table className='p-2 flex flex-col gap-2'>
                                     <thead className=''>
-                                        <tr className=' p-2 my-2 flex gap-10 text-center border shadow-sm rounded bg-gray-500'>
+                                        <tr className='p-2 my-2 flex items-center gap-10 text-center border shadow-sm rounded bg-gray-500'>
 
                                             <th className='w-1/5 text-center'>Descrição</th>
                                             <th className='w-1/5 text-center'>Nome do fornecedor</th>
@@ -287,8 +316,8 @@ const Home = () => {
                                     </thead>
                                     <tbody className='flex flex-col gap-2'>
                                         {
-                                            produtosFornecedores.length > 0 ? produtosFornecedores.map((pdtFornecedor, index) => {
-                                                if (index < 4) {
+                                            (produtosFornecedores.length > 0 && filteredProducts.length === 0) ? produtosFornecedores.map((pdtFornecedor, index) => {
+                                                if (index < 2) {
                                                     return (
                                                         <tr key={index} className='flex shadow rounded p-1'>
                                                             <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.produto_id.descricao}</td>
@@ -308,10 +337,26 @@ const Home = () => {
                                                             })}</td>
                                                         </tr>)
                                                 }
-                                            }) :
-                                                (<tr className='flex justify-center items-center' >
-                                                    <td colSpan={5} className=' w-full'>Não existe produtos de fornecedores na base de dados</td>
-                                                </tr>)
+                                            }) : filteredProducts.map((pdtFornecedor, index) => {
+                                                return (
+                                                    <tr key={index} className='flex shadow rounded p-1'>
+                                                        <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.produto_id.descricao}</td>
+                                                        <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.fornecedor_id.nome_fornecedor}</td>
+                                                        <td className='w-1/5 flex justify-center items-center '>{moment(pdtFornecedor.updated_at).format('L')}</td>
+                                                        <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.precosimples.toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+                                                        <td className='w-1/5 flex justify-center items-center '>{pdtFornecedor.precotransporte.toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+                                                        <td className='w-1/5 flex justify-center items-center '>{((pdtFornecedor.precosimples + pdtFornecedor.precotransporte) / 2).toLocaleString('pt', {
+                                                            style: 'currency',
+                                                            currency: 'KWZ'
+                                                        })}</td>
+                                                    </tr>)
+                                            })
 
                                         }
                                     </tbody>

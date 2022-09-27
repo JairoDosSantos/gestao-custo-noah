@@ -6,8 +6,9 @@ import { FaEdit, FaPrint, FaTrash } from 'react-icons/fa';
 
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import nookies from 'nookies'
 import EditarProdutoModal from '../../components/produto/ModalEditarProduto';
-import { GetStaticProps, NextApiRequest } from 'next';
+import { GetStaticPathsContext, GetStaticProps, NextApiRequest, NextPageContext } from 'next';
 import { supabase } from '../../utils/supabaseClient';
 import { deleteProduto } from '../../redux/produtoSlice';
 import { useDispatch } from 'react-redux';
@@ -215,7 +216,7 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
                                 >
                                     <FaEdit /> <span>Editar</span>
                                 </button>
-                                <button className='btn bg-green-400 flex space-x-2 items-center order-3 lg:order-2'>
+                                <button className='btn hidden bg-green-400 flex space-x-2 items-center order-3 lg:order-2'>
                                     <FaPrint />
                                     <span>Imprimir</span>
                                 </button>
@@ -235,9 +236,14 @@ const InfoProduto = ({ produto, fornecedores }: PropsType) => {
 }
 
 
+export const getStaticPaths = async (req: NextApiRequest) => {
 
-export const getStaticPaths = async () => {
+    const cookie = nookies.get({ req })
 
+    if (!cookie.USER_LOGGED) {
+        // If no user, redirect to index.
+        return { paths: [], fallback: true }
+    }
 
 
     const { data, error } = await supabase
@@ -255,6 +261,14 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 
+    /**
+     *  const cookie = nookies.get(null)
+ 
+     if (!cookie.USER_LOGGED) {
+         // If no user, redirect to index.
+         return { props: {}, redirect: { destination: '/', permanent: false } }
+     }
+     */
 
     const { data } = await supabase
         .from('produto')

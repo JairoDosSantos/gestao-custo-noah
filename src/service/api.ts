@@ -1,7 +1,7 @@
 import axios from 'axios';
 //https://gestao-custo-noah.vercel.app/
 const api = axios.create({
-    baseURL: 'https://gestao-custo-noah.vercel.app/'
+    baseURL: 'http://localhost:3000/'
 });
 
 export default api;

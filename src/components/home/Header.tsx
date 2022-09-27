@@ -7,7 +7,7 @@ import User from '../../assets/user.png'
 import Logo from '../../assets/noah.png'
 
 import { AiFillCloseCircle, AiOutlineNotification } from 'react-icons/ai'
-import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaSignOutAlt } from 'react-icons/fa'
+import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaSignOutAlt, FaMoneyBillWaveAlt } from 'react-icons/fa'
 
 //Redux
 //import { unwrapResult } from '@reduxjs/toolkit';
@@ -22,6 +22,9 @@ import { unwrapResult } from "@reduxjs/toolkit"
 
 import { useRouter } from "next/router"
 import api from "../../service/api"
+
+import nookies from 'nookies'
+import { json } from "stream/consumers"
 
 //Tipagem de ProdutoFornecedor
 type ProdutoFornecedorType = {
@@ -43,40 +46,53 @@ const Header = () => {
     const route = useRouter()
 
     const [activo, setActivo] = useState(route.pathname);
-    const [showNotification, setShowNotification] = useState(false)
+    // const [showNotification, setShowNotification] = useState(false)
 
     const [search, setSearch] = useState('');
     const dispatch = useDispatch<any>();
 
     const [precosTodos, setPrecosTodos] = useState<Array<ProdutoFornecedorType>>([])
 
-    const [isAuthed, setAuthStatus] = useState(false);
+    //const [isAuthed, setAuthStatus] = useState(false);
     const [emailUser, setEmailUser] = useState('')
 
+
+    const cookie = nookies.get(null)
+
+
     const getUser = async () => {
-        const user = await api.get('api/getUser')
-        if (user.data) {
-            setAuthStatus(true)
-            setEmailUser(user.data.email)
-            return user.data
+        const response = await api.get('api/getUser')
+        const { user } = response.data
+
+        const { email } = JSON.parse(user.USER_LOGGED)
+        if (cookie.USER_LOGGED) {
+            //  setAuthStatus(true)
+            setEmailUser(email)
+
         }
 
-        setAuthStatus(false)
+        // setAuthStatus(false)
         return null
     }
 
+
     const logOut = async () => {
         const response = await api.post('api/logout')
-        if (response.data) route.push('/')
+
+        //  console.log(response.data.logout)
+        const { logout } = response.data
+        if (logout) route.push('/')
     }
 
     useEffect(() => {
 
-        getUser()
+        getUser();
+        // getAllPrecosByProdutos();
 
     }, []);
 
-    const getAllPrecosByProdutos = async () => {
+    /**
+     * const getAllPrecosByProdutos = async () => {
         const allPrecos = await dispatch(fetchAllProdutosFornecedor());
         const allPrecosUnwrap = unwrapResult(allPrecos);
 
@@ -97,17 +113,22 @@ const Header = () => {
             })
         }
     }
+     */
 
-    useEffect(() => {
-        getAllPrecosByProdutos();
-    }, [])
+    /**
+     *   useEffect(() => {
+  
+          dispatch(update({ description: search, page: 'Produto' }))
+  
+      }, [search])
+     */
 
     search && dispatch(update({ description: search, page: 'Produto' }))
 
     //isAuthed
     return (
         <header className="bg-gray-50 text-black h-72">
-            <div className={` ${!isAuthed ? 'hidden' : 'flex flex-col'}   py-2 px-8`}>
+            <div className={` ${cookie.USER_LOGGED ? 'flex flex-col' : 'hidden'}   py-2 px-8`}>
                 <div>
                     <div className="flex justify-between items-center border-b border-gray-100">
 
@@ -186,7 +207,7 @@ const Header = () => {
                     <ul className="flex space-x-8 ">
                         <li
                             onClick={() => setActivo('/home')}
-                            className={`link-menu ${activo === '/home' && 'actived'}`}>
+                            className={`link-menu ${activo.includes('/home') && 'actived'}`}>
                             <Link href='/home'>
                                 <span className="flex items-center space-x-2">
                                     <FaHome /> <span>Painel de Controlo</span>
@@ -195,7 +216,7 @@ const Header = () => {
                         </li>
                         <li
                             onClick={() => setActivo('/produto')}
-                            className={`link-menu ${activo === '/produto' && 'actived'}`}>
+                            className={`link-menu ${(activo.includes('/produto') || activo.includes('/todos-produtos')) && 'actived'}`}>
                             <Link href='/produto' >
                                 <span className="flex items-center space-x-2">
                                     <FaList /><span>Produto</span>
@@ -204,16 +225,16 @@ const Header = () => {
                         </li>
                         <li
                             onClick={() => setActivo('/lista-de-produto')}
-                            className={`link-menu ${activo === '/lista-de-produto' && 'actived'}`}>
+                            className={`link-menu ${activo.includes('/lista-de-produto') && 'actived'}`}>
                             <Link href='/lista-de-produto'>
                                 <span className="flex items-center space-x-2">
-                                    <FaListAlt /><span>Produtos</span>
+                                    <FaMoneyBillWaveAlt /><span>Cotações</span>
                                 </span>
                             </Link>
                         </li>
                         <li
                             onClick={() => setActivo('/fornecedor')}
-                            className={`link-menu ${activo === '/fornecedor' && 'actived'}`}>
+                            className={`link-menu ${activo.includes('/fornecedor') && 'actived'}`}>
                             <Link href='/fornecedor'>
                                 <span className="flex items-center space-x-2">
                                     <FaUsers /> <span>Fornecedores</span>
@@ -222,7 +243,7 @@ const Header = () => {
                         </li>
                         <li
                             onClick={() => setActivo('/categoria')}
-                            className={`link-menu ${activo === '/categoria' && 'actived'}`}>
+                            className={`link-menu ${activo.includes('/categoria') && 'actived'}`}>
                             <Link href='/categoria'>
                                 <span className="flex items-center space-x-2">
                                     <FaFigma /><span>Categoria</span>
@@ -232,7 +253,7 @@ const Header = () => {
                     </ul>
 
                     <input
-                        onChange={(event) => setSearch(event.target.value)}
+                        onChange={(event) => dispatch(update({ description: event.target.value, page: 'Produto' }))}
                         type='search'
                         placeholder="Pesquisar"
                         className=" text-black placeholder:text-gray-400 bg-gray-100 px-3 py-2 rounded w-[432px] "

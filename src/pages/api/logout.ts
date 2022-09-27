@@ -5,7 +5,9 @@ import nookies from 'nookies'
 
 export default async function logoutUser(req: NextApiRequest, res: NextApiResponse) {
     let { error } = await supabase.auth.signOut();
-    if (!error) nookies.destroy(null, 'USER_LOGGED', { path: '/' })
+
+    if (!error) nookies.destroy({ res }, 'USER_LOGGED', { path: '/' })
+
     else return res.status(401).json({ error: error.message });
 
     return res.status(200).json({ logout: true });

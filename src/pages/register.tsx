@@ -116,7 +116,7 @@ const Login: NextPage = () => {
                             className='px-4 py-2 caret-blue-600 border mt-2 mb-4'
                             placeholder='Insira o seu melhor email'
                         />
-                        <label htmlFor="email" className='font-bold'>Password</label>
+                        <label htmlFor="password" className='font-bold'>Password</label>
                         <input
                             onChange={(event) => { setPassword(event.target.value); event.target.value === '' && setShowHide('hidden') }}
                             type="password"

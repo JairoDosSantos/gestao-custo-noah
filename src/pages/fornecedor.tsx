@@ -61,7 +61,7 @@ const fornecedor = () => {
 
     const [fornecedores, setFornecedores] = useState<Array<FormValues>>([])
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const { description, page } = useSelector((state: RootState) => state.Search)
 
@@ -82,7 +82,6 @@ const fornecedor = () => {
 
             setInserted(fornecedor.payload)
             setShowErrorAlert(true)
-
         }
 
     }
@@ -106,9 +105,9 @@ const fornecedor = () => {
 
     }
 
-
     //if (description) {
     const filteredFornecedor = description ? fornecedores.filter((fornecedor) => fornecedor.nome_fornecedor.toLowerCase().includes(description.toLowerCase())) : []
+
     /**
      *    setFornecedores(filteredFornecedor)
    } else {
@@ -284,8 +283,8 @@ const fornecedor = () => {
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
                         {
-                            (fornecedores.length === 0) ? (<li className='text-center'>Não existem fornecedores na base de dados</li>) :
-                                (fornecedores && fornecedores.length > 0) ? (
+                            (fornecedores.length === 0 && filteredFornecedor.length === 0) ? (<li className='text-center'>Não existem fornecedores na base de dados</li>) :
+                                (fornecedores && fornecedores.length > 0 && filteredFornecedor?.length === 0) ? (
                                     fornecedores.map((fornecedor, index) => {
 
                                         if (index < 5) {
@@ -335,6 +334,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
         }
     }
 }
+
 
 
 

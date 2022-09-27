@@ -1,37 +1,27 @@
 import { useEffect, useState } from 'react';
-
-
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
-
-import { FaSave, FaPlus } from 'react-icons/fa'
-import NovaCategoriaModal from '../components/categoria/ModalNovaCategoria';
 
 //Componentes Externos
 import { useForm, SubmitHandler } from 'react-hook-form'
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { FaSave, FaPlus } from 'react-icons/fa'
+import nookies from 'nookies';
+const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
 //Imagens
 import LoadImage from '../assets/load.gif';
 
-
-//INSTALAR O yarn add -D @types/sweetalert2-react
-//import SweetAlert2 from 'react-sweetalert2';
-const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
-
-
-import { useDispatch } from 'react-redux';
+import NovaCategoriaModal from '../components/categoria/ModalNovaCategoria';
 import { fetchcategorias, insertSubcategoria } from '../redux/categoriaSlices';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { update } from '../redux/searchGeral';
-import Image from 'next/image';
-import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest } from 'next';
-
-import nookies from 'nookies';
 
 
 //Tipagem
@@ -67,19 +57,27 @@ const Categoria = () => {
     const [actualizaListaCategoria, setActualizaListCategoria] = useState('')
 
 
-    const { description, page } = useSelector((state: RootState) => state.Search)
+    const { description } = useSelector((state: RootState) => state.Search)
 
 
-    const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (datas) => {
+
         setLoad(true)
+
         const categoryInserted = await dispatch(insertSubcategoria(datas))
+
         setLoad(false)
+
         if (categoryInserted.payload) {
+
             setShowConfirmAlert(true)
+
         } else {
+
             setShowErrorAlert(true)
+
         }
 
     }
@@ -101,18 +99,14 @@ const Categoria = () => {
             // setPending(false)
 
         } catch (error) {
-            //setPending(false)
-            console.log(error)
+
         }
 
     }
 
-    if (description) {
-        const filteredCategory = categories.filter((category) => category.descricao.toLowerCase().includes(description.toLowerCase()))
-        setCategories(filteredCategory)
-    } else {
-        fetchAllFornecedores();
-    }
+
+    const filteredCategory = description ? categories.filter((category) => category.descricao.toLowerCase().includes(description.toLowerCase())) : []
+
 
     useEffect(() => {
         dispatch(update({ description, page: 'Categoria' }))
@@ -245,7 +239,7 @@ const Categoria = () => {
                     <h3 className='text-center font-bold mb-4'>Lista de Categorias</h3>
                     <ul>
                         {
-                            categories.length > 0 ? (
+                            (categories.length > 0 && filteredCategory.length === 0) ? (
                                 categories.map((category, index) => {
                                     if (index < 5) {
                                         return (
@@ -258,9 +252,16 @@ const Categoria = () => {
                                         )
                                     }
                                 })
-                            ) : (
-                                <li className='text-center'>Não existem categorias cadastradas na sua base de dados</li>
-                            )
+                            ) : filteredCategory.map((category) => (
+
+                                <li
+                                    key={category.id}
+                                    onClick={() => router.push(`categoria/${category.id}`)}
+                                    className='my-2 cursor-pointer hover:bg-blue-600 hover:text-white hover:font-bold  rounded p-2'
+                                >{category.descricao}
+                                </li>
+                            ))
+
                         }
 
                     </ul>

@@ -13,7 +13,7 @@
         @apply font-roboto  text-xs
     }
   body{
-    @apply overflow-hide-scroll-bar
+    @apply overflow-hide-scroll-bar text-xs
   }
 }
 

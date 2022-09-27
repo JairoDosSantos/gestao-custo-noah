@@ -194,7 +194,7 @@ const ListaProdutos = () => {
                                     (allProductsFornecedores.length === 0) ? (<tr>
                                         <td colSpan={6} className='text-center'>Não existem produtos de fornecedores na sua base de dados.</td>
                                     </tr>) :
-                                        (allProductsFornecedores && allProductsFornecedores.length > 0) ? (
+                                        (allProductsFornecedores && allProductsFornecedores.length > 0 && filteredProducts.length === 0) ? (
                                             allProductsFornecedores.map((products, index) => {
                                                 if (index < 5) {
                                                     return (

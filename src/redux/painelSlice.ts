@@ -42,6 +42,26 @@ type RelatorioProdutoTypeRefactored2 = {
 
 }
 
+
+export const relatorioData = createAsyncThunk('/painel-controlo/produtos/relatorio', async () => {
+    try {
+
+        const { data, error } = await supabase
+            .from('relatorio_view')
+            .select('*')
+            .order('precosimples_antigo', { ascending: true })
+        if (data) {
+            return data
+        } else {
+            return error
+        }
+
+    } catch (error) {
+        return (error)
+    }
+
+})
+
 export const fetchAllProdutosFornecedor = createAsyncThunk('/painel-controlo/produtos/Fornecedor', async () => {
     try {
 
