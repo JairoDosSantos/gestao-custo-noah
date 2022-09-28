@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -6,25 +6,18 @@ import Link from "next/link"
 import User from '../../assets/user.png'
 import Logo from '../../assets/noah.png'
 
-import { AiFillCloseCircle, AiOutlineNotification } from 'react-icons/ai'
-import { FaHome, FaList, FaUsers, FaFigma, FaListAlt, FaSearch, FaSignOutAlt, FaMoneyBillWaveAlt } from 'react-icons/fa'
+import { FaHome, FaList, FaUsers, FaFigma, FaSearch, FaSignOutAlt, FaMoneyBillWaveAlt } from 'react-icons/fa'
 
 //Redux
 //import { unwrapResult } from '@reduxjs/toolkit';
 
 import { useDispatch } from 'react-redux';
 import { update } from "../../redux/searchGeral"
-//Moment
-import moment from 'moment'
-
-import { fetchAllProdutosFornecedor } from "../../redux/produtoSlice"
-import { unwrapResult } from "@reduxjs/toolkit"
 
 import { useRouter } from "next/router"
 import api from "../../service/api"
 
 import nookies from 'nookies'
-import { json } from "stream/consumers"
 
 //Tipagem de ProdutoFornecedor
 type ProdutoFornecedorType = {
@@ -41,8 +34,6 @@ type ProdutoFornecedorType = {
 
 const Header = () => {
 
-
-
     const route = useRouter()
 
     const [activo, setActivo] = useState(route.pathname);
@@ -51,7 +42,6 @@ const Header = () => {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch<any>();
 
-    const [precosTodos, setPrecosTodos] = useState<Array<ProdutoFornecedorType>>([])
 
     //const [isAuthed, setAuthStatus] = useState(false);
     const [emailUser, setEmailUser] = useState('')
@@ -60,21 +50,29 @@ const Header = () => {
     const cookie = nookies.get(null)
 
 
+    /**
+     * Método para buscar o usuário logado
+     */
     const getUser = async () => {
         const response = await api.get('api/getUser')
         const { user } = response.data
 
-        const { email } = JSON.parse(user.USER_LOGGED)
-        if (cookie.USER_LOGGED) {
-            //  setAuthStatus(true)
-            setEmailUser(email)
+        if (user.USER_LOGGED) {
+            const { email } = JSON.parse(user.USER_LOGGED)
+            if (cookie.USER_LOGGED) {
+                //  setAuthStatus(true)
+                setEmailUser(email)
 
+            }
         }
-
         // setAuthStatus(false)
         return null
     }
 
+
+    /**
+     * Método para encerrar a sessão
+     */
 
     const logOut = async () => {
         const response = await api.post('api/logout')
@@ -85,43 +83,8 @@ const Header = () => {
     }
 
     useEffect(() => {
-
         getUser();
-        // getAllPrecosByProdutos();
-
     }, []);
-
-    /**
-     * const getAllPrecosByProdutos = async () => {
-        const allPrecos = await dispatch(fetchAllProdutosFornecedor());
-        const allPrecosUnwrap = unwrapResult(allPrecos);
-
-        const dateNow = new Date();
-
-        const dateNowFormated = moment(dateNow).format('L')
-
-        // console.log(dateNowFormated)
-        setPrecosTodos(allPrecosUnwrap)
-
-        if (precosTodos && precosTodos.length > 0) {
-            let arrayPrecos = []
-            precosTodos.forEach((produto) => {
-                let dateUpdate = moment(produto.updated_at).format('L')
-                //console.log(dateUpdate)
-                //let resutlDate = dateUpdate.diff(dateNowFormated)
-                //console.log(resutlDate)
-            })
-        }
-    }
-     */
-
-    /**
-     *   useEffect(() => {
-  
-          dispatch(update({ description: search, page: 'Produto' }))
-  
-      }, [search])
-     */
 
     search && dispatch(update({ description: search, page: 'Produto' }))
 

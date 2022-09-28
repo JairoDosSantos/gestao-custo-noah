@@ -305,25 +305,27 @@ export default function ModalEditarProdutoPorFornecedor({ isOpen, setIsOpen, dat
                                                 <div className="mt-4 flex gap-3">
                                                     <button
                                                         title='Salvar alterações'
-                                                        className="flex align-center justify-center gap-2 rounded-md border border-transparent 
+                                                        className="flex items-center justify-center gap-2 rounded-md border border-transparent 
                           bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-500 
                           focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 
                           focus-visible:ring-offset-2"
                                                     >
-                                                        {
-                                                            load ? (
-                                                                <Image src={LoadImage} height={25} width={25} objectFit='cover' />
-                                                            ) : (
+                                                        <>
+                                                            {
+                                                                load ? (
+                                                                    <Image src={LoadImage} height={25} width={25} objectFit='cover' />
+                                                                ) : (
 
-                                                                <FaEdit />
-                                                            )
-                                                        }
+                                                                    <FaEdit />
+                                                                )
+                                                            }
+                                                        </>
                                                         <span>Salvar</span>
                                                     </button>
                                                     <button
                                                         title='Apagar produto do fornecedor'
                                                         type="button"
-                                                        className="flex align-center justify-center gap-2 rounded-md border border-transparent 
+                                                        className="flex items-center justify-center gap-2 rounded-md border border-transparent 
                           bg-gray-400 px-4 py-2 text-sm font-bold text-black hover:brightness-75
                           focus:outline-none focus-visible:ring-2
                           focus-visible:ring-offset-2 "

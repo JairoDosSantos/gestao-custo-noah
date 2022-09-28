@@ -5,28 +5,8 @@ import Head from 'next/head'
 import { Provider } from 'react-redux';
 import { store } from '../redux/store';
 import 'animate.css'
-import { Auth } from '@supabase/ui'
-import { supabase } from '../utils/supabaseClient';
-import { useEffect, useState } from 'react';
 
 function MyApp({ Component, pageProps }: AppProps) {
-
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async () => checkUser()
-    )
-    checkUser()
-    return () => {
-      authListener?.unsubscribe()
-    };
-  }, [])
-
-  async function checkUser() {
-    const user = supabase.auth.user()
-    //setUser(user)
-  }
 
   return (
     <Provider store={store}>

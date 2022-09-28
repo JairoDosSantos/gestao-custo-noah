@@ -213,7 +213,7 @@ const TodosProdutos = () => {
                                                         <td className='w-1/6 flex justify-center'>
                                                             <button
                                                                 onClick={() => { handleEditProduct(produto) }}
-                                                                className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
+                                                                className='flex  justify-center space-x-2 items-center btn rounded-full h-10 w-10'
                                                                 title='Editar'
                                                             >
                                                                 <FaEdit />
@@ -222,7 +222,7 @@ const TodosProdutos = () => {
                                                         <td className='w-1/6 text-center flex items-center justify-center'>
                                                             <button
                                                                 onClick={() => { setShowQuestionAlert(true); setidP(produto.id) }}
-                                                                className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
+                                                                className='flex space-x-2 items-center justify-center btn bg-gray-200 text-black rounded-full h-10 w-10'
                                                                 title='Apagar'
                                                             >
                                                                 <FaTrash />
@@ -246,7 +246,7 @@ const TodosProdutos = () => {
                                                     <td className='w-1/6 flex justify-center'>
                                                         <button
                                                             onClick={() => { handleEditProduct(produto) }}
-                                                            className='flex  space-x-2 items-center btn rounded-full h-5 w-12'
+                                                            className='flex  space-x-2 items-center btn rounded-full h-10 w-10'
                                                             title='Editar'
                                                         >
                                                             <FaEdit />
@@ -255,7 +255,7 @@ const TodosProdutos = () => {
                                                     <td className='w-1/6 text-center flex items-center justify-center'>
                                                         <button
                                                             onClick={() => { setShowQuestionAlert(true); setidP(produto.id) }}
-                                                            className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-5 w-12'
+                                                            className='flex space-x-2 items-center btn bg-gray-200 text-black rounded-full h-10 w-10'
                                                             title='Apagar'
                                                         >
                                                             <FaTrash />

@@ -208,16 +208,16 @@ const FornecedorInfo = ({ fornecedo, produto }: FornecedorTyping) => {
                             <div className='flex justify-center align-center'>
                                 <FaUser className='h-44  w-44 text-gray-200' />
                             </div>
-                            <div className='flex gap-3 justify-center align-center'>
+                            <div className='flex gap-3 justify-center items-center'>
                                 <button
                                     onClick={() => setShowModal(true)}
-                                    className='flex space-x-2 items-center btn shadow cursor-pointer'>
+                                    className='flex items-center space-x-2 btn shadow cursor-pointer'>
                                     <FaEdit />
                                     <span>Editar</span>
                                 </button>
                                 <button
                                     onClick={() => setShowQuestionAlert(true)}
-                                    className='flex space-x-2 items-center btn shadow bg-gray-200 text-black'>
+                                    className='flex items-center space-x-2 btn shadow bg-gray-200 text-black'>
                                     <FaTrash />
                                     <span>Apagar</span>
                                 </button>
