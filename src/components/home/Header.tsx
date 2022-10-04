@@ -46,24 +46,27 @@ const Header = () => {
     //const [isAuthed, setAuthStatus] = useState(false);
     const [emailUser, setEmailUser] = useState('')
 
+    const [isAuth, setIsauth] = useState(false)
 
-    const cookie = nookies.get(null)
 
 
     /**
      * Método para buscar o usuário logado
      */
     const getUser = async () => {
+        const cookie = nookies.get(null)
         const response = await api.get('api/getUser')
         const { user } = response.data
 
         if (user.USER_LOGGED) {
             const { email } = JSON.parse(user.USER_LOGGED)
             if (cookie.USER_LOGGED) {
-                //  setAuthStatus(true)
+                setIsauth(true)
                 setEmailUser(email)
 
             }
+        } else {
+            setIsauth(false)
         }
         // setAuthStatus(false)
         return null
@@ -83,15 +86,16 @@ const Header = () => {
     }
 
     useEffect(() => {
+
         getUser();
-    }, []);
+    }, [route.pathname]);
 
     search && dispatch(update({ description: search, page: 'Produto' }))
 
     //isAuthed
     return (
         <header className="bg-gray-50 text-black h-72">
-            <div className={` ${cookie.USER_LOGGED ? 'flex flex-col' : 'hidden'}   py-2 px-8`}>
+            <div className={` ${isAuth ? 'flex flex-col' : 'hidden'}   py-2 px-8`}>
                 <div>
                     <div className="flex justify-between items-center border-b border-gray-100">
 

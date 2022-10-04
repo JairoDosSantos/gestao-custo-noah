@@ -50,6 +50,18 @@
     .overflow-hide-scroll-bar::-webkit-scrollbar {
         display: none;
         }
+        .pagination{
+            @apply flex space-x-4 w-fit mx-auto mt-2 shadow-sm  p-4 rounded-sm
+        }
+        .pagination__link{
+              @apply rounded-full  hover:brightness-75 hover:transform hover:transition-all
+        }
+        .pagination__link--active{
+               @apply flex items-center justify-center rounded-full text-sky-700 hover:brightness-75 hover:transform hover:transition-all
+        }
+        .pagination__link--disabled{
+               @apply flex items-center justify-center rounded-full text-blue-700 hover:brightness-75 hover:transform hover:transition-all
+        }
 
 
 }

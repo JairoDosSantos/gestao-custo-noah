@@ -19,10 +19,12 @@ import { unwrapResult } from '@reduxjs/toolkit';
 
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
-import { GetServerSidePropsContext, NextApiRequest } from 'next';
+import { GetServerSidePropsContext } from 'next';
 
 
 import nookies from 'nookies'
+
+import ReactPaginate from 'react-paginate';
 
 type FornecedorType = {
     id: number;
@@ -65,6 +67,15 @@ type ModalType = {
 
 const ListaProdutos = () => {
 
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const PER_PAGE = 3;
+    const offset = currentPage * PER_PAGE;
+    let pageCount = 1;
+    let currentFiltered: ProdutoFornecedorType[] = []
+    let currentPageData: ProdutoFornecedorType[] = []
+
+
     const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
     const [data, setData] = useState<ProdutoFornecedorType>({} as ProdutoFornecedorType);
 
@@ -88,10 +99,27 @@ const ListaProdutos = () => {
     }
 
 
+    let filteredProducts: ProdutoFornecedorType[] = []
+
+    if (searchType === 'Produto') {
+        filteredProducts = description ? allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase())) : []
+
+    } else {
+        filteredProducts = description ? allProductsFornecedores.filter((product) => product.fornecedor_id.nome_fornecedor.toLowerCase().includes(description.toLowerCase())) : []
+    }
 
 
-    const filteredProducts = description ? allProductsFornecedores.filter((product) => product.produto_id.descricao.toLowerCase().includes(description.toLowerCase())) : []
 
+    if (filteredProducts.length) {
+        currentFiltered = filteredProducts.slice(offset, offset + PER_PAGE)
+        pageCount = Math.ceil(filteredProducts.length / PER_PAGE);
+
+    } else {
+        currentPageData = allProductsFornecedores
+            .slice(offset, offset + PER_PAGE)
+
+        pageCount = Math.ceil(allProductsFornecedores.length / PER_PAGE);
+    }
 
     const printTable = () => {
 
@@ -113,30 +141,17 @@ const ListaProdutos = () => {
 
 
     const handleShowModal = (produto: ProdutoFornecedorType) => {
-        /**
-         *     const produtoFinded = allProductsFornecedores && allProductsFornecedores.find((product) => {
-                return product.id === id
-            })
-    
-            if (produtoFinded) {
-                setData(
-                    {
-                        id: produtoFinded.id,
-                        fornecedor_id: produtoFinded.fornecedor_id.id,
-                        produto_id: produtoFinded.produto_id.id,
-                        nomeuser: produtoFinded.nomeuser,
-                        precotransporte: produtoFinded.precotransporte,
-                        precosimples: produtoFinded.precosimples,
-                        categoria: produtoFinded.categoria,
-                        unidade: produtoFinded.unidade
-                    })
-                setIsOpenModal(true)
-            }
-         */
+
         setData(produto)
         setIsOpenModal(true)
 
     }
+
+    function handlePageClick({ selected: selectedPage }: any) {
+        setCurrentPage(selectedPage);
+    }
+
+
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
@@ -191,11 +206,11 @@ const ListaProdutos = () => {
                             </thead>
                             <tbody>
                                 {
-                                    (allProductsFornecedores.length === 0) ? (<tr>
-                                        <td colSpan={6} className='text-center'>Não existem produtos de fornecedores na sua base de dados.</td>
+                                    (description && filteredProducts.length === 0) ? (<tr>
+                                        <td colSpan={6} className='text-center'>Não existem cotações para este produto na sua base de dados.</td>
                                     </tr>) :
-                                        (allProductsFornecedores && allProductsFornecedores.length > 0 && filteredProducts.length === 0) ? (
-                                            allProductsFornecedores.map((products, index) => {
+                                        (currentPageData && currentPageData.length > 0 && filteredProducts.length === 0) ? (
+                                            currentPageData.map((products, index) => {
                                                 if (index < 5) {
                                                     return (
                                                         <tr
@@ -225,7 +240,7 @@ const ListaProdutos = () => {
                                                     )
                                                 }
                                             })
-                                        ) : filteredProducts.map((products, index) => {
+                                        ) : currentFiltered.map((products, index) => {
                                             return (
                                                 <tr
                                                     key={index}
@@ -263,10 +278,23 @@ const ListaProdutos = () => {
                                 </tr>
                             </tfoot>
                         </table>
+
                     </div>
                     <div>
+                        <ReactPaginate
+                            previousLabel={"←"}
+                            nextLabel={"→"}
+                            breakLabel={'...'}
+                            containerClassName={"pagination"}
+                            previousLinkClassName={"pagination__link"}
+                            nextLinkClassName={"pagination__link"}
+                            disabledClassName={"pagination__link--disabled"}
+                            activeClassName={"pagination__link--active"}
 
-                        <div className='flex print:justify-start justify-end mt-3'>
+                            pageCount={pageCount}
+                            onPageChange={handlePageClick}
+                        />
+                        <div className='hidden print:justify-start justify-end mt-3'>
                             <div className='hidden print:inline-block'>
                                 <h4><span className='font-bold'>Gerado por</span> : Jairo dos Santos</h4>
                             </div>

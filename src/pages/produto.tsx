@@ -95,7 +95,7 @@ const Produto = ({ userEmail }: ProdutoProps) => {
     const dispatch = useDispatch<any>()
     const { description, page } = useSelector((state: RootState) => state.Search)
 
-    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
+    const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm<FormValues>({ mode: 'onChange' });
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         setLoad(true)
@@ -259,7 +259,7 @@ const Produto = ({ userEmail }: ProdutoProps) => {
                 show={showConfirmAlert}
                 title='Sucesso'
                 text='Novo produto criado com sucesso!'
-                onConfirm={() => setShowConfirmAlert(false)}
+                onConfirm={() => reset()}
                 didClose={() => setShowConfirmAlert(false)}
                 didDestroy={() => setShowConfirmAlert(false)}
                 icon='success'
@@ -350,6 +350,7 @@ const Produto = ({ userEmail }: ProdutoProps) => {
                                 <option value="m">m</option>
                                 <option value="m²">m²</option>
                                 <option value="m³">m³</option>
+                                <option value="ml">ml</option>
                                 <option value="caixa">cx</option>
                                 <option value="Peça">un</option>
                                 <option value="Peça">L</option>
@@ -402,9 +403,25 @@ const Produto = ({ userEmail }: ProdutoProps) => {
                     <h3 className='text-center font-bold mb-4'>Lista de Fornecedores</h3>
                     <ul>
                         {
+                            (description && filteredFornecedor.length === 0) ? <li>Não existe este fornecedor</li> :
+                                (fornecedoresLista && fornecedoresLista.length > 0 && filteredFornecedor.length === 0) ? (
+                                    fornecedoresLista.map((fornecedor, index) => {
+                                        if (index < 3) {
+                                            return (
+                                                <li
+                                                    key={index}
+                                                    onClick={() => handleSelectOne(index, fornecedor.id)}
+                                                    className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white 
+                                                ${(index === 2 && backgoundColor3) ? 'selected-item' : ''} 
+                                                ${(index === 1 && backgoundColor2) ? 'selected-item' : ''} 
+                                                ${(index === 0 && backgoundColor1) ? 'selected-item' : ''}  
+                                                rounded p-2`}>{fornecedor.nome_fornecedor} - <span className='text-gray-400 truncate'>{fornecedor.endereco}</span>
+                                                </li>
 
-                            (fornecedoresLista && fornecedoresLista.length > 0 && filteredFornecedor.length === 0) ? (
-                                fornecedoresLista.map((fornecedor, index) => {
+                                            )
+                                        }
+                                    })
+                                ) : filteredFornecedor.map((fornecedor, index) => {
                                     if (index < 3) {
                                         return (
                                             <li
@@ -416,25 +433,9 @@ const Produto = ({ userEmail }: ProdutoProps) => {
                                                 ${(index === 0 && backgoundColor1) ? 'selected-item' : ''}  
                                                 rounded p-2`}>{fornecedor.nome_fornecedor} - <span className='text-gray-400 truncate'>{fornecedor.endereco}</span>
                                             </li>
-
                                         )
                                     }
                                 })
-                            ) : filteredFornecedor.map((fornecedor, index) => {
-                                if (index < 3) {
-                                    return (
-                                        <li
-                                            key={index}
-                                            onClick={() => handleSelectOne(index, fornecedor.id)}
-                                            className={`my-2 cursor-pointer hover:bg-blue-600 hover:text-white 
-                                                ${(index === 2 && backgoundColor3) ? 'selected-item' : ''} 
-                                                ${(index === 1 && backgoundColor2) ? 'selected-item' : ''} 
-                                                ${(index === 0 && backgoundColor1) ? 'selected-item' : ''}  
-                                                rounded p-2`}>{fornecedor.nome_fornecedor} - <span className='text-gray-400 truncate'>{fornecedor.endereco}</span>
-                                        </li>
-                                    )
-                                }
-                            })
                         }
 
                     </ul>

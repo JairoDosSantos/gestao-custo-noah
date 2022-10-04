@@ -85,6 +85,7 @@ const Login: NextPage = () => {
       setLoad(false)
       if (user) {
         setShowSuccess('flex')
+        setShowHide('hidden')
         router.push('/home')
 
       } else if (status === 401) {
@@ -127,7 +128,7 @@ const Login: NextPage = () => {
               className='px-4 py-2 caret-blue-600 border mt-2 mb-4'
               placeholder='Insira a sua password'
             />
-            <button type='submit' className='bg-sky-700 text-white font-bold px-4 py-2 flex items-center justify-center gap-2 hover:brightness-75'>
+            <button type='submit' className='bg-sky-700 text-white font-bold px-4 py-2 flex items-center justify-center gap-2 hover:brightness-75 hover:transform hover:transition-all'>
               {
                 load && (
                   <Image src={LoadImage} height={20} width={20} objectFit='cover' />

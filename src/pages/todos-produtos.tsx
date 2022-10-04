@@ -20,6 +20,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import Pagination from '../components/Pagination';
 
+
+import ReactPaginate from 'react-paginate';
+
 const SweetAlert2 = dynamic(() => import('react-sweetalert2'), { ssr: false })
 
 
@@ -46,6 +49,14 @@ type ProddutoType = {
 const TodosProdutos = () => {
 
     const router = useRouter()
+
+    //Pagination
+    const [currentPage, setCurrentPage] = useState(0);
+    const PER_PAGE = 3;
+    const offset = currentPage * PER_PAGE;
+    let pageCount = 1;
+    let currentFiltered: ProddutoType[] = []
+    let currentPageData: ProddutoType[] = []
 
     const [openModal, setOpenModal] = useState(false);
     const [showConfirmAlert, setShowConfirmAlert] = useState(false)
@@ -77,6 +88,19 @@ const TodosProdutos = () => {
     }
 
     const fetechedProducts = description ? produtList.filter(produto => produto.descricao.toLowerCase().includes(description.toLowerCase())) : []
+
+
+    if (fetechedProducts.length) {
+        currentFiltered = fetechedProducts.slice(offset, offset + PER_PAGE)
+        pageCount = Math.ceil(fetechedProducts.length / PER_PAGE);
+        console.log(currentFiltered)
+    } else {
+        currentPageData = produtList
+            .slice(offset, offset + PER_PAGE)
+
+        pageCount = Math.ceil(produtList.length / PER_PAGE);
+    }
+
 
     const removeProduto = async (id: number) => {
 
@@ -111,6 +135,11 @@ const TodosProdutos = () => {
         setData(produto)
         setOpenModal(true)
     }
+
+    function handlePageClick({ selected: selectedPage }: any) {
+        setCurrentPage(selectedPage);
+    }
+
     return (
         <div className='-mt-20 p-5 flex gap-3'>
             <Head>
@@ -196,9 +225,8 @@ const TodosProdutos = () => {
                             </thead>
                             <tbody>
                                 {
-
-                                    (produtList && produtList.length > 0 && fetechedProducts && fetechedProducts.length === 0) ?
-                                        produtList.map((produto, index) => {
+                                    (description && fetechedProducts.length === 0) ? <></> : (produtList && produtList.length > 0 && fetechedProducts && fetechedProducts.length === 0) ?
+                                        currentPageData?.map((produto, index) => {
                                             if (index < 3) {
                                                 return (
                                                     <tr
@@ -232,7 +260,7 @@ const TodosProdutos = () => {
                                                 )
                                             }
                                         })
-                                        : (fetechedProducts && fetechedProducts.length > 0 && fetechedProducts.map((produto, index) => {
+                                        : (currentFiltered?.map((produto, index) => {
                                             return (
                                                 <tr
                                                     key={index}
@@ -267,20 +295,36 @@ const TodosProdutos = () => {
 
                                         )
 
+
                                 }
 
                             </tbody>
                         </table>
 
                     </div>
-                    <Pagination />
+                    <ReactPaginate
+                        previousLabel={"←"}
+                        nextLabel={"→"}
+                        breakLabel={'...'}
+                        containerClassName={"pagination"}
+                        previousLinkClassName={"pagination__link"}
+                        nextLinkClassName={"pagination__link"}
+                        disabledClassName={"pagination__link--disabled"}
+                        activeClassName={"pagination__link--active"}
+
+                        pageCount={pageCount}
+                        onPageChange={handlePageClick}
+                    />
+                    {/**
+                   *   <Pagination />
+                   */}
                     <div>
 
 
                         {
                             (produtList && produtList.length > 0) && (
                                 <>
-                                    <div className='flex justify-end gap-3'>
+                                    <div className='hidden justify-end gap-3'>
                                         <button onClick={printTable} className='btn flex space-x-2 items-center'>
                                             <FaPrint />
                                             <span>Imprimir</span>

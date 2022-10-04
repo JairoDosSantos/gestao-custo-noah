@@ -197,7 +197,6 @@ const Home = () => {
 
                     dataArray.push(report.precosimples_antigo)
                     categoryArray.push(report.created_at)
-
                 })
         }
 
