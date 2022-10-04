@@ -240,7 +240,7 @@ const ListaProdutos = () => {
                                                     )
                                                 }
                                             })
-                                        ) : currentFiltered.map((products, index) => {
+                                        ) : currentFiltered?.map((products, index) => {
                                             return (
                                                 <tr
                                                     key={index}
