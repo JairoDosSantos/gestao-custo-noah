@@ -15,6 +15,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Sistema de gestão de preços por fornecedores</title>
         <link rel="icon" href='/noah.png' />
+        <meta
+          name='viewport'
+          content='minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover'
+        />
       </Head>
       <Component {...pageProps} />
 
